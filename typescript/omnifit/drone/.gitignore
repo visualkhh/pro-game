@@ -23,7 +23,7 @@
 /libpeerconnection.log
 npm-debug.log
 testem.log
-/typings
+/typ
 
 # e2e
 /e2e/*.js
@@ -143,3 +143,4 @@ $RECYCLE.BIN/
 
 
 # End of https://www.gitignore.io/api/node,macos,angular,windows
+/out-tsc/
