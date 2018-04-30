@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
+import {Observer} from 'rxjs/Observer';
+import {Manager} from './com/khh/domain/Manager';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
@@ -21,11 +23,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   private innerHeight: number;
 
   private canvas: HTMLCanvasElement;
+  private manager: Manager;
   private context: CanvasRenderingContext2D | null;
   @ViewChild('canvas') public canvasElementRef: ElementRef;
 
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
     // console.log(this.hostElement.nativeElement.outerHTML);
+    this.manager = Manager.getInstance();
+    // this.addReSizeSubscribe(this.manager.resize);
   }
 
 
@@ -52,13 +57,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.width =  this.innerWidth;
     this.canvas.height = this.innerHeight;
 
-
-
-
-
-
-
-
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     const x = this.canvas.width / 2;
     const y = this.canvas.height / 2;
@@ -74,33 +72,16 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.context.drawImage(drawing,x - drawing.width/2, y -  drawing.height/2);
     }
 
-
-
+    this.manager.draw(this.canvas);
   }
-
-
-
-
-
-
-
-
-
-
 
   ngAfterViewInit(): void {
-    // const canvasEl: HTMLCanvasElement = this.canvasElementRef.nativeElement;
-    // this.context = canvasEl.getContext('2d');
-    //
-    // canvasEl.width = this.innerWidth;
-    // canvasEl.height = this.innerHeight;
-    //
-    // this.context.lineWidth = 3;
-    // this.context.lineCap = 'round';
-    // this.context.strokeStyle = '#000';
   }
 
 
-
+  // addReSizeSubscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription{
+  //   // return Observable.fromEvent(window, 'resize').subscribe(e => console.log(e));
+  //   return Observable.fromEvent(window, 'resize').subscribe(next);
+  // }
 
 }
