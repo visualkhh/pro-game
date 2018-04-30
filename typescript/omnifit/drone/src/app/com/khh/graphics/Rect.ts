@@ -4,12 +4,15 @@ export class Rect {
   right: number;
   top: number;
 
+
   constructor(bottom: number  = 0, left: number = 0, right: number = 0, top: number = 0) {
     this.bottom = bottom;
     this.left = left;
     this.right = right;
     this.top = top;
   }
+
+
 
   public isEmpty(): boolean {
     return this.left >= this.right || this.top >= this.bottom;
@@ -43,19 +46,19 @@ export class Rect {
       this.left = this.right = this.top = this.bottom = 0;
     }
 
-    // public set(left: number, top: number, right: number, bottom: number) {
-    //     this.left = left;
-    //     this.top = top;
-    //     this.right = right;
-    //     this.bottom = bottom;
-    // }
-
-    public set(src: Rect) {
-        this.left = src.left;
-        this.top = src.top;
-        this.right = src.right;
-        this.bottom = src.bottom;
+    public set(left: number, top: number, right: number, bottom: number) {
+        this.left = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
     }
+
+    // public set(src: Rect) {
+    //     this.left = src.left;
+    //     this.top = src.top;
+    //     this.right = src.right;
+    //     this.bottom = src.bottom;
+    // }
 
     public offset(dx: number, dy: number) {
       this.left += dx;

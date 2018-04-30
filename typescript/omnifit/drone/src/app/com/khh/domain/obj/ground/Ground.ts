@@ -5,6 +5,6 @@ import {ObjImg} from '../ObjImg';
 import {Rect} from '../../../graphics/Rect';
 // import { Point } from '../org/Point';
 export class Ground extends ObjImg{
-  onDraw(drawSpace: Rect, context: CanvasRenderingContext2D): void {
+  onDraw(canvas: HTMLCanvasElement): void {
   }
 }

@@ -4,14 +4,7 @@ import { Obj } from 'app/com/khh/domain/obj/Obj';
 import {ObjImg} from '../ObjImg';
 import {Rect} from '../../../graphics/Rect';
 // import { Point } from '../org/Point';
-export class Drone extends ObjImg{
-
-
-  constructor() {
-    super();
-  }
-
+export class Cloud extends ObjImg{
   onDraw(canvas: HTMLCanvasElement): void {
   }
-
 }

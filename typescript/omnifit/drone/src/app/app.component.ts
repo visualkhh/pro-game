@@ -65,13 +65,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.context.fillStyle = 'blue';
     this.context.fillText('Hello World!', x, y);
 
-    //draw image
-    const drawing = new Image() as HTMLImageElement;
-    drawing.src = "assets/img/drone.png"; // can also be a remote URL e.g. http://
-    drawing.onload = (ev)=>{
-      this.context.drawImage(drawing,x - drawing.width/2, y -  drawing.height/2);
-    }
-
+    // //draw image
+    // const drawing = new Image() as HTMLImageElement;
+    // drawing.src = "assets/img/drone.png"; // can also be a remote URL e.g. http://
+    // drawing.onload = (ev)=>{
+    //   this.context.drawImage(drawing,x - drawing.width/2, y -  drawing.height/2);
+    // }
     this.manager.draw(this.canvas);
   }
 
