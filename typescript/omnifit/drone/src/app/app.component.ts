@@ -6,7 +6,7 @@ import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import {Observer} from 'rxjs/Observer';
-import {Manager} from './com/khh/domain/Manager';
+import {Manager} from './com/khh/omnifit/game/drone/Manager';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
