@@ -12,6 +12,7 @@ import {Manager} from './com/khh/omnifit/game/drone/Manager';
 
 // typescript observable subscribe example
 // https://xgrommx.github.io/rx-book/content/getting_started_with_rxjs/creating_and_querying_observable_sequences/creating_and_subscribing_to_simple_observable_sequences.html
+//https://wonism.github.io/rxjs-5/
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -29,7 +30,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
     // console.log(this.hostElement.nativeElement.outerHTML);
-    this.manager = Manager.getInstance();
     // this.addReSizeSubscribe(this.manager.resize);
   }
 
@@ -42,6 +42,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     // this.canvasElementRef = document.getElementById('canvasElementRef') as HTMLCanvasElement;
     this.canvas = this.canvasElementRef.nativeElement;
     this.context = this.canvas.getContext('2d');
+    this.manager = new Manager(this.canvas);
     this.onDraw();
   }
 
@@ -57,13 +58,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.width =  this.innerWidth;
     this.canvas.height = this.innerHeight;
 
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    const x = this.canvas.width / 2;
-    const y = this.canvas.height / 2;
-    this.context.font = '30pt Calibri';
-    this.context.textAlign = 'center';
-    this.context.fillStyle = 'blue';
-    this.context.fillText('Hello World!', x, y);
+    // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // const x = this.canvas.width / 2;
+    // const y = this.canvas.height / 2;
+    // this.context.font = '30pt Calibri';
+    // this.context.textAlign = 'center';
+    // this.context.fillStyle = 'blue';
+    // this.context.fillText('Hello World!', x, y);
 
     // //draw image
     // const drawing = new Image() as HTMLImageElement;
@@ -71,7 +72,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     // drawing.onload = (ev)=>{
     //   this.context.drawImage(drawing,x - drawing.width/2, y -  drawing.height/2);
     // }
-    this.manager.draw(this.canvas);
+    if(this.manager)
+    this.manager.draw();
   }
 
   ngAfterViewInit(): void {
