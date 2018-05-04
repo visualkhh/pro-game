@@ -3,4 +3,6 @@ import { Point } from 'app/com/khh/graphics/Point';
 import { Obj } from 'app/com/khh/obj/Obj';
 // import { Point } from '../org/Point';
 export class Wind extends Obj{
+  clockSignal(value?: any) {
+  }
 }

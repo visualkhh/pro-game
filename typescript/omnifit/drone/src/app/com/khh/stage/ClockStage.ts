@@ -1,7 +1,7 @@
 import {Stage} from './Stage';
 import {Clock} from '../clock/Clock';
 
-export abstract class ClockStage extends Stage{
+export abstract class ClockStage extends Stage implements ClockSignal{
 
 
   private _clock: Clock;
@@ -19,6 +19,6 @@ export abstract class ClockStage extends Stage{
     this._clock = value;
   }
 
-  public abstract clockSignal(value: number);
+  abstract clockSignal(value: number);
 
 }

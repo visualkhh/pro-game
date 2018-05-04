@@ -8,13 +8,14 @@ import {Obj} from '../../../obj/Obj';
 import {Stage} from '../../../stage/Stage';
 import {DroneStageIntro} from './stage/DroneStageIntro';
 import {Clock} from '../../../clock/Clock';
+import {DroneStageManager} from './stage/DroneStageManager';
+import {DroneStageGame} from './stage/DroneStageGame';
+import {DroneStageEnd} from './stage/DroneStageEnd';
 // import { Point } from '../org/Point';
 export class Manager {
-  private static instance: Manager;
 
 
   private clock: Clock;
-  private stage: Stage;
   private _canvas: HTMLCanvasElement;
 
 
@@ -22,6 +23,7 @@ export class Manager {
     this.init(canvas);
   }
 
+  // private static instance: Manager;
   // static getInstance() {
   //   if (!Manager.instance) {
   //     Manager.instance = new Manager();
@@ -30,21 +32,51 @@ export class Manager {
   // }
 
 
+  private droneStageManager: DroneStageManager;
+
   private init(canvas: HTMLCanvasElement) {
-    this.clock = new Clock(1000);
+    this.clock = new Clock(100);
     this._canvas = canvas;
-    this.stage = new DroneStageIntro(null, this.clock, canvas);
+    this.droneStageManager = new DroneStageManager();
+
+    // this.droneStageManager.pushStage(new DroneStageIntro(this.clock, canvas, this.droneStageManager));
+    // this.droneStageManager.pushStage(new DroneStageGame(this.clock, canvas, this.droneStageManager));
+    // this.droneStageManager.pushStage(new DroneStageEnd(this.clock, canvas, this.droneStageManager));
+    this.droneStageManager.pushStage(new DroneStageIntro(this.clock, canvas));
+    this.droneStageManager.pushStage(new DroneStageGame(this.clock, canvas));
+    this.droneStageManager.pushStage(new DroneStageEnd(this.clock, canvas));
+
   }
 
   get canvas(): HTMLCanvasElement {
     return this._canvas;
   }
 
+
+  mousedown(event: MouseEvent): void{
+    this.droneStageManager.currentStage().mousedown(event);
+  }
+
+  mousemove(event: MouseEvent): void{
+    this.droneStageManager.currentStage().mousemove(event);
+  }
+
+  mouseup(event: MouseEvent): void{
+    this.droneStageManager.currentStage().mouseup(event);
+  }
+
+  keydown(event: KeyboardEvent): void {
+    this.droneStageManager.currentStage().keydown(event);
+  }
+
+  keyup(event: MouseEvent): void {
+    this.droneStageManager.currentStage().keyup(event);
+  }
+
   draw(): void{
-
-
     console.log("manager --> Draw");
-    this.clock.signalForce();
+    this.droneStageManager.currentStage().onDraw();
+    //this.clock.signalForce();
     // console.log(this.stage.next());
     // this.clock.subscribe((x)=>console.log("x-- "+x))
     // this.clock.subscribe((b)=>console.log("b-- "+b))

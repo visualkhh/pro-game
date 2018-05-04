@@ -5,13 +5,14 @@ import { interval } from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
 import {isFunction} from 'util';
 export class Clock {
+
   private _iterval: number;
   private source: Observable<number>;
-  private subscriptions = new Array<Subscription>();
-  private subscriptionFncs = new Array;
+  private subscriptions: Map<Subscription,any>;
 
   constructor(iterval: number) {
     this._iterval = iterval;
+    this.subscriptions = new Map<Subscription,any>();
     this.init();
   }
 
@@ -31,32 +32,33 @@ export class Clock {
 
   public clear(): void{
     this.unsubscribe();
-    this.subscriptions.length = 0;
-    this.subscriptionFncs.length = 0;
+    this.subscriptions.clear();
   }
 
   public unsubscribe(): void{
-    while(this.subscriptions.length > 0) {
-      this.subscriptions.pop().unsubscribe();
-    }
+    this.subscriptions.forEach((val, key)=>key.unsubscribe());
   }
 
   public signalForce(): void{
-    this.subscriptionFncs.forEach((it)=>it(999));
-    // this.reset(1);
+    this.subscriptions.forEach((it)=>it());
+  }
+  public delete(s: Subscription): void{
+    s.unsubscribe();
+    this.subscriptions.delete(s);
+    this.reset();
+
   }
 
-  private reset(value: number) {
+  private reset(value: number = this._iterval) {
     this.unsubscribe();
-    this.source = interval(this.iterval);
-    this.subscriptionFncs.forEach((it)=>this.subscribe(it));
+    this.source = interval(value);
+    this.subscriptions.forEach((val, key)=>this.subscribe(val));
   }
 
 
   public subscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
     let subscription = this.source.subscribe(next);
-    this.subscriptions.push(subscription);
-    this.subscriptionFncs.push(next);
+    this.subscriptions.set(subscription,next);
     return subscription;
   }
 

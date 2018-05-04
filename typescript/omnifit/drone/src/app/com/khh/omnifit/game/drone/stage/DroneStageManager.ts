@@ -6,14 +6,61 @@ import {Clock} from '../../../../clock/Clock';
 export class DroneStageManager {
 
 
+  private position: number = 0;
+  private stages: Array<DroneStage>;
 
-  public next(): Stage;
-  public next(name?: string): Stage{
-    return null;
+  constructor() {
+    this.stages = new Array<DroneStage>();
   }
-  public previous(): Stage;
-  public previous(name?: string): Stage{
-    return null;
+
+  public nextPosition(): number{
+    let p = this.position;
+    p++;
+    if(p >= this.stages.length){
+      p = this.stages.length-1;
+    }
+    return p;
+  }
+  public previousPosition(): number{
+    let p = this.position;
+    p--;
+    if(p < 0){
+      p = 0;
+    }
+    return p;
+  }
+
+
+  public next(): DroneStage {
+    this.currentStage().stop();
+    this.position = this.nextPosition();
+    let nextStage: DroneStage = this.stages[this.position];
+    nextStage.start();
+    return nextStage;
 
   }
+  public previous(): DroneStage {
+    this.currentStage().stop();
+    this.position = this.previousPosition();
+    let previousStage: DroneStage = this.stages[this.position];
+    previousStage.start();
+    return previousStage;
+  }
+
+
+  public pushStage(stage: DroneStage): void{
+    stage.nextSubscribe(value=>{this.next()});
+    stage.previousSubscribe(value=>{this.previous()});
+    this.stages.push(stage)
+  }
+
+  public currentStage(): DroneStage{
+    return this.stages[this.position];
+  }
+
+  // private restore(position: number) {
+  //     this.clock.subscribe((x)=>{
+  //       this.clockSignal(x)
+  //     });
+  // }
 }

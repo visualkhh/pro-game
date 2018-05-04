@@ -5,6 +5,15 @@ import {ObjImg} from 'app/com/khh/graphics/ObjImg';
 import {Rect} from 'app/com/khh/graphics/Rect';
 // import { Point } from '../org/Point';
 export class Cloud extends ObjImg{
-  onDraw(canvas: HTMLCanvasElement): void {
+
+  onDraw(): void {
+    const x = this.canvas.width / 2;
+    const y = this.canvas.height / 2;
+    let ctxBuffer: CanvasRenderingContext2D = this.canvas.getContext("2d");
+    ctxBuffer.drawImage(this.img,x - this.img.width/2, 0);
+  }
+
+  clockSignal(value?: any) {
+    this.onDraw();
   }
 }
