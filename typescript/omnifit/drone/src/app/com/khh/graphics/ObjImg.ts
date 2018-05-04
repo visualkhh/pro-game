@@ -11,7 +11,8 @@ export abstract class ObjImg extends Obj{
   private _canvas: HTMLCanvasElement;
 
 
-  constructor(x: number = 0, y: number = 0, z: number = 0, canvas: HTMLCanvasElement, img: HTMLImageElement, head: Point = new Point(img.width/2,img.height/2,0),) {
+  // = new Point(img.width/2,img.height/2,0),
+  constructor(x: number = 0, y: number = 0, z: number = 0, canvas?: HTMLCanvasElement, img?: HTMLImageElement, head?: Point) {
     super(x, y, z);
     this._canvas = canvas;
     this._img = img;
@@ -50,5 +51,5 @@ export abstract class ObjImg extends Obj{
 
 
   abstract onDraw() : void;
-  abstract clockSignal(value: any);
+  abstract clockSignal(value?: any);
 }

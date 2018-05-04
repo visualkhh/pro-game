@@ -19,9 +19,11 @@ import {ObjImg} from '../../../../graphics/ObjImg';
 import {Obj} from '../../../../obj/Obj';
 import {Cloud} from '../obj/cloud/Cloud';
 import {Drone} from '../obj/drone/Drone';
-import {Gravity} from '../obj/Gravity';
-import {Wind} from '../obj/Wind';
+import {Gravity} from '../obj/gravity/Gravity';
+import {Wind} from '../obj/wind/Wind';
 import {Ground} from '../obj/ground/Ground';
+import {ObjDrone} from '../obj/ObjDrone';
+import {Intent} from '../../../../data/Intent';
 
 
 export class DroneStageGame extends DroneStage{
@@ -29,8 +31,8 @@ export class DroneStageGame extends DroneStage{
   private bufferCanvas: HTMLCanvasElement;
 
 
-  constructor(clock: Clock, canvas: HTMLCanvasElement) {
-    super(clock, canvas);
+  constructor(clock: Clock, canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
+    super(clock, canvas, objs);
     this.init();
   }
   private init() {
@@ -38,21 +40,14 @@ export class DroneStageGame extends DroneStage{
 
     //buffer canvas setting
     this.bufferCanvas = document.createElement('canvas');
+    this.bufferCanvas.width = this.canvas.width;
+    this.bufferCanvas.height = this.canvas.height;
 
-
-
-
-    const droneImage = new Image() as HTMLImageElement;
-    droneImage.src = "assets/image/drone.png";
-    const groundImage = new Image() as HTMLImageElement;
-    groundImage.src = "assets/image/ground.png";
-    const cloudImage = new Image() as HTMLImageElement;
-    cloudImage.src = "assets/image/cloud.png";
 
     //x,y,z
-    let drone = new Drone(0, 0, 20,this.bufferCanvas, droneImage);
-    let cloud = new Cloud(0, 0, 10, this.bufferCanvas, cloudImage);
-    let ground = new Ground(0, 0, 5, this.bufferCanvas, groundImage);
+    let drone = new Drone(0, 0, 20,this.bufferCanvas);
+    let cloud = new Cloud(0, 0, 10, this.bufferCanvas);
+    let ground = new Ground(0, 0, 5, this.bufferCanvas);
     let wind = new Wind(0, 0, 1);
     let gravity = new Gravity(0, 0, 0);
 
@@ -73,19 +68,20 @@ export class DroneStageGame extends DroneStage{
 
   onDraw(): void {
     let context = this.canvas.getContext("2d");
-    const x = this.canvas.width / 2;
-    const y = this.canvas.height / 2;
-
+    const width = this.canvas.width;
+    const height = this.canvas.height;
+    const x = width / 2;
+    const y = height / 2;
 
     let ctxBuffer:CanvasRenderingContext2D = this.bufferCanvas.getContext("2d");
-    ctxBuffer.canvas.width = this.canvas.width;
-    ctxBuffer.canvas.height = this.canvas.height;
+    ctxBuffer.canvas.width = width;
+    ctxBuffer.canvas.height = height;
     ctxBuffer.font = '30pt Calibri';
     ctxBuffer.textAlign = 'center';
     ctxBuffer.fillStyle = 'pink';
-    ctxBuffer.fillRect(0,0,this.canvas.width, this.canvas.height);
+    ctxBuffer.fillRect(0,0,width, height);
     ctxBuffer.fillStyle = 'blue';
-    console.log(this.canvas.width+"     "+this.canvas.height)
+    //console.log(this.canvas.width+"     "+height)
     ctxBuffer.fillText('********GAME********', x, y);
     //ctxBuffer.save();
 
@@ -94,7 +90,19 @@ export class DroneStageGame extends DroneStage{
       it.clockSignal();
     });
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+
+
+
+
+
+    //final draw
     context.drawImage(this.bufferCanvas,0,0);
+
+
+
+
+
 
 
 
@@ -138,15 +146,21 @@ export class DroneStageGame extends DroneStage{
   //   context.drawImage(cnvsBuffer,0,0);
   }
 
-  start(): void {
-    this.onDraw();
+  onStart(): void {
+    super.onStart();
     this.subscription = this.clock.subscribe((x)=>{
       this.clockSignal(x)
     });
   }
 
-  stop(): void {
-    console.log("dronStageGame Stop");
+  onStop(): void {
+    super.onStop();
     this.clock.delete(this.subscription);
+  }
+
+
+  intentSignal(intent: Intent<number>) {
+    console.log("intent game : "+intent.data);
+    this.objs.forEach(it=>it.intentSignal(intent))
   }
 }

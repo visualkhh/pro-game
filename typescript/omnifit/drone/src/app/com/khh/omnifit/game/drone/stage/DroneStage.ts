@@ -7,8 +7,11 @@ import {TeardownLogic} from 'rxjs/src/Subscription';
 import {Subscriber} from 'rxjs/Subscriber';
 import {Subscription} from 'rxjs/Subscription';
 import {Obj} from '../../../../obj/Obj';
+import {ObjDrone} from '../obj/ObjDrone';
+import {IntentSignal} from '../../../../data/IntentSignal';
+import {Intent} from '../../../../data/Intent';
 
-export abstract class DroneStage extends ClockStage{
+export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>{
 
 
   private _canvas: HTMLCanvasElement;
@@ -17,9 +20,9 @@ export abstract class DroneStage extends ClockStage{
   private nextObserver:Subscriber<any>;
   private previousSource;
   private previousObserver:Subscriber<any>;
-  private _objs: Array<Obj>;
+  private _objs: Array<ObjDrone>;
 
-  constructor(clock: Clock, canvas: HTMLCanvasElement, objs: Array<Obj> = new Array<Obj>()) {
+  constructor(clock: Clock, canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
     super(clock);
     this._canvas = canvas;
     this._objs = objs;
@@ -35,11 +38,13 @@ export abstract class DroneStage extends ClockStage{
     // this._droneStageManager = droneStageManager;
   }
 
-  objPush(obj: Obj){
+  objPush(obj: ObjDrone){
     this.objs.push(obj);
+    obj.onCreate();
+    obj.onStart();
   }
 
-  get objs(): Array<Obj> {
+  get objs(): Array<ObjDrone> {
     return this._objs.sort((n1,n2)=> (n1.z > n2.z ? 1 : -1));
   }
 
@@ -78,13 +83,6 @@ export abstract class DroneStage extends ClockStage{
     this.onDraw();
   }
 
-  start(): void {
-    this.onDraw();
-  }
-  stop(): void {
-    let context = this.canvas.getContext("2d");
-    context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
 
 
   abstract onDraw(): void;
@@ -108,5 +106,36 @@ export abstract class DroneStage extends ClockStage{
   keyup(event: MouseEvent): void {
 
   }
+
+  //LifeCycle
+  onCreate() {
+  }
+
+  onDestroy() {
+  }
+
+  onPause() {
+  }
+
+  onRestart() {
+  }
+
+  onResume() {
+  }
+
+  onStart() {
+    this.objs.forEach(it=>it.onStart());
+    this.onDraw();
+  }
+
+  onStop() {
+    this.objs.forEach(it=>it.onStop());
+    let context = this.canvas.getContext("2d");
+    context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  intentSignal(intent: Intent<number>) {
+  }
+
 
 }

@@ -7,6 +7,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import {Observer} from 'rxjs/Observer';
 import {Manager} from './com/khh/omnifit/game/drone/Manager';
+import {Clock} from './com/khh/clock/Clock';
+import { callJS } from 'assets/javascript/omnifit';
+import { Injectable } from '@angular/core';
+import {Intent} from './com/khh/data/Intent';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
@@ -17,6 +21,7 @@ import {Manager} from './com/khh/omnifit/game/drone/Manager';
 //https://github.com/Reactive-Extensions/RxJS/blob/master/doc/gettingstarted/creating.md
 //https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators
 //http://reactivex.io/
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -24,13 +29,12 @@ import {Manager} from './com/khh/omnifit/game/drone/Manager';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   private title = 'app';
-  private innerWidth: number;
-  private innerHeight: number;
 
   private canvas: HTMLCanvasElement;
   private manager: Manager;
   private context: CanvasRenderingContext2D | null;
   @ViewChild('canvas') public canvasElementRef: ElementRef;
+  @ViewChild('con') public conElementRef: ElementRef;
 
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
     // console.log(this.hostElement.nativeElement.outerHTML);
@@ -41,26 +45,47 @@ export class AppComponent implements OnInit, AfterViewInit {
   // private canvasElementRef: HTMLCanvasElement | null;
 
   ngOnInit(): void {
-    this.innerWidth = window.innerWidth;
-    this.innerHeight = window.innerHeight;
     // this.canvasElementRef = document.getElementById('canvasElementRef') as HTMLCanvasElement;
     this.canvas = this.canvasElementRef.nativeElement;
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
     this.manager = new Manager(this.canvas);
+    //hello(1);
+
+
+    let conClock = new Clock(2000);
+    conClock.subscribe((it)=>{
+      let intent = new Intent<number>();
+      if(this.conElementRef.nativeElement.value){
+        intent.name="original"
+        intent.data = this.conElementRef.nativeElement.value as number;
+      }else{
+        intent.name="dummy"
+        intent.data = Math.floor( (Math.random() * (10 - 0 + 1)) + 0 );
+      }
+      // console.log("con:"+val)
+      this.manager.intentSignal(intent);
+    });
+
+    // let signalClock = new Clock(2000);
+    // signalClock.subscribe(it=>{
+    //   console.log(it);
+    //   var window = window;
+    //   window.con = Math.random() * (10 - 0) + 0
+    // });
+
     this.onDraw();
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.innerWidth = window.innerWidth;
-    this.innerHeight = window.innerHeight;
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
     this.onDraw();
   }
 
   onDraw() {
-    this.canvas.width =  this.innerWidth;
-    this.canvas.height = this.innerHeight;
-
     // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     // const x = this.canvas.width / 2;
     // const y = this.canvas.height / 2;

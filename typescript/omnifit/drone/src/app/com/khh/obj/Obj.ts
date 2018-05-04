@@ -15,6 +15,7 @@ export abstract class Obj extends Point implements ClockSignal{
     this._mass = value;
   }
 
-  abstract clockSignal(...values: any[]);
+  // abstract clockSignal(...values: any[]);
+  abstract clockSignal(value?: any);
 
 }

@@ -11,12 +11,21 @@ import {Clock} from '../../../clock/Clock';
 import {DroneStageManager} from './stage/DroneStageManager';
 import {DroneStageGame} from './stage/DroneStageGame';
 import {DroneStageEnd} from './stage/DroneStageEnd';
+import {IntentSignal} from 'app/com/khh/data/IntentSignal';
+import {Subscriber} from 'rxjs/Subscriber';
+import {Subscription} from 'rxjs/Subscription';
+import {Intent} from '../../../data/Intent';
 // import { Point } from '../org/Point';
-export class Manager {
+export class Manager implements IntentSignal<number>{
 
 
-  private clock: Clock;
+  private stageClock: Clock;
   private _canvas: HTMLCanvasElement;
+
+
+  // private _data: any;
+  // private dataObservableSource: any;
+  // private dataObserver: Subscriber<any>;
 
 
   public constructor(canvas: HTMLCanvasElement) {
@@ -35,23 +44,37 @@ export class Manager {
   private droneStageManager: DroneStageManager;
 
   private init(canvas: HTMLCanvasElement) {
-    this.clock = new Clock(100);
+    this.stageClock = new Clock(30);
     this._canvas = canvas;
     this.droneStageManager = new DroneStageManager();
+    this.droneStageManager.pushStage(new DroneStageIntro(this.stageClock, canvas));
+    this.droneStageManager.pushStage(new DroneStageGame(this.stageClock, canvas,));
+    this.droneStageManager.pushStage(new DroneStageEnd(this.stageClock, canvas));
 
-    // this.droneStageManager.pushStage(new DroneStageIntro(this.clock, canvas, this.droneStageManager));
-    // this.droneStageManager.pushStage(new DroneStageGame(this.clock, canvas, this.droneStageManager));
-    // this.droneStageManager.pushStage(new DroneStageEnd(this.clock, canvas, this.droneStageManager));
-    this.droneStageManager.pushStage(new DroneStageIntro(this.clock, canvas));
-    this.droneStageManager.pushStage(new DroneStageGame(this.clock, canvas));
-    this.droneStageManager.pushStage(new DroneStageEnd(this.clock, canvas));
-
+    // this.dataObservableSource = Observable.create((observer:Subscriber<any>) => {
+    //   this.dataObserver = observer;
+    // });
   }
 
   get canvas(): HTMLCanvasElement {
     return this._canvas;
   }
 
+  intentSignal(intent: Intent<number>) {
+    this.droneStageManager.currentStage().intentSignal(intent)
+  }
+  // get data(): any {
+  //   return this._data;
+  // }
+  //
+  // set data(value: any) {
+  //   this._data = value;
+  //   this.dataObserver.next(this._data);
+  // }
+
+  // public addDataSubscribe(next: (value: any)=>void, error?: (value: any)=>void, completed?: (value: any)=>void): Subscription {
+  //   return this.dataObservableSource.subscribe(next, error, completed);
+  // }
 
   mousedown(event: MouseEvent): void{
     this.droneStageManager.currentStage().mousedown(event);
@@ -93,4 +116,6 @@ export class Manager {
     // this.grounds.onDraw(canvas);
     // this.clouds.onDraw(canvas);
   }
+
+
 }

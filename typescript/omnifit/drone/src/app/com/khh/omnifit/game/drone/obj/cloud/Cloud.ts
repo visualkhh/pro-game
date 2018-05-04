@@ -3,8 +3,17 @@ import { Point } from 'app/com/khh/graphics/Point';
 import { Obj } from 'app/com/khh/obj/Obj';
 import {ObjImg} from 'app/com/khh/graphics/ObjImg';
 import {Rect} from 'app/com/khh/graphics/Rect';
+import {ObjDrone} from '../ObjDrone';
+import {Intent} from '../../../../../data/Intent';
 // import { Point } from '../org/Point';
-export class Cloud extends ObjImg{
+export class Cloud extends ObjDrone{
+
+  constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
+    super(x, y, z, canvas);
+    this.img = new Image();
+    this.img.src = "assets/image/cloud.png";
+  }
+
 
   onDraw(): void {
     const x = this.canvas.width / 2;
@@ -16,4 +25,8 @@ export class Cloud extends ObjImg{
   clockSignal(value?: any) {
     this.onDraw();
   }
+
+  intentSignal(intent: Intent<number>) {
+  }
+
 }

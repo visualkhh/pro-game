@@ -77,8 +77,10 @@
   Unit.prototype.update = function() {
     var self = this;
 
+    //클리어
     self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
 
+    //공
     if(self.units.length < self.settings.unitMaximum) {
       if(Math.random() <= self.settings.creationFactor) {
         self.addUnit({
@@ -88,10 +90,12 @@
       }
     }
 
+    //계산안함으로 채크
     for(var idx in self.units) {
       self.units[idx].cals = false;
     }
 
+    //공개수만큼
     for(var idx in self.units) {
       var collapsed = false;
 
