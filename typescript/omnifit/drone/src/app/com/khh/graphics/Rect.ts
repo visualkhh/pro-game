@@ -1,11 +1,11 @@
 export class Rect {
-  bottom: number;
   left: number;
-  right: number;
   top: number;
+  right: number;
+  bottom: number;
 
 
-  constructor(bottom: number  = 0, left: number = 0, right: number = 0, top: number = 0) {
+  constructor(left: number  = 0, top: number = 0, right: number = 0, bottom: number = 0) {
     this.bottom = bottom;
     this.left = left;
     this.right = right;
