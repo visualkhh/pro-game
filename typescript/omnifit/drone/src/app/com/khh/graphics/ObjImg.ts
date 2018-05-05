@@ -1,12 +1,11 @@
 import { Observable } from 'rxjs/Observable';
-import { Obj } from 'app/com/khh/obj/Obj';
-import { Rect } from 'app/com/khh/graphics/Rect';
 import {Point} from './Point';
+import {Obj} from '../obj/Obj';
 export abstract class ObjImg extends Obj{
 
 
 
-  private _img : HTMLImageElement;
+  private _img: HTMLImageElement;
   private _head: Point;
   private _canvas: HTMLCanvasElement;
 

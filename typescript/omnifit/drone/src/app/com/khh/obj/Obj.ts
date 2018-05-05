@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Observable';
-import { Point } from 'app/com/khh/graphics/Point';
-import { Rect } from 'app/com/khh/graphics/Rect';
+import {ClockSignal} from '../clock/ClockSignal';
+import {Point} from '../graphics/Point';
 // import { Point } from '../org/Point';
 export abstract class Obj extends Point implements ClockSignal{
 

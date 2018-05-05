@@ -1,13 +1,10 @@
 import { Observable } from 'rxjs/Observable';
-import { Point } from 'app/com/khh/graphics/Point';
-import { Obj } from 'app/com/khh/obj/Obj';
-import {ObjImg} from 'app/com/khh/graphics/ObjImg';
-import {Rect} from 'app/com/khh/graphics/Rect';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
+import {Point} from '../../../../../graphics/Point';
 // import { Point } from '../org/Point';
 // import * as abc from 'assert/js/processing.js';
-export class Drone extends ObjDrone{
+export class Drone extends ObjDrone {
 
 
   private movePoint: Point;
@@ -19,11 +16,11 @@ export class Drone extends ObjDrone{
   constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(x, y, z, canvas);
     this.img = new Image();
-    this.img.src = "assets/image/drone.png";
+    this.img.src = 'assets/image/drone.png';
 
-    this.movePoint = new Point(0,0,0);
-    this.maxPoint = new Point(0,0,0);
-    this.stepSize = new Point(0,0,0);
+    this.movePoint = new Point(0, 0, 0);
+    this.maxPoint = new Point(0, 0, 0);
+    this.stepSize = new Point(0, 0, 0);
 
   }
 
@@ -43,7 +40,7 @@ export class Drone extends ObjDrone{
     this.stepSize.x = 0.5;
     this.stepSize.y = this.stepSize.x;
     // this.stepSize.y = this.img.height/100;
-    console.log("stepSize:"+this.stepSize.x+","+this.stepSize.y+"   maxPoint:"+this.maxPoint.x+" , "+this.maxPoint.y );
+    console.log('stepSize:' + this.stepSize.x + ',' + this.stepSize.y + '   maxPoint:' + this.maxPoint.x + ' , ' + this.maxPoint.y );
   }
 
   onDraw(): void {
@@ -53,14 +50,14 @@ export class Drone extends ObjDrone{
     const imgCenterX = this.img.width / 2;
     const imgCenterY = this.img.height / 2;
 
-    let context: CanvasRenderingContext2D = this.canvas.getContext("2d");
+    const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
 
 
 
 
-    if(this.beforeIntent && this.intent){
-      this.maxPoint.x -=(this.beforeIntent.data*4);
-      this.maxPoint.x +=(this.intent.data*4);
+    if (this.beforeIntent && this.intent){
+      this.maxPoint.x -= (this.beforeIntent.data * 4);
+      this.maxPoint.x += (this.intent.data * 4);
 
 
       context.font = '30pt Calibri';
@@ -70,24 +67,24 @@ export class Drone extends ObjDrone{
       // context.fillText('********GAME********', x, y);
       context.fillStyle = 'blue';
       //console.log(this.canvas.width+"     "+height)
-      context.fillText('con('+this.intent.name+'):'+this.intent.data, 50, 50);
+      context.fillText('con(' + this.intent.name + '):' + this.intent.data, 50, 50);
     }
 
 
-    if(this.movePoint.x<=0 && Math.abs(this.movePoint.x)>=this.maxPoint.x){
+    if (this.movePoint.x <= 0 && Math.abs(this.movePoint.x) >= this.maxPoint.x){
       this.stepSize.x = Math.abs(this.stepSize.x);
-    }else if(this.movePoint.x>=this.maxPoint.x){
+    }else if (this.movePoint.x >= this.maxPoint.x){
       this.stepSize.x = -this.stepSize.x;
     }
-    if(this.movePoint.y<=0 && Math.abs(this.movePoint.y)>=this.maxPoint.y){
+    if (this.movePoint.y <= 0 && Math.abs(this.movePoint.y) >= this.maxPoint.y){
       this.stepSize.y = Math.abs(this.stepSize.y);
-    }else if(this.movePoint.y>=this.maxPoint.y){
+    }else if (this.movePoint.y >= this.maxPoint.y){
       this.stepSize.y = -this.stepSize.y;
     }
 
     this.movePoint.x += this.stepSize.x;
     this.movePoint.y += this.stepSize.y;
-    console.log("X >>  movePoint:"+this.movePoint.x+" max:"+this.maxPoint.x+"  stepSize:"+this.stepSize.x +"  Y >>  movePoint:"+this.movePoint.y+" max:"+this.maxPoint.y+"  stepSize:"+this.stepSize.y)
+    console.log('X >>  movePoint:' + this.movePoint.x + ' max:' + this.maxPoint.x + '  stepSize:' + this.stepSize.x + '  Y >>  movePoint:' + this.movePoint.y + ' max:' + this.maxPoint.y + '  stepSize:' + this.stepSize.y);
     // this.movePoint.y += this.stepSize.y;
     //   this.movePoint.x += this.stepSize;
     // }else if(this.movePoint.x>0 && Math.abs(this.movePoint.x)>=this.maxPoint.x){
@@ -100,8 +97,8 @@ export class Drone extends ObjDrone{
     //   this.movePoint.y += this.stepSize;
     // }
 
-    let lastX = (x-imgCenterX) + this.movePoint.x;
-    let lastY = (y-imgCenterY) + this.movePoint.y;
+    const lastX = (x - imgCenterX) + this.movePoint.x;
+    const lastY = (y - imgCenterY) + this.movePoint.y;
     context.drawImage(this.img, lastX, lastY);
 
 
@@ -121,12 +118,12 @@ export class Drone extends ObjDrone{
 
   onStop() {
     super.onStop();
-    console.log("Drone onStop");
+    console.log('Drone onStop');
   }
 
   intentSignal(intent: Intent<number>) {
-    if(!this.beforeIntent){
-      this.beforeIntent = intent
+    if (!this.beforeIntent){
+      this.beforeIntent = intent;
     }else{
       this.beforeIntent = this.intent;
       this.intent = intent;

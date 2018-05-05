@@ -1,7 +1,8 @@
 import {Stage} from './Stage';
 import {Clock} from '../clock/Clock';
+import {ClockSignal} from '../clock/ClockSignal';
 
-export abstract class ClockStage extends Stage implements ClockSignal{
+export abstract class ClockStage extends Stage implements ClockSignal {
 
 
   private _clock: Clock;
