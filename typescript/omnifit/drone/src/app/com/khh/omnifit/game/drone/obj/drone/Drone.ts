@@ -2,12 +2,13 @@ import { Observable } from 'rxjs/Observable';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
 import {Point} from '../../../../../graphics/Point';
+import {Rect} from '../../../../../graphics/Rect';
 export class Drone extends ObjDrone {
 
 
   //움직임 상대 누적 좌표
   private movePoint: Point;
-  private maxPoint: Point;
+  private moveBoundary: Rect;
   private velocity: Point;
   private gravity: number;
 
@@ -29,7 +30,7 @@ export class Drone extends ObjDrone {
     super.onStart();
     // Inital starting position
     this.movePoint = new Point(0, 0);
-    this.maxPoint = new Point(50, 25);
+    this.moveBoundary = new Rect(this.getCanvasCenterX()-50, this.getCanvasCenterY()-30, this.getCanvasCenterX()+50, this.getCanvasCenterY()+30);
     this.velocity = new Point(1, -1);
     this.speed = 1;
     this.gravity = 1;
@@ -38,14 +39,15 @@ export class Drone extends ObjDrone {
 
   onDraw(): void {
 
-    const centerX = this.canvas.width / 2;
-    const centerY = this.canvas.height / 2;
-    const imgCenterX = this.img.width / 2;
-    const imgCenterY = this.img.height / 2;
-    let imgX = centerX - imgCenterX;
-    let imgY = centerY - imgCenterY;
+    const canvasCenterX = this.getCanvasCenterX();
+    const canvasCenterY = this.getCanvasCenterY();
+    const imgCenterX = this.getImgCenterX();
+    const imgCenterY = this.getImgCenterY();
+    let imgX = canvasCenterX - imgCenterX;
+    let imgY = canvasCenterY - imgCenterY;
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
-
+    context.strokeStyle = '#00FF00';
+    context.fillStyle = 'blue';
 
 
 
@@ -57,26 +59,24 @@ export class Drone extends ObjDrone {
       //imgY += (this.intent.data * 10);
       context.font = '30pt Calibri';
       context.textAlign = 'left';
-      context.fillStyle = 'red';
-      context.fillStyle = 'blue';
       context.fillText('con(' + this.intent.name + '):' + this.intent.data, 50, 50);
     }
 
 
-    if (this.movePoint.x < 0 &&  Math.abs(this.movePoint.x) >= this.maxPoint.x){
-      this.velocity.x = Math.abs(this.velocity.x);
-    }else if (this.movePoint.x >= this.maxPoint.x){
-      this.velocity.x = this.velocity.x * -1;
-    }
-    this.movePoint.x += (this.velocity.x * this.speed);
-
-
-    if (this.movePoint.y < 0 &&  Math.abs(this.movePoint.y) >= this.maxPoint.y){
-      this.velocity.y = Math.abs(this.velocity.y);
-    }else if (this.movePoint.y >= this.maxPoint.y){
-      this.velocity.y = this.velocity.y * -1;
-    }
-    this.movePoint.y += (this.velocity.y * this.speed);
+    // if (this.movePoint.x < 0 &&  Math.abs(this.movePoint.x) >= this.moveBoundary.x){
+    //   this.velocity.x = Math.abs(this.velocity.x);
+    // }else if (this.movePoint.x >= this.moveBoundary.x){
+    //   this.velocity.x = this.velocity.x * -1;
+    // }
+    // this.movePoint.x += (this.velocity.x * this.speed);
+    //
+    //
+    // if (this.movePoint.y < 0 &&  Math.abs(this.movePoint.y) >= this.moveBoundary.y){
+    //   this.velocity.y = Math.abs(this.velocity.y);
+    // }else if (this.movePoint.y >= this.moveBoundary.y){
+    //   this.velocity.y = this.velocity.y * -1;
+    // }
+    // this.movePoint.y += (this.velocity.y * this.speed);
 
 
     // this.velocity.y += this.gravity;
@@ -94,11 +94,40 @@ export class Drone extends ObjDrone {
 
 
 
-    console.log('X >>  movePoint:' + this.movePoint.x + ' max:' + this.maxPoint.x + '  speed:' + this.speed + '  Y >>  movePoint:' + this.movePoint.y + ' max:' + this.maxPoint.y + '  speed:' + this.speed);
+    // console.log('X >>  movePoint:' + this.movePoint.x + ' max:' + this.moveBoundary.x + '  speed:' + this.speed + '  Y >>  movePoint:' + this.movePoint.y + ' max:' + this.moveBoundary.y + '  speed:' + this.speed);
     //
     const lastX = imgX + this.movePoint.x;
     const lastY = imgY + this.movePoint.y;
     context.drawImage(this.img, lastX, lastY);
+    context.strokeRect(lastX, lastY, this.img.width, this.img.height);
+
+
+
+
+
+
+    //////maxBoundary
+    context.fillStyle = '#FFFF00';
+    context.strokeStyle = '#FFFF00';
+    context.beginPath();
+    context.strokeRect(2,2,this.moveBoundary.width(),this.moveBoundary.height());
+    context.arc(this.moveBoundary.centerX(), this.moveBoundary.centerY(), 20, 0, 2 * Math.PI);
+    context.fill();
+
+
+
+
+
+    //center
+    context.beginPath();
+    context.fillStyle = '#00FF00';
+    context.strokeStyle = '#00FF00';
+    context.arc(canvasCenterX, canvasCenterY, 1, 0, 2 * Math.PI);
+    // context.stroke();
+    context.fill();
+
+
+
 
 
     /*
@@ -109,6 +138,8 @@ export class Drone extends ObjDrone {
 
 
   }
+
+
 
   clockSignal(value?: any) {
     this.onDraw();

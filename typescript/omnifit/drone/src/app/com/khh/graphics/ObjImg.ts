@@ -48,6 +48,21 @@ export abstract class ObjImg extends Obj{
     this._img = img;
   }
 
+  public getImgCenterY() {
+    return this.img.height / 2;
+  }
+
+  public getImgCenterX() {
+    return this.img.width / 2;
+  }
+
+  public getCanvasCenterY() {
+    return this.canvas.height / 2;
+  }
+
+  public getCanvasCenterX() {
+    return this.canvas.width / 2;
+  }
 
   abstract onDraw() : void;
   abstract clockSignal(value?: any);
