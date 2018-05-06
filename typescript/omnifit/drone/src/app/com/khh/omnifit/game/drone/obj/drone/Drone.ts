@@ -3,18 +3,19 @@ import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
 import {Point} from '../../../../../graphics/Point';
 import {Rect} from '../../../../../graphics/Rect';
+import {PointVector} from '../../../../../math/PointVector';
+import {RandomUtil} from '../../../../../math/RandomUtil';
 export class Drone extends ObjDrone {
-
-
-  //움직임 상대 누적 좌표
-  private movePoint: Point;
-  private moveBoundary: Rect;
-  private velocity: Point;
-  private gravity: number;
+  private angle: PointVector;
+  private velocity: PointVector;
+  private amplitude: PointVector;
+  private acceleration: PointVector;
+  private gravity: PointVector;
 
   private beforeIntent: Intent<number>;
   private intent: Intent<number>;
-  private speed: number;
+
+  private  move: number = 0;
 
   constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(x, y, z, canvas);
@@ -28,118 +29,107 @@ export class Drone extends ObjDrone {
 
   onStart() {
     super.onStart();
-    // Inital starting position
-    this.movePoint = new Point(0, 0);
-    this.moveBoundary = new Rect(this.getCanvasCenterX()-50, this.getCanvasCenterY()-30, this.getCanvasCenterX()+50, this.getCanvasCenterY()+30);
-    this.velocity = new Point(1, -1);
-    this.speed = 1;
-    this.gravity = 1;
-    // console.log('stepSize:' + this.velocity.x + ',' + this.velocity.y + '   maxPoint:' + this.centerMaxPoint.x + ' , ' + this.centerMaxPoint.y );
+    this.angle = new PointVector();
+    this.velocity = new PointVector(RandomUtil.random(-0.05, 0.05), RandomUtil.random(-0.05, 0.05));
+    // this.amplitude = new PointVector(RandomUtil.random(20, this.canvas.width/2), RandomUtil.random(20, this.canvas.height/2));
+    // this.amplitude = new PointVector(RandomUtil.random(10,20), RandomUtil.random(10,20));
+    this.amplitude = new PointVector(RandomUtil.random(10,20), RandomUtil.random(10,20));
+    this.gravity = new PointVector(0, 0.1);
+    this.acceleration = new PointVector(0, 0);
   }
 
   onDraw(): void {
-
-    const canvasCenterX = this.getCanvasCenterX();
-    const canvasCenterY = this.getCanvasCenterY();
-    const imgCenterX = this.getImgCenterX();
-    const imgCenterY = this.getImgCenterY();
-    let imgX = canvasCenterX - imgCenterX;
-    let imgY = canvasCenterY - imgCenterY;
-    const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
-    context.strokeStyle = '#00FF00';
-    context.fillStyle = 'blue';
-
-
-
-
-
+    let con: number = 0;
+    let bcon: number = 0;
     if (this.beforeIntent && this.intent){
-      // this.centerMaxPoint.centerX -= (this.beforeIntent.data * 4);
-      // this.centerMaxPoint.centerX += (this.intent.data * 4);
-      //imgY += (this.intent.data * 10);
-      context.font = '30pt Calibri';
-      context.textAlign = 'left';
-      context.fillText('con(' + this.intent.name + '):' + this.intent.data, 50, 50);
+      bcon = this.beforeIntent.data;
+      con = this.intent.data;
+    }
+
+    if(con>0){
+      // console.log("oscillate "+con)
+      this.oscillate();
+    }
+
+    const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+    //
+    // var initX = this.canvas.width/2;
+    // var initY = this.canvas.height/2;
+    var initX = this.canvas.width / 2;
+    var initY = this.canvas.height - this.img.height/2;
+
+    var x = Math.sin(this.angle.x) * this.amplitude.x;
+    var y = Math.sin(this.angle.y) * this.amplitude.y;
+
+    var position = new PointVector(x, y);
+
+
+
+
+
+
+    //width
+    const stepVal = (this.canvas.height - this.img.height) / 10;
+    // const conStepVal = (stepVal * con) *-1;
+    // const bconStepVal = (stepVal * bcon) *-1;
+    const conStepVal = (stepVal * con);
+    const bconStepVal = (stepVal * bcon);
+    if((bconStepVal - conStepVal) > 0 ){
+      console.log("conStepVal>bconStepVal");
+      // position.y = position.y - conStepVal;
+      position.y = position.y - (--this.move);
+    }else {
+      position.y = position.y - (++this.move);
+      console.log("conStepVal>bconStepVal ELSE");
+      // position.y = position.y + conStepVal;
     }
 
 
-    // if (this.movePoint.x < 0 &&  Math.abs(this.movePoint.x) >= this.moveBoundary.x){
-    //   this.velocity.x = Math.abs(this.velocity.x);
-    // }else if (this.movePoint.x >= this.moveBoundary.x){
-    //   this.velocity.x = this.velocity.x * -1;
-    // }
-    // this.movePoint.x += (this.velocity.x * this.speed);
-    //
-    //
-    // if (this.movePoint.y < 0 &&  Math.abs(this.movePoint.y) >= this.moveBoundary.y){
-    //   this.velocity.y = Math.abs(this.velocity.y);
-    // }else if (this.movePoint.y >= this.moveBoundary.y){
-    //   this.velocity.y = this.velocity.y * -1;
-    // }
-    // this.movePoint.y += (this.velocity.y * this.speed);
-
-
-    // this.velocity.y += this.gravity;
-    // this.movePoint.y += this.gravity;
-
-    // if (this.movePoint.y <= 0 && Math.abs(this.movePoint.y) >= this.maxPoint.y){
-    //   this.velocity.y = Math.abs(this.velocity.y);
-    // }else if (this.movePoint.y >= this.maxPoint.y){
-    //   this.velocity.y = -this.velocity.y;
-    // }
-    //
-    // this.movePoint.centerX += this.stepSize.x;
-    // this.movePoint.centerY += this.stepSize.y;
+    //move
+    // var mouse = new PointVector(x, y+=conStepVal);
+    // var dir = PointVector.sub(mouse, position);
+    // dir.normalize();
+    // dir.mult(0.2);
+    // this.acceleration = dir;
+    // this.velocity.add(this.acceleration);
+    // this.velocity.limit(5);
+    // position.add(this.velocity);
 
 
 
-
-    // console.log('X >>  movePoint:' + this.movePoint.x + ' max:' + this.moveBoundary.x + '  speed:' + this.speed + '  Y >>  movePoint:' + this.movePoint.y + ' max:' + this.moveBoundary.y + '  speed:' + this.speed);
-    //
-    const lastX = imgX + this.movePoint.x;
-    const lastY = imgY + this.movePoint.y;
-    context.drawImage(this.img, lastX, lastY);
-    context.strokeRect(lastX, lastY, this.img.width, this.img.height);
-
-
-
-
-
-
-    //////maxBoundary
-    context.fillStyle = '#FFFF00';
-    context.strokeStyle = '#FFFF00';
     context.beginPath();
-    context.strokeRect(2,2,this.moveBoundary.width(),this.moveBoundary.height());
-    context.arc(this.moveBoundary.centerX(), this.moveBoundary.centerY(), 20, 0, 2 * Math.PI);
+    context.setTransform(1, 0, 0, 1, 0, 0);
+
+    context.strokeStyle = "#FFFF00";
+    context.fillStyle="#FF0000";
+    context.lineWidth = 2;
+    context.translate(initX, initY);
+    context.moveTo(0, 0);
+    context.lineTo(position.x, position.y);
+    context.stroke();
+    context.beginPath();
+    context.drawImage(this.img, position.x - this.img.width/2, position.y - this.img.height/2);
+    context.arc(position.x, position.y, 1, 0, 2 * Math.PI);
+    context.strokeRect(position.x - this.img.width/2, position.y - this.img.height/2, this.img.width, this.img.height);
     context.fill();
 
 
-
-
-
-    //center
-    context.beginPath();
-    context.fillStyle = '#00FF00';
-    context.strokeStyle = '#00FF00';
-    context.arc(canvasCenterX, canvasCenterY, 1, 0, 2 * Math.PI);
-    // context.stroke();
-    context.fill();
-
-
-
-
-
-    /*
-      무게(weight) 와 질량(mass)
-      물체의 질량은 물체에 포함되어 있는 물질의 양입니다. (킬로그램 단위로 측정합니다.)
-      질량과 혼동되는 무게는 사실 물체에 작용하는 중력의 힘을 말합니다. 뉴턴의 제 2 법칙에 따라 질량 곱하기 중력 가속도 (w = m * g)를 통해 무게를 계산할 수 있습니다. 무게는 뉴턴 단위로 측정합니다.
-     */
-
+    // context.beginPath();
+    // context.fillStyle="#FF00FF";
+    // context.setTransform(1, 0, 0, 1, 0, 0);
+    // context.arc(initX, initY, 10, 0, 2 * Math.PI);
+    // context.fill();
 
   }
 
+  oscillate() {
+    this.angle.add(this.velocity);
+  }
 
+  applyForce(force: PointVector) {
+    var f = PointVector.div(force, this.mass);
+    this.acceleration.add(f);
+  };
 
   clockSignal(value?: any) {
     this.onDraw();

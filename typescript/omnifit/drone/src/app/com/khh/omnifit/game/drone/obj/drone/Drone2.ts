@@ -5,7 +5,7 @@
 // import {Rect} from 'app/com/khh/graphics/Rect';
 // import {ObjDrone} from '../ObjDrone';
 // // import { Point } from '../org/Point';
-// // import * as abc from 'assert/js/processing.js';
+// // import * as abc from 'assert/js/processing-1.4.1.js';
 // export class Drone2 extends ObjDrone{
 //
 //

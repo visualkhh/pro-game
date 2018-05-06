@@ -8,9 +8,12 @@ import 'rxjs/add/operator/filter';
 import {Observer} from 'rxjs/Observer';
 import {Manager} from './com/khh/omnifit/game/drone/Manager';
 import {Clock} from './com/khh/clock/Clock';
-import { callJS } from 'assets/javascript/omnifit';
+import { hello } from 'assets/javascript/omnifit';
+// import * as Processing from 'assets/javascript/processing-1.4.1';
 import { Injectable } from '@angular/core';
 import {Intent} from './com/khh/data/Intent';
+import {RandomUtil} from './com/khh/math/RandomUtil';
+
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
@@ -21,7 +24,7 @@ import {Intent} from './com/khh/data/Intent';
 //https://github.com/Reactive-Extensions/RxJS/blob/master/doc/gettingstarted/creating.md
 //https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators
 //http://reactivex.io/
-
+declare var Processing :any;   // not required
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -62,7 +65,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         intent.data = this.conElementRef.nativeElement.value as number;
       }else{
         intent.name="dummy"
-        intent.data = Math.floor( (Math.random() * (10 - 0 + 1)) + 0 );
+        intent.data = Math.floor(RandomUtil.random(0,10));
       }
       // console.log("con:"+val)
       this.manager.intentSignal(intent);
@@ -100,6 +103,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     // drawing.onload = (ev)=>{
     //   this.context.drawImage(drawing,x - drawing.width/2, y -  drawing.height/2);
     // }
+    // console.log(new (new Processing).Random(1).nextGaussian())
+    // console.log(new Processing().random(100,200))
     if(this.manager)this.manager.draw();
   }
 
@@ -116,7 +121,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     Observable.fromEvent(this.canvas, 'keydown').subscribe((event: KeyboardEvent)=>{
       if(this.manager)this.manager.keydown(event);
     });
-    Observable.fromEvent(this.canvas, 'keyup').subscribe((event: MouseEvent)=>{
+    Observable.fromEvent(this.canvas, 'keyup').subscribe((event: KeyboardEvent)=>{
       if(this.manager)this.manager.keyup(event);
     });
 

@@ -18,12 +18,16 @@ import 'rxjs/add/operator/map';
 import {ObjImg} from '../../../../graphics/ObjImg';
 import {Obj} from '../../../../obj/Obj';
 import {Cloud} from '../obj/cloud/Cloud';
+import {Score} from '../obj/score/Score';
 import {Drone} from '../obj/drone/Drone';
 import {Gravity} from '../obj/gravity/Gravity';
 import {Wind} from '../obj/wind/Wind';
 import {Ground} from '../obj/ground/Ground';
 import {ObjDrone} from '../obj/ObjDrone';
 import {Intent} from '../../../../data/Intent';
+import {MouseDummy} from '../obj/dummy/MouseDummy';
+import {GravityDummy} from '../obj/dummy/GravityDummy';
+import {ArcWaveDummy} from '../obj/dummy/ArcWaveDummy';
 
 
 export class DroneStageGame extends DroneStage{
@@ -47,12 +51,23 @@ export class DroneStageGame extends DroneStage{
     //x,y,z
     let drone = new Drone(0, 0, 20,this.bufferCanvas);
     let cloud = new Cloud(0, 0, 10, this.bufferCanvas);
+    let score = new Score(0, 0, 500, this.bufferCanvas);
     let ground = new Ground(0, 0, 5, this.bufferCanvas);
     let wind = new Wind(0, 0, 1);
     let gravity = new Gravity(0, 0, 0);
 
     this.objPush(cloud);
     this.objPush(drone);
+    this.objPush(score);
+    // for (let i = 0; i < 30; i++) {
+    //   this.objPush(new MouseDummy(0, 0, 100, this.bufferCanvas));
+    // }
+    // for (let i = 0; i < 2; i++) {
+    //   this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
+    // }
+    // for (let i = 0; i < 2; i++) {
+    //   this.objPush(new ArcWaveDummy(0, 0, 101, this.bufferCanvas));
+    // }
     this.objPush(ground);
     this.objPush(gravity);
     this.objPush(wind);
@@ -61,9 +76,17 @@ export class DroneStageGame extends DroneStage{
 
 
   mousedown(event: MouseEvent): void {
+    super.mousedown(event);
     console.log({x: event.layerX, y: event.layerY});
     console.log('click Game: ' + event.offsetX + '/' + event.offsetY);
+    this.objs.forEach(it=>it.mousedown(event));
     this.next();
+  }
+
+
+  mousemove(event: MouseEvent): void {
+    super.mousemove(event);
+    this.objs.forEach(it=>it.mousemove(event));
   }
 
   onDraw(): void {

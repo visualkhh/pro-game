@@ -44,7 +44,7 @@ export class Manager implements IntentSignal<number>{
   private droneStageManager: DroneStageManager;
 
   private init(canvas: HTMLCanvasElement) {
-    this.stageClock = new Clock(30);
+    this.stageClock = new Clock(10);
     this._canvas = canvas;
     this.droneStageManager = new DroneStageManager();
     this.droneStageManager.pushStage(new DroneStageIntro(this.stageClock, canvas));
@@ -92,7 +92,7 @@ export class Manager implements IntentSignal<number>{
     this.droneStageManager.currentStage().keydown(event);
   }
 
-  keyup(event: MouseEvent): void {
+  keyup(event: KeyboardEvent): void {
     this.droneStageManager.currentStage().keyup(event);
   }
 

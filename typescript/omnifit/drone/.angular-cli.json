@@ -22,7 +22,7 @@
         "styles.css"
       ],
       "scripts": [
-        "assets/javascript/processing.js"
+        "assets/javascript/processing-1.4.1.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
