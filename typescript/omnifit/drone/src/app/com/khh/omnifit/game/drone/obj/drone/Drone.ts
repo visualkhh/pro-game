@@ -16,6 +16,7 @@ export class Drone extends ObjDrone {
   private intent: Intent<number>;
 
   private  move: number = 0;
+  private gvelocity: PointVector;
 
   constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(x, y, z, canvas);
@@ -31,11 +32,13 @@ export class Drone extends ObjDrone {
     super.onStart();
     this.angle = new PointVector();
     this.velocity = new PointVector(RandomUtil.random(-0.05, 0.05), RandomUtil.random(-0.05, 0.05));
+    this.gvelocity = new PointVector(0,0);
     // this.amplitude = new PointVector(RandomUtil.random(20, this.canvas.width/2), RandomUtil.random(20, this.canvas.height/2));
     // this.amplitude = new PointVector(RandomUtil.random(10,20), RandomUtil.random(10,20));
     this.amplitude = new PointVector(RandomUtil.random(10,20), RandomUtil.random(10,20));
     this.gravity = new PointVector(0, 0.1);
     this.acceleration = new PointVector(0, 0);
+    this.mass = 1;
   }
 
   onDraw(): void {
@@ -55,33 +58,42 @@ export class Drone extends ObjDrone {
     //
     // var initX = this.canvas.width/2;
     // var initY = this.canvas.height/2;
-    var initX = this.canvas.width / 2;
-    var initY = this.canvas.height - this.img.height/2;
+    let initX = this.canvas.width / 2;
+    let initY = this.canvas.height - this.img.height/2;
 
-    var x = Math.sin(this.angle.x) * this.amplitude.x;
-    var y = Math.sin(this.angle.y) * this.amplitude.y;
+    let x = Math.sin(this.angle.x) * this.amplitude.x;
+    let y = Math.sin(this.angle.y) * this.amplitude.y;
 
-    var position = new PointVector(x, y);
+    let position = new PointVector(x, y);
 
 
-
+    // this.applyForce(this.gravity);
+    // this.gvelocity.add(this.acceleration);
+    // position.add(this.velocity);
+    // console.log(position+"  "+this.gravity);
 
 
 
     //width
+    // const stepVal = (this.canvas.height - this.img.height) / 10;
+    // const conStepVal = (stepVal * con);
+    // const bconStepVal = (stepVal * bcon);
+    // if((bconStepVal - conStepVal) > 0 ){
+    //   console.log("conStepVal>bconStepVal");
+    //   position.y = position.y - (--this.move);
+    // }else {
+    //   position.y = position.y - (++this.move);
+    //   console.log("conStepVal>bconStepVal ELSE");
+    // }
     const stepVal = (this.canvas.height - this.img.height) / 10;
-    // const conStepVal = (stepVal * con) *-1;
-    // const bconStepVal = (stepVal * bcon) *-1;
     const conStepVal = (stepVal * con);
     const bconStepVal = (stepVal * bcon);
-    if((bconStepVal - conStepVal) > 0 ){
+    if((con - bcon) > 0  && this.canvas.height < 0){
       console.log("conStepVal>bconStepVal");
-      // position.y = position.y - conStepVal;
       position.y = position.y - (--this.move);
-    }else {
+    }else if ((con - bcon) <= 0 && this.canvas.height >= 0) {
       position.y = position.y - (++this.move);
       console.log("conStepVal>bconStepVal ELSE");
-      // position.y = position.y + conStepVal;
     }
 
 
