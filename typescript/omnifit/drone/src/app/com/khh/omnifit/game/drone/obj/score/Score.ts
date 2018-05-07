@@ -34,6 +34,8 @@ export class Score extends ObjDrone {
     context.setTransform(1, 0, 0, 1, 0, 0);
     if (this.beforeIntent && this.intent){
       context.setTransform(1, 0, 0, 1, 0, 0);
+      context.beginPath()
+      context.fillStyle = '#FF0000'
       context.font = '30pt Calibri';
       context.textAlign = 'left';
       context.fillText('con(' + this.intent.name + '):' + this.intent.data.con + ' ['+(this.intent.data.con-this.beforeIntent.data.con)+']', 50, 50);

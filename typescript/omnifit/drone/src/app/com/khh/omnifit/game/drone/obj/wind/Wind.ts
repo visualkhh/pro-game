@@ -31,6 +31,8 @@ export class Wind extends ObjDrone {
     context.setTransform(1, 0, 0, 1, 0, 0);
     if (this.beforeIntent && this.intent) {
       context.setTransform(1, 0, 0, 1, 0, 0);
+      context.beginPath()
+      context.fillStyle = '#442266'
       context.font = '30pt Calibri';
       context.textAlign = 'left';
       context.textBaseline="bottom";

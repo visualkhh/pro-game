@@ -97,12 +97,34 @@ export class Drone extends ObjDrone {
     context.strokeStyle = "#FF0000";
     context.lineWidth = 2;
     // context.drawImage(this.img, this.position.x - this.img.width/2, this.position.y - this.img.height/2, this.img.width * 0.3, this.img.height * 0.3);
+
+    context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    context.arc(this.position.x, this.canvas.height, 20, 0, 2 * Math.PI);
+    context.fill();
+    context.restore();
     context.translate(this.position.x, this.position.y);
-    // context.rotate(0.5);
+    if(wind.x>0){
+      context.rotate(0.2);
+    }else if(wind.x<0){
+      context.rotate(-0.2);
+    }
+
     context.scale(0.5, 0.5);
     context.drawImage(this.img, -this.img.width/2, -this.img.height/2);
     context.arc(0, 0, 5, 0, 2 * Math.PI);
     context.fill();
+
+    context.beginPath();
+    // let grad = context.createRadialGradient(150, 75, 0, 150, 75, 50);
+    // // grad.addColorStop(0,'rgba(0, 0, 0, 0.5)');
+    // // grad.addColorStop(1,'rgba(0, 0, 0, 0)');
+    // grad.addColorStop(0,'rgba(0, 0, 0, 1)');
+    // grad.addColorStop(1,'rgba(0, 0, 0, 0.5)');
+    // context.fillStyle = grad;
+    // context.setTransform(1, 0, 0, 1, 0, 0);
+
+    // context.fill();
+    // context.restore();
   }
 
   clockSignal(value?: any) {
