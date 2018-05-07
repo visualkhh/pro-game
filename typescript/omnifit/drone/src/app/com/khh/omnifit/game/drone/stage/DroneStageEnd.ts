@@ -7,6 +7,7 @@ import {Clock} from '../../../../clock/Clock';
 import {DroneStageManager} from './DroneStageManager';
 
 export class DroneStageEnd extends DroneStage{
+  private previousStageData: any | undefined;
 
   constructor(clock: Clock, canvas: HTMLCanvasElement) {
     super(clock, canvas);
@@ -26,8 +27,19 @@ export class DroneStageEnd extends DroneStage{
       context.font = '30pt Calibri';
       context.textAlign = 'center';
       context.fillStyle = 'blue';
-      context.fillText('END', x, y);
+      context.fillText('END ('+this.previousStageData+' 점)', x, y);
+      context.fillText('(다시 시작하기)', x, y+50);
   }
 
 
+  onStart(data?: any): void {
+    //super.onStart(data);
+    this.previousStageData = data;
+    this.onDraw();
+  }
+
+
+  onStop(data?: any): void {
+    super.onStop(data);
+  }
 }

@@ -33,8 +33,9 @@ import {RandomUtil} from '../../../../math/RandomUtil';
 import {GameData} from '../vo/GameData';
 import {PointVector} from '../../../../math/PointVector';
 import {EarthGravityDummy} from '../obj/dummy/EarthGravityDummy';
-
-
+import {LiquidGravityDummy} from '../obj/dummy/LiquidGravityDummy';
+//공기 및 유체 저항
+//https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
 export class DroneStageGame extends DroneStage{
   private subscription: Subscription;
   private bufferCanvas: HTMLCanvasElement;
@@ -57,12 +58,12 @@ export class DroneStageGame extends DroneStage{
 
 
     //x,y,z
-    let drone = new Drone(0, 0, 20,this.bufferCanvas);
-    let cloud = new Cloud(0, 0, 10, this.bufferCanvas);
-    let score = new Score(0, 0, 500, this.bufferCanvas);
-    let wind = new Wind(0, 0, 500, this.bufferCanvas);
-    let ground = new Ground(0, 0, 5, this.bufferCanvas);
-    let gravity = new Gravity(0, 0, 0, this.bufferCanvas);
+    let drone = new Drone(this, 0, 0, 20,this.bufferCanvas);
+    let cloud = new Cloud(this, 0, 0, 10, this.bufferCanvas);
+    let score = new Score(this, 0, 0, 500, this.bufferCanvas);
+    let wind = new Wind(this, 0, 0, 500, this.bufferCanvas);
+    let ground = new Ground(this, 0, 0, 5, this.bufferCanvas);
+    let gravity = new Gravity(this, 0, 0, 0, this.bufferCanvas);
 
     this.objPush(cloud);
     this.objPush(drone);
@@ -80,8 +81,9 @@ export class DroneStageGame extends DroneStage{
     this.objPush(gravity);
     this.objPush(wind);
 
-    this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
-    this.objPush(new EarthGravityDummy(0, 0, 101, this.bufferCanvas));
+    // this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
+    // this.objPush(new EarthGravityDummy(0, 0, 101, this.bufferCanvas));
+    // this.objPush(new LiquidGravityDummy(0, 0, 101, this.bufferCanvas));
 
 
     //wind
@@ -187,28 +189,29 @@ export class DroneStageGame extends DroneStage{
   //   context.drawImage(cnvsBuffer,0,0);
   }
 
-  onStart(): void {
-    super.onStart();
+  onStart(data?: any): void {
+    super.onStart(data);
     this.subscription = this.clock.subscribe((x)=>{
       this.clockSignal(x)
     });
     this.windSubscription = this.windObservable.subscribe((it)=>{
       this.reflushRandomWind();
     })
+
+  }
+
+  onStop(data?: any): void {
+    super.onStop(data);
+    this.clock.delete(this.subscription);
+    if(this.windSubscription){
+      this.windSubscription.unsubscribe();
+    }
   }
 
   private reflushRandomWind() {
     // return new PointVector(RandomUtil.random((this.canvas.width / 2) * -1, this.canvas.width / 2), RandomUtil.random((this.canvas.height / 2) * -1, this.canvas.height / 2));
     // return new PointVector(Math.floor(RandomUtil.random(-10, 10)), Math.floor(RandomUtil.random(0, 0)));
-    return this.wind.set(Math.floor(RandomUtil.random((this.canvas.width / 3) * -1, this.canvas.width / 3)), Math.floor(RandomUtil.random(0, 0)));
-  }
-
-  onStop(): void {
-    super.onStop();
-    this.clock.delete(this.subscription);
-    if(this.windSubscription){
-      this.windSubscription.unsubscribe();
-    }
+    return this.wind.set(Math.floor(RandomUtil.random((this.canvas.width / 3) * -1, this.canvas.width / 3)));
   }
 
 

@@ -6,15 +6,66 @@ import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
 import {RandomUtil} from '../../../../../math/RandomUtil';
 import {GameData} from '../../vo/GameData';
+import construct = Reflect.construct;
 import {DroneStage} from '../../stage/DroneStage';
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/newtons-laws-of-motion
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/modeling-gravity-and-friction
-//마찰력
-export class EarthGravityDummy extends ObjDrone {
-  private position: PointVector;
-  private velocity: PointVector;
-  private acceleration: PointVector;
 
+class Liquid{
+  private x: number;
+  private y: number;
+  private w: number;
+  private h: number;
+  private c: number;
+  private canvas: HTMLCanvasElement;
+  constructor(x: number, y: number, w: number, h: number, c: number, canvas: HTMLCanvasElement) {
+  this.x = x;
+  this.y = y;
+  this.w = w;
+  this.h = h;
+  this.c = c;
+  this.canvas = canvas;
+  }
+
+// Is the Mover in the Liquid?
+  contains(m: LiquidGravityDummy) {
+  var p = m.position;
+  return p.x > this.x && p.x < this.x + this.w &&
+    p.y > this.y && p.y < this.y + this.h;
+  }
+
+  // Calculate drag force
+  calculateDrag(m: LiquidGravityDummy) {
+  // Magnitude is coefficient * speed squared
+  var speed = m.velocity.mag();
+  var dragMagnitude = this.c * speed * speed;
+
+  // Direction is inverse of velocity
+  var dragForce = m.velocity.get();
+  dragForce.mult(-1);
+
+  // Scale according to magnitude
+  dragForce.normalize();
+  dragForce.mult(dragMagnitude);
+  return dragForce;
+};
+
+  display = function() {
+    const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    // noStroke();
+    context.fillStyle = "rgba(0,0,200,0.5)";
+    context.rect(this.x, this.y, this.w, this.h);
+    context.fill()
+  };
+
+}
+
+export class LiquidGravityDummy extends ObjDrone {
+  public position: PointVector;
+  public velocity: PointVector;
+  private acceleration: PointVector;
+  private liquid: Liquid;
 
 
   constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
@@ -30,11 +81,14 @@ export class EarthGravityDummy extends ObjDrone {
     this.position = new PointVector(30, RandomUtil.random(this.canvas.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
+    this.liquid = new Liquid(0, this.canvas.height/2, this.canvas.width, this.canvas.height/2, 0.1,this.canvas);
   }
 
 
 
   onDraw(): void {
+
+    this.liquid.display();
 
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -43,27 +97,18 @@ export class EarthGravityDummy extends ObjDrone {
     context.save();
     context.beginPath();
 
+    // Is the Mover in the liquid?
+    if (this.liquid.contains(this)) {
+      // Calculate drag force
+      var dragForce = this.liquid.calculateDrag(this);
+      // Apply drag force to Mover
+      this.applyForce(dragForce);
+    }
 
 
-    //마찰력
-    const wind = new PointVector(0.01, 0);
-    const gravity = new PointVector(0, 0.1 * this.mass);
-    let c = 0.01; //마찰강도
-    let normal = 1; //수직힘.
-    let frictionMag = c * normal;
-    let friction = this.velocity.get();
-    friction.mult(-1);
-    friction.normalize();
-    friction.mult(frictionMag);
-    this.applyForce(friction);
-
-    //기본 힘들.
-    this.applyForce(wind);
+    // Gravity is scaled by mass here!
+    var gravity = new PointVector(0, 0.1*this.mass);
     this.applyForce(gravity);
-
-    // m.update();
-    // m.display();
-    // m.checkEdges();
 
 
 

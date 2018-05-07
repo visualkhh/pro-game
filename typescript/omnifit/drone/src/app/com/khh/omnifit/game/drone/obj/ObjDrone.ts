@@ -3,17 +3,29 @@ import {IntentSignal} from '../../../../data/IntentSignal';
 import {Intent} from '../../../../data/Intent';
 import {ObjImg} from '../../../../graphics/ObjImg';
 import {GameData} from '../vo/GameData';
+import {Point} from '../../../../graphics/Point';
+import {DroneStage} from '../stage/DroneStage';
 // import { Point } from '../org/Point';
 // import * as abc from 'assert/js/processing-1.4.1.js';
 export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal<GameData>, MouseSignal, KeyboardSignal{
 
   abstract intentSignal(intent: Intent<GameData>);
 
+  private _stage: DroneStage;
 
-  onCreate() {
+  get stage(): DroneStage {
+    return this._stage;
   }
 
-  onStart() {
+  constructor(stage: DroneStage, x: number = 0, y: number = 0, z: number = 0, canvas: HTMLCanvasElement, img?: HTMLImageElement, head?: Point) {
+    super(x, y, z, canvas, img, head);
+    this._stage = stage;
+  }
+
+  onCreate(data?: any) {
+  }
+
+  onStart(data?: any) {
     // const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     // context.setTransform(1, 0, 0, 1, 0, 0);
     // context.fillStyle = "#000000";
@@ -21,20 +33,20 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal
     // context.save();
   }
 
-  onResume() {
+  onResume(data?: any) {
   }
 
-  onRestart() {
-    this.onStart();
+  onRestart(data?: any) {
+    this.onStart(data);
   }
 
-  onPause() {
+  onPause(data?: any) {
   }
 
-  onStop() {
+  onStop(data?: any) {
   }
 
-  onDestroy() {
+  onDestroy(data?: any) {
   }
 
   // checkEdges = function() {

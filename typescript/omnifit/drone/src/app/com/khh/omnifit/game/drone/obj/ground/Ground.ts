@@ -6,12 +6,13 @@ import {Rect} from 'app/com/khh/graphics/Rect';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
 import {GameData} from '../../vo/GameData';
+import {DroneStage} from '../../stage/DroneStage';
 // import { Point } from '../org/Point';
 export class Ground extends ObjDrone{
 
 
-  constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(x, y, z, canvas);
+  constructor(stage: DroneStage,x: number, y: number, z: number, canvas: HTMLCanvasElement) {
+    super(stage, x, y, z, canvas);
     this.img = new Image();
     this.img.src = "assets/image/ground.png";
   }

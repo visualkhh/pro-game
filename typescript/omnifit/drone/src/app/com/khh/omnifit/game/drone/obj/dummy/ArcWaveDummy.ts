@@ -6,6 +6,7 @@ import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
 import {RandomUtil} from '../../../../../math/RandomUtil';
 import {GameData} from '../../vo/GameData';
+import {DroneStage} from '../../stage/DroneStage';
 export class ArcWaveDummy extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;
@@ -15,8 +16,8 @@ export class ArcWaveDummy extends ObjDrone {
 
 
 
-  constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(x, y, z, canvas);
+  constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
+    super(stage, x, y, z, canvas);
     this.onStart();
   }
 

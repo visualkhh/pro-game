@@ -6,26 +6,51 @@ import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
 import {RandomUtil} from '../../../../../math/RandomUtil';
 import {GameData} from '../../vo/GameData';
+import {Subscription} from 'rxjs/Subscription';
+import { timer } from 'rxjs/observable/timer';
+import {isNullOrUndefined} from 'util';
+import {DroneStage} from '../../stage/DroneStage';
 export class Score extends ObjDrone {
 
   private beforeIntent: Intent<GameData>;
   private intent: Intent<GameData>;
 
 
-
-  constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(x, y, z, canvas);
+  private pointObservable: Observable<number>;
+  private pointSubscription: Subscription;
+  private point: number;
+  private timeSecond: number;
+  constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
+    super(stage, x, y, z, canvas);
     this.img = new Image();
     this.img.src = 'assets/image/drone.png';
-
-    this.onStart();
+    this.pointObservable = timer(1000, 1000); // 1second
   }
 
 
 
-  onStart() {
+  onStart(data?: any) {
     super.onStart();
+    this.point = 0;
+    this.timeSecond = 60;
+    this.pointSubscription = this.pointObservable.subscribe((it)=>{
+      this.timeSecond--;
+      console.log("timeSecond"+this.timeSecond)
+      if(this.timeSecond<=0){
+        this.stage.next(this.point);
+      }
+    })
   }
+
+
+  onStop(data: any) {
+    super.onStop();
+    if(this.pointSubscription){
+      this.pointSubscription.unsubscribe();
+    }
+    console.log('Score onStop');
+  }
+
 
   onDraw(): void {
 
@@ -40,18 +65,19 @@ export class Score extends ObjDrone {
       context.textAlign = 'left';
       context.fillText('con(' + this.intent.name + '):' + this.intent.data.con + ' ['+(this.intent.data.con-this.beforeIntent.data.con)+']', 50, 50);
     }
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.beginPath()
+      context.fillStyle = '#FF0000'
+      context.font = '30pt Calibri';
+      context.textAlign = 'right';
+      context.fillText('time('+this.timeSecond+') point('+this.point+')', this.canvas.width, 50);
 
 
   }
+
 
   clockSignal(value?: any) {
     this.onDraw();
-  }
-
-
-  onStop() {
-    super.onStop();
-    console.log('Score onStop');
   }
 
   intentSignal(intent: Intent<GameData>) {
@@ -62,5 +88,10 @@ export class Score extends ObjDrone {
       this.beforeIntent = this.intent;
       this.intent = intent;
     }
+
+
+    //60초    2초에 한번씩 나오니깐 = 60/2 = 30초
+    //9점 만점으로 하면  9*30 = 270점
+    this.point += intent.data.con;
   }
 }

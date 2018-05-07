@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Observable';
-import { Point } from 'app/com/khh/graphics/Point';
-import { Obj } from 'app/com/khh/obj/Obj';
+import { Point } from '../../../../../graphics/Point';
+import { Obj } from '../../../../../obj/Obj';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
 import {GameData} from '../../vo/GameData';

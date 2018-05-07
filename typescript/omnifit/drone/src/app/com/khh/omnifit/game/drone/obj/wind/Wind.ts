@@ -4,6 +4,7 @@ import { Obj } from 'app/com/khh/obj/Obj';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
 import {GameData} from '../../vo/GameData';
+import {DroneStage} from '../../stage/DroneStage';
 // import { Point } from '../org/Point';
 export class Wind extends ObjDrone {
 
@@ -11,8 +12,8 @@ export class Wind extends ObjDrone {
   private intent: Intent<GameData>;
 
 
-  constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(x, y, z, canvas);
+  constructor(stage: DroneStage,x: number, y: number, z: number, canvas: HTMLCanvasElement) {
+    super(stage, x, y, z, canvas);
     this.img = new Image();
     this.img.src = 'assets/image/drone.png';
 
@@ -36,7 +37,7 @@ export class Wind extends ObjDrone {
       context.font = '30pt Calibri';
       context.textAlign = 'left';
       context.textBaseline="bottom";
-      context.fillText('wind:' + this.intent.data.wind + ' [' + (this.intent.data.wind.x - this.beforeIntent.data.wind.x) + ', '+(this.intent.data.wind.y - this.beforeIntent.data.wind.y)+']', 50, this.canvas.height);
+      context.fillText('wind:' + this.intent.data.wind, 50, this.canvas.height);
     }
 
 

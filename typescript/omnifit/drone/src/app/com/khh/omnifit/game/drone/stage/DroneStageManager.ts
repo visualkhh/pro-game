@@ -31,26 +31,26 @@ export class DroneStageManager {
   }
 
 
-  public next(): DroneStage {
-    this.currentStage().onStop();
+  public next(data?: any): DroneStage {
+    this.currentStage().onStop(data);
     this.position = this.nextPosition();
     let nextStage: DroneStage = this.stages[this.position];
-    nextStage.onStart();
+    nextStage.onStart(data);
     return nextStage;
 
   }
-  public previous(): DroneStage {
-    this.currentStage().onStop();
+  public previous(data?: any): DroneStage {
+    this.currentStage().onStop(data);
     this.position = this.previousPosition();
     let previousStage: DroneStage = this.stages[this.position];
-    previousStage.onStart();
+    previousStage.onStart(data);
     return previousStage;
   }
 
   //RxJs 좀헛갈리지만 이벤트 중심으로 하려고 한다.
   public pushStage(stage: DroneStage): void{
-    stage.nextSubscribe(value=>{this.next()});
-    stage.previousSubscribe(value=>{this.previous()});
+    stage.nextSubscribe(value=>{this.next(value)});
+    stage.previousSubscribe(value=>{this.previous(value)});
     this.stages.push(stage)
   }
 

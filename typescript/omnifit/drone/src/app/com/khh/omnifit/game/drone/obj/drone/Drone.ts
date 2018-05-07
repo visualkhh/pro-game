@@ -11,6 +11,8 @@ import {DroneStageIntro} from '../../stage/DroneStageIntro';
 import {DroneStageManager} from '../../stage/DroneStageManager';
 import {DroneStageGame} from '../../stage/DroneStageGame';
 import {GameData} from '../../vo/GameData';
+import {DroneStage} from '../../stage/DroneStage';
+import {isNullOrUndefined} from 'util';
 export class Drone extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;
@@ -18,9 +20,11 @@ export class Drone extends ObjDrone {
   private mousemoveEvent: MouseEvent;
   private beforeIntent: Intent<GameData>;
   private intent: Intent<GameData>;
+
+  private beforePoint: PointVector;
 //
-  constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(x, y, z, canvas);
+  constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
+    super(stage, x, y, z, canvas);
     this.onStart();
     this.img = new Image();
     this.img.src = 'assets/image/drone.png';
@@ -103,10 +107,16 @@ export class Drone extends ObjDrone {
     context.fill();
     context.restore();
     context.translate(this.position.x, this.position.y);
-    if(wind.x>0){
-      context.rotate(0.2);
-    }else if(wind.x<0){
-      context.rotate(-0.2);
+    if(!isNullOrUndefined(this.beforePoint) && this.beforePoint.x-this.position.x>0){
+      // let p = PointVector.sub(this.beforePoint,this.position)
+      // context.rotate(-p.mag());
+      // let p = PointVector.sub(this.beforePoint,this.position)
+      // p.normalize()
+      context.rotate(-0.06);
+    }else if(!isNullOrUndefined(this.beforePoint) && this.beforePoint.x-this.position.x<0){
+      // p.normalize()
+      // context.rotate(p.mag());
+      context.rotate(0.06);
     }
 
     context.scale(0.5, 0.5);
@@ -115,6 +125,12 @@ export class Drone extends ObjDrone {
     context.fill();
 
     context.beginPath();
+
+
+
+
+    this.beforePoint = this.position.get();
+
     // let grad = context.createRadialGradient(150, 75, 0, 150, 75, 50);
     // // grad.addColorStop(0,'rgba(0, 0, 0, 0.5)');
     // // grad.addColorStop(1,'rgba(0, 0, 0, 0)');

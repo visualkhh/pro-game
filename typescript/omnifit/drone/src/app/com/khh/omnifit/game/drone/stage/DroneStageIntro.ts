@@ -26,7 +26,9 @@ export class DroneStageIntro extends DroneStage{
     context.font = '30pt Calibri';
     context.textAlign = 'center';
     context.fillStyle = 'blue';
-    context.fillText('Hello World!', x, y);
+    context.fillText('60초동안 집중력을 발휘하여', x, y);
+    context.fillText('드론을 높게 뛰어봅시다.', x, y+50);
+    context.fillText('(시작하기)', x, y+50+50);
   }
 
 }

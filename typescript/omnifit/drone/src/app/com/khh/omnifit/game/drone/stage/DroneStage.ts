@@ -41,8 +41,8 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
 
   objPush(obj: ObjDrone){
     this.objs.push(obj);
-    obj.onCreate();
-    obj.onStart();
+    // obj.onCreate();
+    // obj.onStart();
   }
 
   get objs(): Array<ObjDrone> {
@@ -50,11 +50,11 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
   }
 
 
-  public next(): void {
-    return this.nextObserver.next();
+  public next(data?: any): void {
+    return this.nextObserver.next(data) ;
   }
-  public previous(): void {
-    return this.previousObserver.next();
+  public previous(data?: any): void {
+    return this.previousObserver.next(data);
   }
   public nextSubscribe(next: (value: any)=>void, error?: (value: any)=>void, completed?: (value: any)=>void): Subscription {
     return this.nextSource.subscribe(next, error, completed);
@@ -110,13 +110,13 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
   onResume() {
   }
 
-  onStart() {
-    this.objs.forEach(it=>it.onStart());
+  onStart(data?: any) {
+    this.objs.forEach(it=>it.onStart(data));
     this.onDraw();
   }
 
-  onStop() {
-    this.objs.forEach(it=>it.onStop());
+  onStop(data?: any) {
+    this.objs.forEach(it=>it.onStop(data));
     let context = this.canvas.getContext("2d");
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
