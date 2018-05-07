@@ -2,11 +2,12 @@ import { Observable } from 'rxjs/Observable';
 import {IntentSignal} from '../../../../data/IntentSignal';
 import {Intent} from '../../../../data/Intent';
 import {ObjImg} from '../../../../graphics/ObjImg';
+import {GameData} from '../vo/GameData';
 // import { Point } from '../org/Point';
 // import * as abc from 'assert/js/processing-1.4.1.js';
-export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal{
+export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal<GameData>, MouseSignal, KeyboardSignal{
 
-  abstract intentSignal(intent: Intent<number>);
+  abstract intentSignal(intent: Intent<GameData>);
 
 
   onCreate() {

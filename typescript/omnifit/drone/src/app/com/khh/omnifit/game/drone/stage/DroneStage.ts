@@ -11,7 +11,7 @@ import {ObjDrone} from '../obj/ObjDrone';
 import {IntentSignal} from '../../../../data/IntentSignal';
 import {Intent} from '../../../../data/Intent';
 
-export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal{
+export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal, EventSignal{
 
 
 
@@ -122,6 +122,9 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
   }
 
   intentSignal(intent: Intent<number>) {
+  }
+
+  eventSignal(event: Event): void {
   }
 
 

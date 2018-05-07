@@ -25,11 +25,12 @@ export class Intent<T> {
     this._name = value;
   }
 
-  get data(): any {
+
+  get data(): T {
     return this._data;
   }
 
-  set data(value: any) {
+  set data(value: T) {
     this._data = value;
   }
 

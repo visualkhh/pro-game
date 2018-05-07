@@ -5,10 +5,11 @@ import {Point} from '../../../../../graphics/Point';
 import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
 import {RandomUtil} from '../../../../../math/RandomUtil';
+import {GameData} from '../../vo/GameData';
 export class Score extends ObjDrone {
 
-  private beforeIntent: Intent<number>;
-  private intent: Intent<number>;
+  private beforeIntent: Intent<GameData>;
+  private intent: Intent<GameData>;
 
 
 
@@ -35,7 +36,7 @@ export class Score extends ObjDrone {
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.font = '30pt Calibri';
       context.textAlign = 'left';
-      context.fillText('con(' + this.intent.name + '):' + this.intent.data + ' ['+(this.intent.data-this.beforeIntent.data)+']', 50, 50);
+      context.fillText('con(' + this.intent.name + '):' + this.intent.data.con + ' ['+(this.intent.data.con-this.beforeIntent.data.con)+']', 50, 50);
     }
 
 
@@ -51,7 +52,7 @@ export class Score extends ObjDrone {
     console.log('Score onStop');
   }
 
-  intentSignal(intent: Intent<number>) {
+  intentSignal(intent: Intent<GameData>) {
     if (!this.beforeIntent){
       this.beforeIntent = intent;
       this.intent = intent;

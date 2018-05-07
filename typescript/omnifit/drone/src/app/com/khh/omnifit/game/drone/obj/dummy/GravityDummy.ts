@@ -5,6 +5,7 @@ import {Point} from '../../../../../graphics/Point';
 import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
 import {RandomUtil} from '../../../../../math/RandomUtil';
+import {GameData} from '../../vo/GameData';
 export class GravityDummy extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;
@@ -100,7 +101,7 @@ export class GravityDummy extends ObjDrone {
     console.log('Mouse onStop');
   }
 
-  intentSignal(intent: Intent<number>) {
+  intentSignal(intent: Intent<GameData>) {
   }
 
 

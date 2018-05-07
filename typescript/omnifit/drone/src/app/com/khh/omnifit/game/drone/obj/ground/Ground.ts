@@ -5,6 +5,7 @@ import {ObjImg} from 'app/com/khh/graphics/ObjImg';
 import {Rect} from 'app/com/khh/graphics/Rect';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
+import {GameData} from '../../vo/GameData';
 // import { Point } from '../org/Point';
 export class Ground extends ObjDrone{
 
@@ -25,7 +26,7 @@ export class Ground extends ObjDrone{
   clockSignal(value?: any) {
     this.onDraw();
   }
-  intentSignal(intent: Intent<number>) {
+  intentSignal(intent: Intent<GameData>) {
   }
 
 }

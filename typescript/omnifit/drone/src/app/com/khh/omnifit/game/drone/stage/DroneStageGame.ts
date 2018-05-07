@@ -28,11 +28,18 @@ import {Intent} from '../../../../data/Intent';
 import {MouseDummy} from '../obj/dummy/MouseDummy';
 import {GravityDummy} from '../obj/dummy/GravityDummy';
 import {ArcWaveDummy} from '../obj/dummy/ArcWaveDummy';
+import {interval} from 'rxjs/observable/interval';
+import {RandomUtil} from '../../../../math/RandomUtil';
+import {GameData} from '../vo/GameData';
+import {PointVector} from '../../../../math/PointVector';
 
 
 export class DroneStageGame extends DroneStage{
   private subscription: Subscription;
   private bufferCanvas: HTMLCanvasElement;
+  private windObservable: Observable<number>;
+  private windSubscription: Subscription;
+  private wind: PointVector;
 
 
   constructor(clock: Clock, canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
@@ -52,16 +59,16 @@ export class DroneStageGame extends DroneStage{
     let drone = new Drone(0, 0, 20,this.bufferCanvas);
     let cloud = new Cloud(0, 0, 10, this.bufferCanvas);
     let score = new Score(0, 0, 500, this.bufferCanvas);
+    let wind = new Wind(0, 0, 500, this.bufferCanvas);
     let ground = new Ground(0, 0, 5, this.bufferCanvas);
-    let wind = new Wind(0, 0, 1);
     let gravity = new Gravity(0, 0, 0);
 
     this.objPush(cloud);
-    // this.objPush(drone);
+    this.objPush(drone);
     this.objPush(score);
-    for (let i = 0; i < 30; i++) {
-      this.objPush(new MouseDummy(0, 0, 100, this.bufferCanvas));
-    }
+    // for (let i = 0; i < 30; i++) {
+    //   this.objPush(new MouseDummy(0, 0, 100, this.bufferCanvas));
+    // }
     // for (let i = 0; i < 2; i++) {
     //   this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
     // }
@@ -72,6 +79,11 @@ export class DroneStageGame extends DroneStage{
     this.objPush(gravity);
     this.objPush(wind);
 
+
+
+    //wind
+    this.windObservable = interval(5000);
+    this.wind = new PointVector(0,0);
   }
 
 
@@ -87,6 +99,13 @@ export class DroneStageGame extends DroneStage{
   mousemove(event: MouseEvent): void {
     super.mousemove(event);
     this.objs.forEach(it=>it.mousemove(event));
+  }
+
+
+  eventSignal(event: Event): void {
+   if("resize"==event.type){
+      this.reflushRandomWind();
+   }
   }
 
   onDraw(): void {
@@ -109,16 +128,12 @@ export class DroneStageGame extends DroneStage{
     //ctxBuffer.save();
 
 
+    //object draw
     this.objs.forEach(it=>{
       it.clockSignal();
     });
+
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-
-
-
-
-
     //final draw
     context.drawImage(this.bufferCanvas,0,0);
 
@@ -174,16 +189,32 @@ export class DroneStageGame extends DroneStage{
     this.subscription = this.clock.subscribe((x)=>{
       this.clockSignal(x)
     });
+    this.windSubscription = this.windObservable.subscribe((it)=>{
+      this.reflushRandomWind();
+    })
+  }
+
+  private reflushRandomWind() {
+    // return new PointVector(RandomUtil.random((this.canvas.width / 2) * -1, this.canvas.width / 2), RandomUtil.random((this.canvas.height / 2) * -1, this.canvas.height / 2));
+    // return new PointVector(Math.floor(RandomUtil.random(-10, 10)), Math.floor(RandomUtil.random(0, 0)));
+    return this.wind.set(Math.floor(RandomUtil.random((this.canvas.width / 3) * -1, this.canvas.width / 3)), Math.floor(RandomUtil.random(0, 0)));
   }
 
   onStop(): void {
     super.onStop();
     this.clock.delete(this.subscription);
+    if(this.windSubscription){
+      this.windSubscription.unsubscribe();
+    }
   }
 
 
   intentSignal(intent: Intent<number>) {
     console.log("intent game : "+intent.data);
-    this.objs.forEach(it=>it.intentSignal(intent))
+    let newItent = new Intent<GameData>(new GameData());
+    newItent.data.con = intent.data;
+    newItent.data.wind = this.wind;
+    newItent.name = intent.name;
+    this.objs.forEach(it=>it.intentSignal(newItent))
   }
 }

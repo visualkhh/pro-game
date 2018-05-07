@@ -3,13 +3,60 @@ import { Point } from 'app/com/khh/graphics/Point';
 import { Obj } from 'app/com/khh/obj/Obj';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
+import {GameData} from '../../vo/GameData';
 // import { Point } from '../org/Point';
-export class Wind extends ObjDrone{
-  clockSignal(value?: any) {
+export class Wind extends ObjDrone {
+
+  private beforeIntent: Intent<GameData>;
+  private intent: Intent<GameData>;
+
+
+  constructor(x: number, y: number, z: number, canvas: HTMLCanvasElement) {
+    super(x, y, z, canvas);
+    this.img = new Image();
+    this.img.src = 'assets/image/drone.png';
+
+    this.onStart();
+  }
+
+
+  onStart() {
+    super.onStart();
   }
 
   onDraw(): void {
+
+    const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    if (this.beforeIntent && this.intent) {
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.font = '30pt Calibri';
+      context.textAlign = 'left';
+      context.textBaseline="bottom";
+      context.fillText('wind:' + this.intent.data.wind + ' [' + (this.intent.data.wind.x - this.beforeIntent.data.wind.x) + ', '+(this.intent.data.wind.y - this.beforeIntent.data.wind.y)+']', 50, this.canvas.height);
+    }
+
+
   }
-  intentSignal(intent: Intent<number>) {
+
+  clockSignal(value?: any) {
+    this.onDraw();
+  }
+
+
+  onStop() {
+    super.onStop();
+    console.log('Score onStop');
+  }
+
+  intentSignal(intent: Intent<GameData>) {
+    if (!this.beforeIntent) {
+      this.beforeIntent = intent;
+      this.intent = intent;
+    } else {
+      this.beforeIntent = this.intent;
+      this.intent = intent;
+    }
   }
 }

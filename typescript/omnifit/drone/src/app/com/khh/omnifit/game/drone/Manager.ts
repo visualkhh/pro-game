@@ -16,7 +16,7 @@ import { Subscriber } from 'rxjs/Subscriber';
 import { Subscription } from 'rxjs/Subscription';
 import { Intent } from '../../../data/Intent';
 // import { Point } from '../org/Point';
-export class Manager implements IntentSignal<number>{
+export class Manager implements IntentSignal<number>, MouseSignal, KeyboardSignal, EventSignal{
 
 
   private stageClock: Clock;
@@ -82,7 +82,7 @@ export class Manager implements IntentSignal<number>{
   }
 
   mousemove(event: MouseEvent): void{
-    console.log("Manager mouseMove "+event.offsetX+","+event.offsetY);
+    // console.log("Manager mouseMove "+event.offsetX+","+event.offsetY);
     this.droneStageManager.currentStage().mousemove(event);
   }
 
@@ -100,7 +100,9 @@ export class Manager implements IntentSignal<number>{
     // console.log("Manager keyUp");
     this.droneStageManager.currentStage().keyup(event);
   }
-
+  eventSignal(event: Event): void {
+    this.droneStageManager.currentStage().eventSignal(event);
+  }
   draw(): void{
     // console.log("manager --> Draw");
     this.droneStageManager.currentStage().onDraw();
@@ -121,6 +123,8 @@ export class Manager implements IntentSignal<number>{
     // this.grounds.onDraw(canvas);
     // this.clouds.onDraw(canvas);
   }
+
+
 
 
 }

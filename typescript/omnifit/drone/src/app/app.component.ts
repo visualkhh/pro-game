@@ -85,6 +85,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   onResize(event) {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
+    //trigger
+    this.canvas.dispatchEvent(new Event('resize'));
     this.onDraw();
   }
 
@@ -112,6 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     Observable.fromEvent(this.canvas, 'mousedown').subscribe((event: MouseEvent)=>{
       if(this.manager)this.manager.mousedown(event);
     });
+
     Observable.fromEvent(this.canvas, 'mouseup').subscribe((event: MouseEvent)=>{
       if(this.manager)this.manager.mouseup(event);
     });
@@ -123,6 +126,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     Observable.fromEvent(this.canvas, 'keyup').subscribe((event: KeyboardEvent)=>{
       if(this.manager)this.manager.keyup(event);
+    });
+
+    Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
+      if(this.manager)this.manager.eventSignal(event);
     });
 
 
