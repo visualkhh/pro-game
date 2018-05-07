@@ -6,7 +6,8 @@ import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
 import {RandomUtil} from '../../../../../math/RandomUtil';
 import {GameData} from '../../vo/GameData';
-export class GravityDummy extends ObjDrone {
+//https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/newtons-laws-of-motion
+export class EarthGravityDummy extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
@@ -34,16 +35,26 @@ export class GravityDummy extends ObjDrone {
 
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
-    context.fillStyle = "#000000";
+    context.fillStyle = "#0FF0F0";
     context.strokeStyle = "#000000";
     context.save();
     context.beginPath();
 
 
 
-
+    //마찰력
     const wind = new PointVector(0.01, 0);
-    const gravity = new PointVector(0, 0.1);
+    const gravity = new PointVector(0, 0.1 * this.mass);
+    let c = 0.01; //마찰강도
+    let normal = 1; //수직힘.
+    let frictionMag = c * normal;
+    let friction = this.velocity.get();
+    friction.mult(-1);
+    friction.normalize();
+    friction.mult(frictionMag);
+    this.applyForce(friction);
+
+    //기본 힘들.
     this.applyForce(wind);
     this.applyForce(gravity);
 
@@ -66,7 +77,7 @@ export class GravityDummy extends ObjDrone {
     context.beginPath();
     context.strokeStyle = "#FFFF00";
     context.lineWidth = 2;
-    context.arc(this.position.x, this.position.y, this.mass*30, 0, 2 * Math.PI);
+    context.arc(this.position.x, this.position.y, this.mass*16, 0, 2 * Math.PI);
     context.fill();
 
 

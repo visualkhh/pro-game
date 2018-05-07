@@ -32,6 +32,7 @@ import {interval} from 'rxjs/observable/interval';
 import {RandomUtil} from '../../../../math/RandomUtil';
 import {GameData} from '../vo/GameData';
 import {PointVector} from '../../../../math/PointVector';
+import {EarthGravityDummy} from '../obj/dummy/EarthGravityDummy';
 
 
 export class DroneStageGame extends DroneStage{
@@ -61,7 +62,7 @@ export class DroneStageGame extends DroneStage{
     let score = new Score(0, 0, 500, this.bufferCanvas);
     let wind = new Wind(0, 0, 500, this.bufferCanvas);
     let ground = new Ground(0, 0, 5, this.bufferCanvas);
-    let gravity = new Gravity(0, 0, 0);
+    let gravity = new Gravity(0, 0, 0, this.bufferCanvas);
 
     this.objPush(cloud);
     this.objPush(drone);
@@ -79,6 +80,8 @@ export class DroneStageGame extends DroneStage{
     this.objPush(gravity);
     this.objPush(wind);
 
+    this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
+    this.objPush(new EarthGravityDummy(0, 0, 101, this.bufferCanvas));
 
 
     //wind

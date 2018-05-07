@@ -14,6 +14,11 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal
   }
 
   onStart() {
+    // const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+    // context.setTransform(1, 0, 0, 1, 0, 0);
+    // context.fillStyle = "#000000";
+    // context.strokeStyle = "#000000";
+    // context.save();
   }
 
   onResume() {
