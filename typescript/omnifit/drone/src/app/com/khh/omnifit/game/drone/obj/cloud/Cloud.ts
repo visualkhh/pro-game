@@ -34,14 +34,10 @@ export class Cloud extends ObjDrone{
 
 
     let ctxBuffer: CanvasRenderingContext2D = this.canvas.getContext("2d");
-    ctxBuffer.drawImage(this.img,(x - this.img.width/2) + this.currentX, 0);
+    ctxBuffer.drawImage(this.img,(x - this.img.width/2)  + this.currentX, 0);
   }
 
   clockSignal(value?: any) {
-    this.onDraw();
-  }
-
-  intentSignal(intent: Intent<GameData>) {
     this.onDraw();
   }
 
