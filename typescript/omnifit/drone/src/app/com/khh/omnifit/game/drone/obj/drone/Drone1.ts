@@ -100,7 +100,7 @@
 //     const lastY = imgY + this.movePoint.y;
 //     context.drawImage(this.img, lastX, lastY);
 //     context.strokeRect(lastX, lastY, this.img.width, this.img.height);
-//
+// //
 //
 //
 //
