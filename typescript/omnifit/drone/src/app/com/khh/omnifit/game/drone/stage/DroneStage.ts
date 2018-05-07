@@ -63,14 +63,6 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
     return this.previousSource.subscribe(next, error, completed);
   }
 
-  // get droneStageManager(): DroneStageManager {
-  //   return this._droneStageManager;
-  // }
-  //
-  // set droneStageManager(value: DroneStageManager) {
-  //   this._droneStageManager = value;
-  // }
-
   get canvas(): HTMLCanvasElement {
     return this._canvas;
   }
@@ -79,16 +71,11 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
     this._canvas = value;
   }
 
-
   clockSignal(value: number) {
     this.onDraw();
   }
 
-
-
   abstract onDraw(): void;
-
-
 
 
   //event

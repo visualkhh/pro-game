@@ -32,6 +32,7 @@ export class MouseDummy extends ObjDrone {
   mousemove(event: MouseEvent): void {
     super.mousemove(event);
     this.mousemoveEvent = event;
+
   }
 
   onDraw(): void {
@@ -40,6 +41,7 @@ export class MouseDummy extends ObjDrone {
     let mouseY = this.mousemoveEvent?this.mousemoveEvent.offsetY:1;
 
 
+    console.log("MouseDummy ("+this.mousemoveEvent+")"+mouseX+","+mouseY);
     //////update
     var mouse = new PointVector(mouseX, mouseY);
     var dir = PointVector.sub(mouse, this.position);

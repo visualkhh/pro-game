@@ -57,11 +57,11 @@ export class DroneStageGame extends DroneStage{
     let gravity = new Gravity(0, 0, 0);
 
     this.objPush(cloud);
-    this.objPush(drone);
+    // this.objPush(drone);
     this.objPush(score);
-    // for (let i = 0; i < 30; i++) {
-    //   this.objPush(new MouseDummy(0, 0, 100, this.bufferCanvas));
-    // }
+    for (let i = 0; i < 30; i++) {
+      this.objPush(new MouseDummy(0, 0, 100, this.bufferCanvas));
+    }
     // for (let i = 0; i < 2; i++) {
     //   this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
     // }

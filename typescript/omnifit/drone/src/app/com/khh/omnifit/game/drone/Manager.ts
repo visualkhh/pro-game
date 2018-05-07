@@ -1,20 +1,20 @@
 import { Observable } from 'rxjs/Observable';
-import { Point } from 'app/com/khh/graphics/Point';
-import { Rect } from 'app/com/khh/graphics/Rect';
-import { Drone } from 'app/com/khh/omnifit/game/drone/obj/drone/Drone';
-import { Ground } from 'app/com/khh/omnifit/game/drone/obj/ground/Ground';
-import { Cloud } from 'app/com/khh/omnifit/game/drone/obj/cloud/Cloud';
-import {Obj} from '../../../obj/Obj';
-import {Stage} from '../../../stage/Stage';
-import {DroneStageIntro} from './stage/DroneStageIntro';
-import {Clock} from '../../../clock/Clock';
-import {DroneStageManager} from './stage/DroneStageManager';
-import {DroneStageGame} from './stage/DroneStageGame';
-import {DroneStageEnd} from './stage/DroneStageEnd';
-import {IntentSignal} from 'app/com/khh/data/IntentSignal';
-import {Subscriber} from 'rxjs/Subscriber';
-import {Subscription} from 'rxjs/Subscription';
-import {Intent} from '../../../data/Intent';
+import { Point } from '../../../graphics/Point';
+import { Rect } from '../../../graphics/Rect';
+import { Drone } from '../../../omnifit/game/drone/obj/drone/Drone';
+import { Ground } from '../../../omnifit/game/drone/obj/ground/Ground';
+import { Cloud } from '../../../omnifit/game/drone/obj/cloud/Cloud';
+import { Obj } from '../../../obj/Obj';
+import { Stage } from '../../../stage/Stage';
+import { DroneStageIntro } from './stage/DroneStageIntro';
+import { Clock } from '../../../clock/Clock';
+import { DroneStageManager } from './stage/DroneStageManager';
+import { DroneStageGame } from './stage/DroneStageGame';
+import { DroneStageEnd } from './stage/DroneStageEnd';
+import { IntentSignal } from '../../../data/IntentSignal';
+import { Subscriber } from 'rxjs/Subscriber';
+import { Subscription } from 'rxjs/Subscription';
+import { Intent } from '../../../data/Intent';
 // import { Point } from '../org/Point';
 export class Manager implements IntentSignal<number>{
 
@@ -77,27 +77,32 @@ export class Manager implements IntentSignal<number>{
   // }
 
   mousedown(event: MouseEvent): void{
+    // console.log("Manager mouseDown");
     this.droneStageManager.currentStage().mousedown(event);
   }
 
   mousemove(event: MouseEvent): void{
+    console.log("Manager mouseMove "+event.offsetX+","+event.offsetY);
     this.droneStageManager.currentStage().mousemove(event);
   }
 
   mouseup(event: MouseEvent): void{
+    // console.log("Manager mouseUp");
     this.droneStageManager.currentStage().mouseup(event);
   }
 
   keydown(event: KeyboardEvent): void {
+    // console.log("Manager keyDown");
     this.droneStageManager.currentStage().keydown(event);
   }
 
   keyup(event: KeyboardEvent): void {
+    // console.log("Manager keyUp");
     this.droneStageManager.currentStage().keyup(event);
   }
 
   draw(): void{
-    console.log("manager --> Draw");
+    // console.log("manager --> Draw");
     this.droneStageManager.currentStage().onDraw();
     //this.clock.signalForce();
     // console.log(this.stage.next());
