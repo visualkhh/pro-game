@@ -92,6 +92,6 @@ export class Score extends ObjDrone {
 
     //60초    2초에 한번씩 나오니깐 = 60/2 = 30초
     //9점 만점으로 하면  9*30 = 270점
-    this.point += intent.data.con;
+    this.point += Number(intent.data.con);
   }
 }
