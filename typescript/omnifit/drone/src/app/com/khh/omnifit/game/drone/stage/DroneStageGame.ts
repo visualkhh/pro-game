@@ -23,6 +23,12 @@ import {interval} from 'rxjs/observable/interval';
 import {RandomUtil} from '../../../../math/RandomUtil';
 import {GameData} from '../vo/GameData';
 import {PointVector} from '../../../../math/PointVector';
+import {MouseDummy} from '../obj/dummy/MouseDummy';
+import {TestDummy} from '../obj/dummy/TestDummy';
+import {GravityDummy} from '../obj/dummy/GravityDummy';
+import {ArcWaveDummy} from '../obj/dummy/ArcWaveDummy';
+import {EarthGravityDummy} from '../obj/dummy/EarthGravityDummy';
+import {LiquidGravityDummy} from '../obj/dummy/LiquidGravityDummy';
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
 export class DroneStageGame extends DroneStage{
@@ -52,27 +58,29 @@ export class DroneStageGame extends DroneStage{
     let score = new Score(this, 0, 0, 500, this.bufferCanvas);
     let wind = new Wind(this, 0, 0, 500, this.bufferCanvas);
     let ground = new Ground(this, 0, 0, 5, this.bufferCanvas);
-    let gravity = new Gravity(this, 0, 0, 0, this.bufferCanvas);
+    // let gravity = new Gravity(this, 0, 0, 0, this.bufferCanvas);
 
     this.objPush(cloud);
     this.objPush(drone);
     this.objPush(score);
     // for (let i = 0; i < 30; i++) {
-    //   this.objPush(new MouseDummy(0, 0, 100, this.bufferCanvas));
+    //   this.objPush(new MouseDummy(this, 0, 0, 100, this.bufferCanvas));
     // }
     // for (let i = 0; i < 2; i++) {
-    //   this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
+    //   this.objPush(new GravityDummy(this,0, 0, 100, this.bufferCanvas));
     // }
     // for (let i = 0; i < 2; i++) {
-    //   this.objPush(new ArcWaveDummy(0, 0, 101, this.bufferCanvas));
+    //   this.objPush(new ArcWaveDummy(this, 0, 0, 101, this.bufferCanvas));
     // }
     this.objPush(ground);
-    this.objPush(gravity);
+    // this.objPush(gravity);
     this.objPush(wind);
+    // this.objPush(new Drone(this, 0, 0, 20,this.bufferCanvas));
 
-    // this.objPush(new GravityDummy(0, 0, 100, this.bufferCanvas));
-    // this.objPush(new EarthGravityDummy(0, 0, 101, this.bufferCanvas));
-    // this.objPush(new LiquidGravityDummy(0, 0, 101, this.bufferCanvas));
+    // this.objPush(new GravityDummy(this, 0, 0, 100, this.bufferCanvas));
+    // this.objPush(new MouseDummy(this, 0, 0, 100, this.bufferCanvas));
+    // this.objPush(new EarthGravityDummy(this, 0, 0, 101, this.bufferCanvas));
+    // this.objPush(new LiquidGravityDummy(this, 0, 0, 101, this.bufferCanvas));
 
 
     //wind
@@ -83,6 +91,7 @@ export class DroneStageGame extends DroneStage{
 
   mousedown(event: MouseEvent): void {
     super.mousedown(event);
+    //this.objPush(new TestDummy(this,0,0,0,this.bufferCanvas));
     console.log({x: event.layerX, y: event.layerY});
     console.log('click Game: ' + event.offsetX + '/' + event.offsetY);
     this.objs.forEach(it=>it.mousedown(event));
@@ -181,7 +190,8 @@ export class DroneStageGame extends DroneStage{
   onStart(data?: any): void {
     super.onStart(data);
     this.subscription = this.clock.subscribe((x)=>{
-      this.clockSignal(x)
+      //this.clockSignal(x)
+      this.onDraw();
     });
     this.windSubscription = this.windObservable.subscribe((it)=>{
       this.reflushRandomWind();

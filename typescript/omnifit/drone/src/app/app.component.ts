@@ -35,15 +35,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('con') public conElementRef: ElementRef;
 
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
-    // console.log(this.hostElement.nativeElement.outerHTML);
-    // this.addReSizeSubscribe(this.manager.resize);
   }
 
 
-  // private canvasElementRef: HTMLCanvasElement | null;
-
   ngOnInit(): void {
-    // this.canvasElementRef = document.getElementById('canvasElementRef') as HTMLCanvasElement;
     this.canvas = this.canvasElementRef.nativeElement;
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;

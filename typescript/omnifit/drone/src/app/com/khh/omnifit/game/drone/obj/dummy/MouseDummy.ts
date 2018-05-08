@@ -39,22 +39,18 @@ export class MouseDummy extends ObjDrone {
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     let mouseX = this.mousemoveEvent?this.mousemoveEvent.offsetX:1;
     let mouseY = this.mousemoveEvent?this.mousemoveEvent.offsetY:1;
-
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
     // console.log("MouseDummy ("+this.mousemoveEvent+")"+mouseX+","+mouseY);
     //////update
     var mouse = new PointVector(mouseX, mouseY);
     var dir = PointVector.sub(mouse, this.position);
     dir.normalize();
-    dir.mult(0.2);
+    dir.mult(0.5);
     this.acceleration = dir;
     this.velocity.add(this.acceleration);
     this.velocity.limit(5);
     this.position.add(this.velocity);
-
-
-
-
 
     //checkEdges
     if (this.position.x > this.canvas.width) {

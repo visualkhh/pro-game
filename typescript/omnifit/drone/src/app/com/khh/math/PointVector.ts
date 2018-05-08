@@ -55,7 +55,7 @@ export class PointVector {
     return new PointVector(this.x, this.y, this.z)
   }
 
-  //피타고라스의 정리는 a aa의 제곱 더하기 b bb의 제곱은 c cc의 제곱과 같다는 것을 정의합니다.
+  //피타고라스의 정리는 a의 제곱 더하기 b 의 제곱은 c 의 제곱과 같다는 것을 정의합니다.
   public mag(): number {
     var x = this.x,
       y = this.y,

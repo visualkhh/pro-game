@@ -4,6 +4,7 @@ import {PointVector} from '../../../../../math/PointVector';
 import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 import {isNullOrUndefined} from 'util';
+import {RandomUtil} from '../../../../../math/RandomUtil';
 
 export class Drone extends ObjDrone {
   private position: PointVector;
@@ -22,8 +23,8 @@ export class Drone extends ObjDrone {
 
   onStart() {
     super.onStart();
-    this.position = new PointVector(this.canvas.width/2, this.canvas.height/2);
-    // this.position = new PointVector(RandomUtil.random(this.canvas.width), RandomUtil.random(this.canvas.height));
+    // this.position = new PointVector(this.canvas.width/2, this.canvas.height/2);
+    this.position = new PointVector(RandomUtil.random(this.canvas.width), RandomUtil.random(this.canvas.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
   }
@@ -31,6 +32,7 @@ export class Drone extends ObjDrone {
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+    context.setTransform(1, 0, 0, 1, 0, 0);
     let con: number = 0;
     let bcon: number = 0;
     let wind: PointVector = new PointVector();
