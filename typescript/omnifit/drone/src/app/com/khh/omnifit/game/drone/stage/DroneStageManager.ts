@@ -1,13 +1,28 @@
 import {DroneStage} from './DroneStage';
+import {Clock} from '../../../../clock/Clock';
+import {DroneStageIntro} from './DroneStageIntro';
+import {DroneStageGame} from './DroneStageGame';
+import {DroneStageEnd} from './DroneStageEnd';
 
 export class DroneStageManager {
 
 
   private position: number = 0;
   private stages: Array<DroneStage>;
+  private canvas: HTMLCanvasElement;
+  private clock: Clock;
 
-  constructor() {
+  constructor(canvas: HTMLCanvasElement) {
     this.stages = new Array<DroneStage>();
+    this.canvas= canvas;
+    this.init();
+  }
+
+  private init() {
+    this.clock = new Clock(10);
+    this.pushStage(new DroneStageIntro(this.clock, this.canvas));
+    this.pushStage(new DroneStageGame(this.clock, this.canvas,));
+    this.pushStage(new DroneStageEnd(this.clock, this.canvas));
   }
 
   public nextPosition(): number{

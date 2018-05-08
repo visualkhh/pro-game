@@ -10,7 +10,6 @@ import {Intent} from '../../../data/Intent';
 export class Manager implements IntentSignal<number>, MouseSignal, KeyboardSignal, EventSignal{
 
 
-  private stageClock: Clock;
   private _canvas: HTMLCanvasElement;
 
 
@@ -35,16 +34,8 @@ export class Manager implements IntentSignal<number>, MouseSignal, KeyboardSigna
   private droneStageManager: DroneStageManager;
 
   private init(canvas: HTMLCanvasElement) {
-    this.stageClock = new Clock(10);
     this._canvas = canvas;
-    this.droneStageManager = new DroneStageManager();
-    this.droneStageManager.pushStage(new DroneStageIntro(this.stageClock, canvas));
-    this.droneStageManager.pushStage(new DroneStageGame(this.stageClock, canvas,));
-    this.droneStageManager.pushStage(new DroneStageEnd(this.stageClock, canvas));
-
-    // this.dataObservableSource = Observable.create((observer:Subscriber<any>) => {
-    //   this.dataObserver = observer;
-    // });
+    this.droneStageManager = new DroneStageManager(this._canvas);
   }
 
   get canvas(): HTMLCanvasElement {

@@ -16,11 +16,11 @@ import {RandomUtil} from './com/khh/math/RandomUtil';
 
 // typescript observable subscribe example
 // https://xgrommx.github.io/rx-book/content/getting_started_with_rxjs/creating_and_querying_observable_sequences/creating_and_subscribing_to_simple_observable_sequences.html
-//https://wonism.github.io/rxjs-5/
-//https://angular-2-training-book.rangle.io/handout/observables/using_observables.html
-//https://github.com/Reactive-Extensions/RxJS/blob/master/doc/gettingstarted/creating.md
-//https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators
-//http://reactivex.io/
+// https://wonism.github.io/rxjs-5/
+// https://angular-2-training-book.rangle.io/handout/observables/using_observables.html
+// https://github.com/Reactive-Extensions/RxJS/blob/master/doc/gettingstarted/creating.md
+// https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators
+// http://reactivex.io/
 declare var Processing :any;   // not required
 @Component({
   selector: 'app-root',
@@ -51,30 +51,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
     this.manager = new Manager(this.canvas);
-    //hello(1);
-
-
-    let conClock = new Clock(2000);
-    conClock.subscribe((it)=>{
-      let intent = new Intent<number>();
-      if(this.conElementRef.nativeElement.value){
-        intent.name="original"
-        intent.data = this.conElementRef.nativeElement.value as number;
-      }else{
-        intent.name="dummy"
-        intent.data = Math.floor(RandomUtil.random(0,10));
-      }
-      // console.log("con:"+val)
-      this.manager.intentSignal(intent);
-    });
-
-    // let signalClock = new Clock(2000);
-    // signalClock.subscribe(it=>{
-    //   console.log(it);
-    //   var window = window;
-    //   window.con = Math.random() * (10 - 0) + 0
-    // });
-
     this.onDraw();
   }
 
@@ -88,24 +64,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onDraw() {
-    // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // const x = this.canvas.width / 2;
-    // const y = this.canvas.height / 2;
-    // this.context.font = '30pt Calibri';
-    // this.context.textAlign = 'center';
-    // this.context.fillStyle = 'blue';
-    // this.context.fillText('Hello World!', x, y);
-
-    // //draw image
-    // const drawing = new Image() as HTMLImageElement;
-    // drawing.src = "assets/img/drone.png"; // can also be a remote URL e.g. http://
-    // drawing.onload = (ev)=>{
-    //   this.context.drawImage(drawing,x - drawing.width/2, y -  drawing.height/2);
-    // }
-    // console.log(new (new Processing).Random(1).nextGaussian())
-    // console.log(new Processing().random(100,200))
     if(this.manager)this.manager.draw();
   }
+
+
 
   ngAfterViewInit(): void {
     Observable.fromEvent(this.canvas, 'mousedown').subscribe((event: MouseEvent)=>{
@@ -127,6 +89,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
       if(this.manager)this.manager.eventSignal(event);
+    });
+    //customEvent
+    Observable.fromEvent(window, 'omnifit-concentration').subscribe((event: CustomEvent)=>{
+      let intent = new Intent<number>();
+      intent.name = event.detail.name;
+      intent.data = event.detail.data;
+      this.manager.intentSignal(intent);
     });
 
 

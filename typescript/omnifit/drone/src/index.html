@@ -22,7 +22,40 @@
 </body>
 <script type="text/javascript">
   function callJS(data) {
-    document.getElementById("con").value=data;
+    // document.getElementById("con").value=data;
+    // // Add an event listener
+    // Create the event
+    var event = new CustomEvent('omnifit-concentration', {'detail': {'name':'omnifit', 'data': Number(data)} });
+    // Dispatch/Trigger/Fire the event
+    var a = window.dispatchEvent(event)
+    console.log("callJS "+data+"-=--"+a);
+  }
+
+  // window.addEventListener("omnifit-concentration", function(e) {
+  //   console.log(e.detail); // Prints "Example of an event"
+  //   e.preventDefault()
+  // });
+
+
+  var dummyInterval = undefined;
+  function dummy(interval) {
+    if(!interval){
+      interval = 2000;
+    }
+    dummyStop();
+    dummyInterval = setInterval(function(){
+      var max = 10;
+      var min = 0;
+      var data = Math.floor(Math.random() * (max - min)) + min;
+      var event = new CustomEvent('omnifit-concentration', {'detail': {'name':'dummy', 'data':Number(data)} });
+      var a = window.dispatchEvent(event)
+      console.log("dummy "+data+"  "+a);
+    },interval);
+  }
+  function dummyStop() {
+    if(dummyInterval){
+      clearInterval(dummyInterval);
+    }
   }
 </script>
 
