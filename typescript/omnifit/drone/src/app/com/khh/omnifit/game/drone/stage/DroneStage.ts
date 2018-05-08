@@ -7,12 +7,11 @@ import {ObjDrone} from '../obj/ObjDrone';
 import {IntentSignal} from '../../../../data/IntentSignal';
 import {Intent} from '../../../../data/Intent';
 
-export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal, EventSignal{
+export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal, ViewInterface{
 
 
 
   private _canvas: HTMLCanvasElement;
-  // private _droneStageManager: DroneStageManager;
   private nextSource;
   private nextObserver:Subscriber<any>;
   private previousSource;
@@ -71,7 +70,7 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
     this.onDraw();
   }
 
-  abstract onDraw(): void;
+  abstract onDraw(canvas?: HTMLCanvasElement): void;
 
 
   //event
@@ -120,8 +119,8 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
   intentSignal(intent: Intent<number>) {
   }
 
-  eventSignal(event: Event): void {
-  }
+  // eventSignal(event: Event): void {
+  // }
 
 
 }

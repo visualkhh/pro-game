@@ -107,9 +107,6 @@ export class EarthGravityDummy extends ObjDrone {
     this.acceleration.add(f);
   };
 
-  clockSignal(value?: any) {
-    this.onDraw();
-  }
 
 
   onStop() {

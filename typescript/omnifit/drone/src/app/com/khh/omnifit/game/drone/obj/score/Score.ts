@@ -71,11 +71,6 @@ export class Score extends ObjDrone {
 
   }
 
-
-  clockSignal(value?: any) {
-    this.onDraw();
-  }
-
   intentSignal(intent: Intent<GameData>) {
     if (!this.beforeIntent){
       this.beforeIntent = intent;

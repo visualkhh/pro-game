@@ -57,9 +57,6 @@ export class ArcWaveDummy extends ObjDrone {
     this.angle.add(this.velocity);
   }
 
-  clockSignal(value?: any) {
-    this.onDraw();
-  }
 
 
   onStop() {

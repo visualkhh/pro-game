@@ -1,7 +1,7 @@
 import {Point} from './Point';
 import {Obj} from '../obj/Obj';
 
-export abstract class ObjImg extends Obj{
+export abstract class ObjImg extends Obj implements ViewInterface{
 
 
 
@@ -44,7 +44,7 @@ export abstract class ObjImg extends Obj{
     this._head = value;
   }
 
-  public setImg(img : HTMLImageElement): void{
+  public setImg(img: HTMLImageElement): void{
     this._img = img;
   }
 
@@ -64,6 +64,6 @@ export abstract class ObjImg extends Obj{
     return this.canvas.width / 2;
   }
 
-  abstract onDraw() : void;
-  abstract clockSignal(value?: any);
+  abstract onDraw(canvas?: HTMLCanvasElement) : void;
+  // abstract clockSignal(value?: any);
 }

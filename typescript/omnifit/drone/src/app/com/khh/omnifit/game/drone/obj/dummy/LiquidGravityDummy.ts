@@ -151,9 +151,6 @@ export class LiquidGravityDummy extends ObjDrone {
     this.acceleration.add(f);
   };
 
-  clockSignal(value?: any) {
-    this.onDraw();
-  }
 
 
   onStop() {

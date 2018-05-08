@@ -16,9 +16,6 @@ export class Ground extends ObjDrone{
   }
 
   onDraw(): void {
-
-
-
     const x = this.canvas.width / 2;
     const y = this.canvas.height / 2;
     let context: CanvasRenderingContext2D = this.canvas.getContext("2d");
@@ -30,9 +27,6 @@ export class Ground extends ObjDrone{
     context.drawImage(this.img, (x - this.img.width/2) + this.currentX, this.canvas.height -  this.img.height);
   }
 
-  clockSignal(value?: any) {
-    this.onDraw();
-  }
   intentSignal(intent: Intent<GameData>) {
     if(this.beforeWind!=intent.data.wind.x){
       this.beforeWind=intent.data.wind.x

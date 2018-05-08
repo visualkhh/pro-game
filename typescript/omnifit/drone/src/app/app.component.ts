@@ -5,11 +5,9 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
-import {Manager} from './com/khh/omnifit/game/drone/Manager';
-import {Clock} from './com/khh/clock/Clock';
 import {hello} from 'assets/javascript/omnifit';
 import {Intent} from './com/khh/data/Intent';
-import {RandomUtil} from './com/khh/math/RandomUtil';
+import {DroneStageManager} from './com/khh/omnifit/game/drone/DroneStageManager';
 
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
@@ -31,7 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private title = 'app';
 
   private canvas: HTMLCanvasElement;
-  private manager: Manager;
+  private manager: DroneStageManager;
   private context: CanvasRenderingContext2D | null;
   @ViewChild('canvas') public canvasElementRef: ElementRef;
   @ViewChild('con') public conElementRef: ElementRef;
@@ -50,8 +48,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
-    this.manager = new Manager(this.canvas);
-    this.onDraw();
+    this.manager = DroneStageManager.getInstance(this.canvas);
+    this.manager.onStart();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -60,36 +58,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.height = window.innerHeight;
     //trigger
     this.canvas.dispatchEvent(new Event('resize'));
-    this.onDraw();
   }
-
-  onDraw() {
-    if(this.manager)this.manager.draw();
-  }
-
-
 
   ngAfterViewInit(): void {
-    Observable.fromEvent(this.canvas, 'mousedown').subscribe((event: MouseEvent)=>{
-      if(this.manager)this.manager.mousedown(event);
-    });
-
-    Observable.fromEvent(this.canvas, 'mouseup').subscribe((event: MouseEvent)=>{
-      if(this.manager)this.manager.mouseup(event);
-    });
-    Observable.fromEvent(this.canvas, 'mousemove').subscribe((event: MouseEvent)=>{
-      if(this.manager)this.manager.mousemove(event);
-    });
-    Observable.fromEvent(this.canvas, 'keydown').subscribe((event: KeyboardEvent)=>{
-      if(this.manager)this.manager.keydown(event);
-    });
-    Observable.fromEvent(this.canvas, 'keyup').subscribe((event: KeyboardEvent)=>{
-      if(this.manager)this.manager.keyup(event);
-    });
-
-    Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
-      if(this.manager)this.manager.eventSignal(event);
-    });
     //customEvent
     Observable.fromEvent(window, 'omnifit-concentration').subscribe((event: CustomEvent)=>{
       let intent = new Intent<number>();

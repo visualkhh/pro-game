@@ -85,9 +85,6 @@ export class MouseDummy extends ObjDrone {
 
 
 
-  clockSignal(value?: any) {
-    this.onDraw();
-  }
 
 
   onStop() {

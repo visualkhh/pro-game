@@ -9,12 +9,10 @@ export class Drone extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
-  private mousemoveEvent: MouseEvent;
   private beforeIntent: Intent<GameData>;
   private intent: Intent<GameData>;
-
   private beforePoint: PointVector;
-//
+
   constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(stage, x, y, z, canvas);
     this.onStart();
@@ -30,15 +28,9 @@ export class Drone extends ObjDrone {
     this.acceleration = new PointVector(0, 0);
   }
 
-  mousemove(event: MouseEvent): void {
-    super.mousemove(event);
-    this.mousemoveEvent = event;
-  }
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
-    let mouseX = this.mousemoveEvent?this.mousemoveEvent.offsetX:1;
-    let mouseY = this.mousemoveEvent?this.mousemoveEvent.offsetY:1;
     let con: number = 0;
     let bcon: number = 0;
     let wind: PointVector = new PointVector();
@@ -49,24 +41,18 @@ export class Drone extends ObjDrone {
       bwind = this.beforeIntent.data.wind;
       wind = this.intent.data.wind;
     }
-    // if(con>0){
-    //   this.velocity.limit(3);
-    // }else{
-    //   this.velocity.limit(0);
-    // }
 
     //height
     const stepVal = (this.canvas.height - this.img.height) / 10;
     const conStepVal = (stepVal * con);
     const bconStepVal = (stepVal * bcon);
     // var mouse = new PointVector((this.canvas.width/2)+RandomUtil.random((this.img.width/2)*-1,this.img.width/2), (this.canvas.height - this.img.height/2) - conStepVal);
-    var mouse = new PointVector((this.canvas.width/2), (this.canvas.height - this.img.height/2) - conStepVal);
-    mouse.add(wind);
+    var targetPosition = new PointVector((this.canvas.width/2), (this.canvas.height - this.img.height/2) - conStepVal);
+    targetPosition.add(wind);
 
     // console.log("MouseDummy ("+this.mousemoveEvent+")"+mouseX+","+mouseY);
     //////update
-    // var mouse = new PointVector(mouseX, mouseY);
-    var dir = PointVector.sub(mouse, this.position);
+    var dir = PointVector.sub(targetPosition, this.position);
     dir.normalize();
     dir.mult(0.2);
     this.acceleration = dir;
@@ -100,14 +86,8 @@ export class Drone extends ObjDrone {
     context.restore();
     context.translate(this.position.x, this.position.y);
     if(!isNullOrUndefined(this.beforePoint) && this.beforePoint.x-this.position.x>0){
-      // let p = PointVector.sub(this.beforePoint,this.position)
-      // context.rotate(-p.mag());
-      // let p = PointVector.sub(this.beforePoint,this.position)
-      // p.normalize()
       context.rotate(-0.06);
     }else if(!isNullOrUndefined(this.beforePoint) && this.beforePoint.x-this.position.x<0){
-      // p.normalize()
-      // context.rotate(p.mag());
       context.rotate(0.06);
     }
 
@@ -117,31 +97,11 @@ export class Drone extends ObjDrone {
     context.fill();
 
     context.beginPath();
-
-
-
-
     this.beforePoint = this.position.get();
-
-    // let grad = context.createRadialGradient(150, 75, 0, 150, 75, 50);
-    // // grad.addColorStop(0,'rgba(0, 0, 0, 0.5)');
-    // // grad.addColorStop(1,'rgba(0, 0, 0, 0)');
-    // grad.addColorStop(0,'rgba(0, 0, 0, 1)');
-    // grad.addColorStop(1,'rgba(0, 0, 0, 0.5)');
-    // context.fillStyle = grad;
-    // context.setTransform(1, 0, 0, 1, 0, 0);
-
-    // context.fill();
-    // context.restore();
-  }
-
-  clockSignal(value?: any) {
-    this.onDraw();
   }
 
   onStop() {
     super.onStop();
-    console.log('Mouse onStop');
   }
 
   intentSignal(intent: Intent<GameData>) {

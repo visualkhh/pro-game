@@ -124,7 +124,7 @@ export class DroneStageGame extends DroneStage{
 
     //object draw
     this.objs.forEach(it=>{
-      it.clockSignal();
+      it.onDraw();
     });
 
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -191,7 +191,11 @@ export class DroneStageGame extends DroneStage{
 
   onStop(data?: any): void {
     super.onStop(data);
-    this.clock.delete(this.subscription);
+
+    if(this.subscription){
+      this.subscription.unsubscribe();
+      this.clock.delete(this.subscription);
+    }
     if(this.windSubscription){
       this.windSubscription.unsubscribe();
     }

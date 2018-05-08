@@ -24,11 +24,6 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal
   }
 
   onStart(data?: any) {
-    // const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
-    // context.setTransform(1, 0, 0, 1, 0, 0);
-    // context.fillStyle = "#000000";
-    // context.strokeStyle = "#000000";
-    // context.save();
   }
 
   onResume(data?: any) {
@@ -46,22 +41,6 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal
 
   onDestroy(data?: any) {
   }
-
-  // checkEdges = function() {
-  //   if (this.position.x > width) {
-  //     this.position.x = 0;
-  //   }
-  //   else if (this.position.x < 0) {
-  //     this.position.x = width;
-  //   }
-  //
-  //   if (this.position.y > height) {
-  //     this.position.y = 0;
-  //   }
-  //   else if (this.position.y < 0) {
-  //     this.position.y = height;
-  //   }
-  // };
 
 
   keydown(event: KeyboardEvent): void {
