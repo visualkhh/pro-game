@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs/Observable';
 import {Point} from './Point';
 import {Obj} from '../obj/Obj';
+
 export abstract class ObjImg extends Obj{
 
 

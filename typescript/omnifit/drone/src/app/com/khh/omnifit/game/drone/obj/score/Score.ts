@@ -1,15 +1,11 @@
-import { Observable } from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
-import {Point} from '../../../../../graphics/Point';
-import {Rect} from '../../../../../graphics/Rect';
-import {PointVector} from '../../../../../math/PointVector';
-import {RandomUtil} from '../../../../../math/RandomUtil';
 import {GameData} from '../../vo/GameData';
 import {Subscription} from 'rxjs/Subscription';
-import { timer } from 'rxjs/observable/timer';
-import {isNullOrUndefined} from 'util';
+import {timer} from 'rxjs/observable/timer';
 import {DroneStage} from '../../stage/DroneStage';
+
 export class Score extends ObjDrone {
 
   private beforeIntent: Intent<GameData>;

@@ -1,16 +1,13 @@
-import {Component, HostListener, OnInit, ElementRef, Renderer2, ViewChild, AfterViewInit} from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+// import * as Processing from 'assets/javascript/processing-1.4.1';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
 // Observable operators
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
-import {Observer} from 'rxjs/Observer';
 import {Manager} from './com/khh/omnifit/game/drone/Manager';
 import {Clock} from './com/khh/clock/Clock';
-import { hello } from 'assets/javascript/omnifit';
-// import * as Processing from 'assets/javascript/processing-1.4.1';
-import { Injectable } from '@angular/core';
+import {hello} from 'assets/javascript/omnifit';
 import {Intent} from './com/khh/data/Intent';
 import {RandomUtil} from './com/khh/math/RandomUtil';
 

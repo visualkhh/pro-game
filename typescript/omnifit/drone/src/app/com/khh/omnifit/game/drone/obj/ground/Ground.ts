@@ -1,14 +1,7 @@
-import { Observable } from 'rxjs/Observable';
-import { Point } from '../../../../../graphics/Point';
-import { Obj } from '../../../../../obj/Obj';
-import {ObjImg} from '../../../../../graphics/ObjImg';
-import {Rect} from '../../../../../graphics/Rect';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
 import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
-import {PointVector} from '../../../../../math/PointVector';
-// import { Point } from '../org/Point';
 export class Ground extends ObjDrone{
 
 

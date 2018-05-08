@@ -1,9 +1,5 @@
-import { Observable } from 'rxjs/Observable';
-import { Point } from 'app/com/khh/graphics/Point';
-import { Obj } from 'app/com/khh/obj/Obj';
-import { interval } from 'rxjs/observable/interval';
-import {Subscription} from 'rxjs/Subscription';
-import {isFunction, isNullOrUndefined} from 'util';
+import {isNullOrUndefined} from 'util';
+
 export class RandomUtil {
 
 

@@ -1,12 +1,8 @@
 import {ClockStage} from '../../../../stage/ClockStage';
-import {Stage} from '../../../../stage/Stage';
 import {Clock} from '../../../../clock/Clock';
-import {DroneStageManager} from './DroneStageManager';
-import {Observable, Subscribable} from 'rxjs/Observable';
-import {TeardownLogic} from 'rxjs/src/Subscription';
+import {Observable} from 'rxjs/Observable';
 import {Subscriber} from 'rxjs/Subscriber';
 import {Subscription} from 'rxjs/Subscription';
-import {Obj} from '../../../../obj/Obj';
 import {ObjDrone} from '../obj/ObjDrone';
 import {IntentSignal} from '../../../../data/IntentSignal';
 import {Intent} from '../../../../data/Intent';

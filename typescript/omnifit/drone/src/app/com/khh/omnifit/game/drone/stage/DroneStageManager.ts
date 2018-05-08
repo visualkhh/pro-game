@@ -1,7 +1,4 @@
-import {Stage} from '../../../../stage/Stage';
-import {DroneStageGame} from './DroneStageGame';
 import {DroneStage} from './DroneStage';
-import {Clock} from '../../../../clock/Clock';
 
 export class DroneStageManager {
 

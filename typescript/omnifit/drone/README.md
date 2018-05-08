@@ -1,7 +1,9 @@
-npm install @angular-devkit/core
-
-
 # Drone
+1. npm install
+2. npm install @angular-devkit/core
+3. ng server -o --host ip --port port
+
+
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.3.
 

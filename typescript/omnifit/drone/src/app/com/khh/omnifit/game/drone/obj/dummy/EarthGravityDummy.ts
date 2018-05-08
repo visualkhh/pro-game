@@ -1,8 +1,5 @@
-import { Observable } from 'rxjs/Observable';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
-import {Point} from '../../../../../graphics/Point';
-import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
 import {RandomUtil} from '../../../../../math/RandomUtil';
 import {GameData} from '../../vo/GameData';

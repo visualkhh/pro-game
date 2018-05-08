@@ -1,9 +1,5 @@
-import {Stage} from '../../../../stage/Stage';
-import {DroneStageGame} from './DroneStageGame';
 import {DroneStage} from './DroneStage';
 import {Clock} from '../../../../clock/Clock';
-import {Observable} from 'rxjs/Observable';
-import {DroneStageManager} from './DroneStageManager';
 
 export class DroneStageIntro extends DroneStage{
 

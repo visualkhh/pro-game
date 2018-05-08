@@ -1,20 +1,11 @@
-import { Observable } from 'rxjs/Observable';
-import { Point } from '../../../graphics/Point';
-import { Rect } from '../../../graphics/Rect';
-import { Drone } from '../../../omnifit/game/drone/obj/drone/Drone';
-import { Ground } from '../../../omnifit/game/drone/obj/ground/Ground';
-import { Cloud } from '../../../omnifit/game/drone/obj/cloud/Cloud';
-import { Obj } from '../../../obj/Obj';
-import { Stage } from '../../../stage/Stage';
-import { DroneStageIntro } from './stage/DroneStageIntro';
-import { Clock } from '../../../clock/Clock';
-import { DroneStageManager } from './stage/DroneStageManager';
-import { DroneStageGame } from './stage/DroneStageGame';
-import { DroneStageEnd } from './stage/DroneStageEnd';
-import { IntentSignal } from '../../../data/IntentSignal';
-import { Subscriber } from 'rxjs/Subscriber';
-import { Subscription } from 'rxjs/Subscription';
-import { Intent } from '../../../data/Intent';
+import {DroneStageIntro} from './stage/DroneStageIntro';
+import {Clock} from '../../../clock/Clock';
+import {DroneStageManager} from './stage/DroneStageManager';
+import {DroneStageGame} from './stage/DroneStageGame';
+import {DroneStageEnd} from './stage/DroneStageEnd';
+import {IntentSignal} from '../../../data/IntentSignal';
+import {Intent} from '../../../data/Intent';
+
 // import { Point } from '../org/Point';
 export class Manager implements IntentSignal<number>, MouseSignal, KeyboardSignal, EventSignal{
 

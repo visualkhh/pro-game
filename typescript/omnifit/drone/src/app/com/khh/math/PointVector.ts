@@ -1,5 +1,3 @@
-import {isNumber} from 'util';
-
 export class PointVector {
   private _x: number;
   private _y: number;

@@ -1,5 +1,3 @@
-import {Stage} from '../../../../stage/Stage';
-import {Observable} from 'rxjs/Observable';
 import {PointVector} from '../../../../math/PointVector';
 
 export class GameData {

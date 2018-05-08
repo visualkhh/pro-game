@@ -1,18 +1,10 @@
-import { Observable } from 'rxjs/Observable';
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../data/Intent';
-import {Point} from '../../../../../graphics/Point';
-import {Rect} from '../../../../../graphics/Rect';
 import {PointVector} from '../../../../../math/PointVector';
-import {RandomUtil} from '../../../../../math/RandomUtil';
-import {DroneStageEnd} from '../../stage/DroneStageEnd';
-import {Clock} from '../../../../../clock/Clock';
-import {DroneStageIntro} from '../../stage/DroneStageIntro';
-import {DroneStageManager} from '../../stage/DroneStageManager';
-import {DroneStageGame} from '../../stage/DroneStageGame';
 import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 import {isNullOrUndefined} from 'util';
+
 export class Drone extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;

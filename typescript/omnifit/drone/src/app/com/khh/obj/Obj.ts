@@ -1,7 +1,6 @@
-import { Observable } from 'rxjs/Observable';
 import {ClockSignal} from '../clock/ClockSignal';
 import {Point} from '../graphics/Point';
-// import { Point } from '../org/Point';
+
 export abstract class Obj extends Point implements ClockSignal{
 
   //질량

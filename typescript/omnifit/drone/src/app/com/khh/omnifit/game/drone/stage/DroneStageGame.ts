@@ -1,13 +1,9 @@
-import {Stage} from '../../../../stage/Stage';
-import {DroneStageEnd} from './DroneStageEnd';
-import {ClockStage} from '../../../../stage/ClockStage';
 import {DroneStage} from './DroneStage';
 import {Clock} from '../../../../clock/Clock';
 import {Subscription} from 'rxjs/Subscription';
-import {DroneStageManager} from './DroneStageManager';
-import {Observable} from "rxjs/Observable";
-import "rxjs/add/observable/zip";
-import "rxjs/add/observable/bindCallback";
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/zip';
+import 'rxjs/add/observable/bindCallback';
 import 'rxjs/add/observable/range';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/skip';
@@ -15,8 +11,6 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {ObjImg} from '../../../../graphics/ObjImg';
-import {Obj} from '../../../../obj/Obj';
 import {Cloud} from '../obj/cloud/Cloud';
 import {Score} from '../obj/score/Score';
 import {Drone} from '../obj/drone/Drone';
@@ -25,15 +19,10 @@ import {Wind} from '../obj/wind/Wind';
 import {Ground} from '../obj/ground/Ground';
 import {ObjDrone} from '../obj/ObjDrone';
 import {Intent} from '../../../../data/Intent';
-import {MouseDummy} from '../obj/dummy/MouseDummy';
-import {GravityDummy} from '../obj/dummy/GravityDummy';
-import {ArcWaveDummy} from '../obj/dummy/ArcWaveDummy';
 import {interval} from 'rxjs/observable/interval';
 import {RandomUtil} from '../../../../math/RandomUtil';
 import {GameData} from '../vo/GameData';
 import {PointVector} from '../../../../math/PointVector';
-import {EarthGravityDummy} from '../obj/dummy/EarthGravityDummy';
-import {LiquidGravityDummy} from '../obj/dummy/LiquidGravityDummy';
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
 export class DroneStageGame extends DroneStage{

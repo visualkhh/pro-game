@@ -1,10 +1,5 @@
-import {Stage} from '../../../../stage/Stage';
-import {DroneStageGame} from './DroneStageGame';
-import {DroneStageIntro} from './DroneStageIntro';
-import {ClockStage} from '../../../../stage/ClockStage';
 import {DroneStage} from './DroneStage';
 import {Clock} from '../../../../clock/Clock';
-import {DroneStageManager} from './DroneStageManager';
 
 export class DroneStageEnd extends DroneStage{
   private previousStageData: any | undefined;
