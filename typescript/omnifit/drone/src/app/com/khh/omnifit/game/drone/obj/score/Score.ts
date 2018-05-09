@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs/Observable';
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../data/Intent';
+import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {GameData} from '../../vo/GameData';
 import {Subscription} from 'rxjs/Subscription';
 import {timer} from 'rxjs/observable/timer';

@@ -1,10 +1,10 @@
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../data/Intent';
-import {PointVector} from '../../../../../math/PointVector';
+import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
+import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 import {isNullOrUndefined} from 'util';
-import {RandomUtil} from '../../../../../math/RandomUtil';
+import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
 
 export class Drone extends ObjDrone {
   private position: PointVector;

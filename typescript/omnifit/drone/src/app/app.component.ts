@@ -6,7 +6,7 @@ import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import {hello} from 'assets/javascript/omnifit';
-import {Intent} from './com/khh/data/Intent';
+import {Intent} from '../../lib-typescript/com/khh/data/Intent';
 import {DroneStageManager} from './com/khh/omnifit/game/drone/DroneStageManager';
 
 

@@ -1,13 +1,17 @@
-import {ClockStage} from '../../../../stage/ClockStage';
-import {Clock} from '../../../../clock/Clock';
+import {ClockStage} from '../../../../../../../../lib-typescript/com/khh/stage/ClockStage';
+import {Clock} from '../../../../../../../../lib-typescript/com/khh/clock/Clock';
 import {Observable} from 'rxjs/Observable';
 import {Subscriber} from 'rxjs/Subscriber';
 import {Subscription} from 'rxjs/Subscription';
 import {ObjDrone} from '../obj/ObjDrone';
-import {IntentSignal} from '../../../../data/IntentSignal';
-import {Intent} from '../../../../data/Intent';
+import {IntentSignal} from '../../../../../../../../lib-typescript/com/khh/data/IntentSignal';
+import {Intent} from '../../../../../../../../lib-typescript/com/khh/data/Intent';
+import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
+import {MouseSignal} from '../../../../../../../../lib-typescript/com/khh/event/io/mouse/MouseSignal';
+import {KeyboardSignal} from '../../../../../../../../lib-typescript/com/khh/event/io/keyboard/KeyboardSignal';
+import {ViewInterface} from '../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
 
-export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal, ViewInterface{
+export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal, ViewInterface {
 
 
 

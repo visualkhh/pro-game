@@ -1,9 +1,12 @@
-import {IntentSignal} from '../../../../data/IntentSignal';
-import {Intent} from '../../../../data/Intent';
-import {ObjImg} from '../../../../graphics/ObjImg';
+import {IntentSignal} from '../../../../../../../../lib-typescript/com/khh/data/IntentSignal';
+import {Intent} from '../../../../../../../../lib-typescript/com/khh/data/Intent';
+import {ObjImg} from '../../../../../../../../lib-typescript/com/khh/graphics/ObjImg';
 import {GameData} from '../vo/GameData';
-import {Point} from '../../../../graphics/Point';
+import {Point} from '../../../../../../../../lib-typescript/com/khh/graphics/Point';
 import {DroneStage} from '../stage/DroneStage';
+import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
+import {MouseSignal} from '../../../../../../../../lib-typescript/com/khh/event/io/mouse/MouseSignal';
+import {KeyboardSignal} from '../../../../../../../../lib-typescript/com/khh/event/io/keyboard/KeyboardSignal';
 
 export abstract class ObjDrone extends ObjImg implements LifeCycle, IntentSignal<GameData>, MouseSignal, KeyboardSignal{
 

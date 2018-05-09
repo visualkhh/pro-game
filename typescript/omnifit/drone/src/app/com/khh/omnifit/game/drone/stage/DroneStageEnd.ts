@@ -1,5 +1,5 @@
 import {DroneStage} from './DroneStage';
-import {Clock} from '../../../../clock/Clock';
+import {Clock} from '../../../../../../../../lib-typescript/com/khh/clock/Clock';
 
 export class DroneStageEnd extends DroneStage{
   private previousStageData: any | undefined;

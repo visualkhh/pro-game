@@ -1,11 +1,12 @@
 import {DroneStage} from './stage/DroneStage';
-import {Clock} from '../../../clock/Clock';
+import {Clock} from '../../../../../../../lib-typescript/com/khh/clock/Clock';
 import {DroneStageIntro} from './stage/DroneStageIntro';
 import {DroneStageGame} from './stage/DroneStageGame';
 import {DroneStageEnd} from './stage/DroneStageEnd';
-import {IntentSignal} from '../../../data/IntentSignal';
-import {Intent} from '../../../data/Intent';
+import {IntentSignal} from '../../../../../../../lib-typescript/com/khh/data/IntentSignal';
+import {Intent} from '../../../../../../../lib-typescript/com/khh/data/Intent';
 import {Observable} from 'rxjs/Observable';
+import {LifeCycle} from '../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 
 export class DroneStageManager implements IntentSignal<number>, LifeCycle {
 

@@ -1,4 +1,4 @@
-import {PointVector} from '../../../../math/PointVector';
+import {PointVector} from '../../../../../../../../lib-typescript/com/khh/math/PointVector';
 
 export class GameData {
 
