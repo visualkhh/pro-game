@@ -1,14 +1,10 @@
 import {DroneStage} from './stage/DroneStage';
-import {Clock} from '../../../../../../../lib-typescript/com/khh/clock/Clock';
 import {DroneStageIntro} from './stage/DroneStageIntro';
 import {DroneStageGame} from './stage/DroneStageGame';
 import {DroneStageEnd} from './stage/DroneStageEnd';
-import {IntentSignal} from '../../../../../../../lib-typescript/com/khh/data/IntentSignal';
-import {Intent} from '../../../../../../../lib-typescript/com/khh/data/Intent';
-import {Observable} from 'rxjs/Observable';
 import {LifeCycle} from '../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 
-export class DroneStageManager implements IntentSignal<number>, LifeCycle {
+export class DroneStageManager implements LifeCycle {
 
 
 
@@ -16,7 +12,6 @@ export class DroneStageManager implements IntentSignal<number>, LifeCycle {
   private position: number = 0;
   private stages: Array<DroneStage>;
   private canvas: HTMLCanvasElement;
-  private clock: Clock;
 
   //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
@@ -38,34 +33,9 @@ export class DroneStageManager implements IntentSignal<number>, LifeCycle {
   }
 
   private init() {
-    this.clock = new Clock(10);
-    this.pushStage(new DroneStageIntro(this.clock, this.canvas));
-    this.pushStage(new DroneStageGame(this.clock, this.canvas,));
-    this.pushStage(new DroneStageEnd(this.clock, this.canvas));
-
-
-
-    //addEventListener
-    Observable.fromEvent(this.canvas, 'mousedown').subscribe((event: MouseEvent)=>{
-      this.currentStage().mousedown(event);
-    });
-    Observable.fromEvent(this.canvas, 'mouseup').subscribe((event: MouseEvent)=>{
-      this.currentStage().mouseup(event);
-    });
-    Observable.fromEvent(this.canvas, 'mousemove').subscribe((event: MouseEvent)=>{
-      this.currentStage().mousemove(event);
-    });
-    Observable.fromEvent(this.canvas, 'keydown').subscribe((event: KeyboardEvent)=>{
-      this.currentStage().keydown(event);
-    });
-    Observable.fromEvent(this.canvas, 'keyup').subscribe((event: KeyboardEvent)=>{
-      this.currentStage().keyup(event);
-    });
-    Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
-      this.currentStage().onDraw();
-    });
-
-
+    this.pushStage(new DroneStageIntro(this.canvas));
+    this.pushStage(new DroneStageGame(this.canvas,));
+    this.pushStage(new DroneStageEnd(this.canvas));
   }
 
   public nextPosition(): number{
@@ -103,37 +73,26 @@ export class DroneStageManager implements IntentSignal<number>, LifeCycle {
   }
 
   //RxJs 좀헛갈리지만 이벤트 중심으로 하려고 한다.
-  public pushStage(stage: DroneStage): void{
+  public pushStage(stage: DroneStage): void {
     stage.nextSubscribe(value=>{this.next(value)});
     stage.previousSubscribe(value=>{this.previous(value)});
-    this.stages.push(stage)
+    this.stages.push(stage);
+    stage.onCreate();
   }
 
-  public currentStage(): DroneStage{
+  public currentStage(): DroneStage {
     return this.stages[this.position];
   }
 
-  intentSignal(intent: Intent<number>) {
-    this.currentStage().intentSignal(intent)
-  }
-
-
-
-  onCreate(data?: any) {
-  }
+  onCreate(data?: any) {}
   public onStart(): void {
-    this.currentStage().onDraw();
+    this.currentStage().onStart();
   }
-  onPause(data?: any) {
-  }
-  onRestart(data?: any) {
-  }
-  onResume(data?: any) {
-  }
-  onStop(data?: any) {
-  }
-  onDestroy(data?: any) {
-  }
+  onPause(data?: any) {}
+  onRestart(data?: any) {}
+  onResume(data?: any) {}
+  onStop(data?: any) {}
+  onDestroy(data?: any) {}
 
   // private restore(position: number) {
   //     this.clock.subscribe((x)=>{

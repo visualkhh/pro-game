@@ -5,14 +5,27 @@ import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 import {isNullOrUndefined} from 'util';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
+import {DeviceManager} from '../../../../drive/DeviceManager';
 
 export class Drone extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
-  private beforeIntent: Intent<GameData>;
-  private intent: Intent<GameData>;
   private beforePoint: PointVector;
+
+  private beforeHeadsetConcentration: number = 0;
+  private headsetConcentration: number = 0;
+  private beforeWind: number = 0;
+  private wind: number = 0;
+
+
+  private windSubscription: Subscription;
+  private concentrationSubscription: Subscription;
+  private resizeSubscription: Subscription;
+  private clockSubscription: Subscription;
+
 
   constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(stage, x, y, z, canvas);
@@ -21,36 +34,17 @@ export class Drone extends ObjDrone {
     this.img.src = 'assets/image/drone.png';
   }
 
-  onStart() {
-    super.onStart();
-    // this.position = new PointVector(this.canvas.width/2, this.canvas.height/2);
-    this.position = new PointVector(RandomUtil.random(this.canvas.width), RandomUtil.random(this.canvas.height));
-    this.velocity = new PointVector(0, 0);
-    this.acceleration = new PointVector(0, 0);
-  }
-
-
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
-    let con: number = 0;
-    let bcon: number = 0;
-    let wind: PointVector = new PointVector();
-    let bwind: PointVector = new PointVector()
-    if (this.beforeIntent && this.intent){
-      bcon = this.beforeIntent.data.con;
-      con = this.intent.data.con;
-      bwind = this.beforeIntent.data.wind;
-      wind = this.intent.data.wind;
-    }
 
     //height
     const stepVal = (this.canvas.height - this.img.height) / 10;
-    const conStepVal = (stepVal * con);
-    const bconStepVal = (stepVal * bcon);
+    const conStepVal = (stepVal * this.headsetConcentration);
+
     // var mouse = new PointVector((this.canvas.width/2)+RandomUtil.random((this.img.width/2)*-1,this.img.width/2), (this.canvas.height - this.img.height/2) - conStepVal);
     var targetPosition = new PointVector((this.canvas.width/2), (this.canvas.height - this.img.height/2) - conStepVal);
-    targetPosition.add(wind);
+    targetPosition.add(this.wind);
 
     // console.log("MouseDummy ("+this.mousemoveEvent+")"+mouseX+","+mouseY);
     //////update
@@ -102,17 +96,38 @@ export class Drone extends ObjDrone {
     this.beforePoint = this.position.get();
   }
 
-  onStop() {
-    super.onStop();
+
+  onStart() {
+    super.onStart();
+    // this.position = new PointVector(this.canvas.width/2, this.canvas.height/2);
+    this.position = new PointVector(RandomUtil.random(this.canvas.width), RandomUtil.random(this.canvas.height));
+    this.velocity = new PointVector(0, 0);
+    this.acceleration = new PointVector(0, 0);
+    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event) => {
+      this.onDraw();
+    });
+
+    //집중도
+    this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe(concentration => {
+      this.beforeHeadsetConcentration = this.headsetConcentration;
+      this.headsetConcentration = concentration;
+    });
+    this.windSubscription = this.stage.subscribe('windObservable', wind => {
+      this.beforeWind = this.wind;
+      this.wind = wind;
+    });
+    this.clockSubscription = this.stage.clockSubscribe((date:Date)=>{
+      console.log("clock  "+date);
+    })
+
   }
 
-  intentSignal(intent: Intent<GameData>) {
-    if (!this.beforeIntent){
-      this.beforeIntent = intent;
-      this.intent = intent;
-    }else{
-      this.beforeIntent = this.intent;
-      this.intent = intent;
-    }
+  onStop() {
+    super.onStop();
+    if(!isNullOrUndefined(this.resizeSubscription)){this.resizeSubscription.unsubscribe();}
+    if(!isNullOrUndefined(this.concentrationSubscription)){this.concentrationSubscription.unsubscribe();}
+    if(!isNullOrUndefined(this.windSubscription)){this.windSubscription.unsubscribe();}
+    if(!isNullOrUndefined(this.clockSubscription)){this.clockSubscription.unsubscribe();}
   }
+
 }

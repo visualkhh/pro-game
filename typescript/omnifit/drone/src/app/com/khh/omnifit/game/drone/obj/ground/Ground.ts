@@ -2,6 +2,8 @@ import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 export class Ground extends ObjDrone{
 
 
@@ -9,6 +11,8 @@ export class Ground extends ObjDrone{
   private currentX: number = 0;
   private beforeWind: number = 0;
   private wind: number = 0;
+  private resizeSubscription: Subscription;
+
   constructor(stage: DroneStage,x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(stage, x, y, z, canvas);
     this.img = new Image();
@@ -32,6 +36,20 @@ export class Ground extends ObjDrone{
       this.beforeWind=intent.data.wind.x
     }else{
       this.wind=intent.data.wind.x
+    }
+  }
+
+  onStart(data?: any) {
+    super.onStart(data);
+    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
+      this.onDraw();
+    });
+  }
+
+  onStop(data?: any) {
+    super.onStop(data);
+    if(this.resizeSubscription){
+      this.resizeSubscription.unsubscribe();
     }
   }
 

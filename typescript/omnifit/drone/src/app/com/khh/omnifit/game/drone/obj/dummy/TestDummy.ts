@@ -14,9 +14,6 @@ export class TestDummy extends ObjDrone {
   }
 
 
-  mousedown(event: MouseEvent): void {
-    super.mousedown(event);
-  }
 
   onDraw(): void {
     let context = this.canvas.getContext("2d");

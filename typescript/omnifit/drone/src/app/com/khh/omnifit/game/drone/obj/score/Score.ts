@@ -16,6 +16,8 @@ export class Score extends ObjDrone {
   private pointSubscription: Subscription;
   private point: number;
   private timeSecond: number;
+  private resizeSubscription: Subscription;
+
   constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(stage, x, y, z, canvas);
     this.img = new Image();
@@ -23,29 +25,6 @@ export class Score extends ObjDrone {
     this.pointObservable = timer(1000, 1000); // 1second
   }
 
-
-
-  onStart(data?: any) {
-    super.onStart();
-    this.point = 0;
-    this.timeSecond = 60;
-    this.pointSubscription = this.pointObservable.subscribe((it)=>{
-      this.timeSecond--;
-      console.log("timeSecond"+this.timeSecond)
-      if(this.timeSecond<=0){
-        this.stage.next(this.point);
-      }
-    })
-  }
-
-
-  onStop(data: any) {
-    super.onStop();
-    if(this.pointSubscription){
-      this.pointSubscription.unsubscribe();
-    }
-    console.log('Score onStop');
-  }
 
 
   onDraw(): void {
@@ -61,14 +40,43 @@ export class Score extends ObjDrone {
       context.textAlign = 'left';
       context.fillText('con(' + this.intent.name + '):' + this.intent.data.con + ' ['+(this.intent.data.con-this.beforeIntent.data.con)+']', 50, 50);
     }
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      context.beginPath()
-      context.fillStyle = '#FF0000'
-      context.font = '30pt Calibri';
-      context.textAlign = 'right';
-      context.fillText('time('+this.timeSecond+') point('+this.point+')', this.canvas.width, 50);
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.beginPath()
+    context.fillStyle = '#FF0000'
+    context.font = '30pt Calibri';
+    context.textAlign = 'right';
+    context.fillText('time('+this.timeSecond+') point('+this.point+')', this.canvas.width, 50);
 
 
+  }
+
+
+  onStart(data?: any) {
+    super.onStart();
+    this.point = 0;
+    this.timeSecond = 60;
+    this.pointSubscription = this.pointObservable.subscribe((it)=>{
+      this.timeSecond--;
+      console.log("timeSecond"+this.timeSecond)
+      if(this.timeSecond<=0){
+        this.stage.nextStage(this.point);
+      }
+    });
+    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
+      this.onDraw();
+    });
+  }
+
+
+  onStop(data: any) {
+    super.onStop();
+    if(this.pointSubscription){
+      this.pointSubscription.unsubscribe();
+    }
+    if(this.resizeSubscription){
+      this.resizeSubscription.unsubscribe();
+    }
+    console.log('Score onStop');
   }
 
   intentSignal(intent: Intent<GameData>) {

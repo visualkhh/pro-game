@@ -2,13 +2,15 @@ import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 
 // import { Point } from '../org/Point';
 export class Wind extends ObjDrone {
 
   private beforeIntent: Intent<GameData>;
   private intent: Intent<GameData>;
-
+  private resizeSubscription: Subscription;
 
   constructor(stage: DroneStage,x: number, y: number, z: number, canvas: HTMLCanvasElement) {
     super(stage, x, y, z, canvas);
@@ -18,10 +20,6 @@ export class Wind extends ObjDrone {
     this.onStart();
   }
 
-
-  onStart() {
-    super.onStart();
-  }
 
   onDraw(): void {
 
@@ -37,20 +35,25 @@ export class Wind extends ObjDrone {
       context.textBaseline="bottom";
       context.fillText('wind:' + this.intent.data.wind, 50, this.canvas.height);
     }
-
-
   }
 
   clockSignal(value?: any) {
     this.onDraw();
   }
 
-
-  onStop() {
-    super.onStop();
-    console.log('Score onStop');
+  onStart(data?: any) {
+    super.onStart(data);
+    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
+      this.onDraw();
+    });
   }
 
+  onStop(data?: any) {
+    super.onStop(data);
+    if(this.resizeSubscription){
+      this.resizeSubscription.unsubscribe();
+    }
+  }
   intentSignal(intent: Intent<GameData>) {
     if (!this.beforeIntent) {
       this.beforeIntent = intent;

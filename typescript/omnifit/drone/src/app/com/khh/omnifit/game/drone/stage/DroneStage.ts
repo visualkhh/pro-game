@@ -1,4 +1,3 @@
-import {ClockStage} from '../../../../../../../../lib-typescript/com/khh/stage/ClockStage';
 import {Clock} from '../../../../../../../../lib-typescript/com/khh/clock/Clock';
 import {Observable} from 'rxjs/Observable';
 import {Subscriber} from 'rxjs/Subscriber';
@@ -10,8 +9,11 @@ import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/li
 import {MouseSignal} from '../../../../../../../../lib-typescript/com/khh/event/io/mouse/MouseSignal';
 import {KeyboardSignal} from '../../../../../../../../lib-typescript/com/khh/event/io/keyboard/KeyboardSignal';
 import {ViewInterface} from '../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
+import {Stage} from '../../../../../../../../lib-typescript/com/khh/stage/Stage';
+import {interval} from 'rxjs/observable/interval';
+import {Optional} from '@angular/core';
 
-export abstract class DroneStage extends ClockStage implements LifeCycle, IntentSignal<number>, MouseSignal, KeyboardSignal, ViewInterface {
+export abstract class DroneStage extends Stage implements LifeCycle {
 
 
 
@@ -21,9 +23,10 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
   private previousSource;
   private previousObserver:Subscriber<any>;
   private _objs: Array<ObjDrone>;
-
-  constructor(clock: Clock, canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
-    super(clock);
+  private clock: Observable<Date>;
+  public clockInterval = 10;
+  constructor(canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
+    super();
     this._canvas = canvas;
     this._objs = objs;
 
@@ -40,7 +43,7 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
 
   objPush(obj: ObjDrone){
     this.objs.push(obj);
-    // obj.onCreate();
+    obj.onCreate();
     // obj.onStart();
   }
 
@@ -49,12 +52,14 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
   }
 
 
-  public next(data?: any): void {
+
+  public nextStage(data?: any): void {
     return this.nextObserver.next(data) ;
   }
-  public previous(data?: any): void {
+  public previousStage(data?: any): void {
     return this.previousObserver.next(data);
   }
+
   public nextSubscribe(next: (value: any)=>void, error?: (value: any)=>void, completed?: (value: any)=>void): Subscription {
     return this.nextSource.subscribe(next, error, completed);
   }
@@ -70,31 +75,23 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
     this._canvas = value;
   }
 
-  clockSignal(value: number) {
-    this.onDraw();
-  }
 
   abstract onDraw(canvas?: HTMLCanvasElement): void;
 
 
-  //event
-  keydown(event: KeyboardEvent): void {
+  public clockSubscribe(next: (value: Date)=>void): Subscription {
+    return this.clock.subscribe(next);
   }
 
-  keyup(event: KeyboardEvent): void {
-  }
-
-  mousedown(event: MouseEvent): void {
-  }
-
-  mousemove(event: MouseEvent): void {
-  }
-
-  mouseup(event: MouseEvent): void {
+  public subscribe(observableName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
+    if(this[observableName]){
+    return this[observableName].subscribe(next, error, complete);
+    }
   }
 
   //LifeCycle
   onCreate() {
+    this.clock = interval(this.clockInterval).map(_=>new Date());
   }
 
   onDestroy() {
@@ -116,12 +113,10 @@ export abstract class DroneStage extends ClockStage implements LifeCycle, Intent
 
   onStop(data?: any) {
     this.objs.forEach(it=>it.onStop(data));
-    let context = this.canvas.getContext("2d");
+    let context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  intentSignal(intent: Intent<number>) {
-  }
 
   // eventSignal(event: Event): void {
   // }

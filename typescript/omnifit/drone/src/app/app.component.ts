@@ -32,8 +32,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   private manager: DroneStageManager;
   private context: CanvasRenderingContext2D | null;
   @ViewChild('canvas') public canvasElementRef: ElementRef;
-  @ViewChild('con') public conElementRef: ElementRef;
-
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
   }
 
@@ -57,12 +55,34 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     //customEvent
-    Observable.fromEvent(window, 'omnifit-concentration').subscribe((event: CustomEvent)=>{
-      let intent = new Intent<number>();
-      intent.name = event.detail.name;
-      intent.data = event.detail.data;
-      this.manager.intentSignal(intent);
-    });
+    // Observable.fromEvent(this.canvas, 'mousedown').subscribe((event: MouseEvent)=>{
+    //   if(this.manager)this.manager.mousedown(event);
+    // });
+    //
+    // Observable.fromEvent(this.canvas, 'mouseup').subscribe((event: MouseEvent)=>{
+    //   if(this.manager)this.manager.mouseup(event);
+    // });
+    // Observable.fromEvent(this.canvas, 'mousemove').subscribe((event: MouseEvent)=>{
+    //   if(this.manager)this.manager.mousemove(event);
+    // });
+    // Observable.fromEvent(this.canvas, 'keydown').subscribe((event: KeyboardEvent)=>{
+    //   if(this.manager)this.manager.keydown(event);
+    // });
+    // Observable.fromEvent(this.canvas, 'keyup').subscribe((event: KeyboardEvent)=>{
+    //   if(this.manager)this.manager.keyup(event);
+    // });
+    //
+    // Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
+    //   console.log("rrrrrrrrrrrrrrrrrsssssssssssssssssszzzzzz")
+    //   // if(this.manager)this.manager.eventSignal(event);
+    // });
+    // //customEvent
+    // Observable.fromEvent(window, 'omnifit-concentration').subscribe((event: CustomEvent)=>{
+    //   let intent = new Intent<number>();
+    //   intent.name = event.detail.name;
+    //   intent.data = event.detail.data;
+    //   this.manager.intentSignal(intent);
+    // });
 
 
 

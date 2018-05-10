@@ -29,11 +29,11 @@ export class MouseDummy extends ObjDrone {
   }
 
 
-  mousemove(event: MouseEvent): void {
-    super.mousemove(event);
-    this.mousemoveEvent = event;
-
-  }
+  // mousemove(event: MouseEvent): void {
+  //   super.mousemove(event);
+  //   this.mousemoveEvent = event;
+  //
+  // }
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
