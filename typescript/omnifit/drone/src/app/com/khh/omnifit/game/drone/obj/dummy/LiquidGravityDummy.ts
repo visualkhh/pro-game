@@ -1,13 +1,11 @@
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
-import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/newtons-laws-of-motion
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/modeling-gravity-and-friction
 
-class Liquid{
+class Liquid {
   private x: number;
   private y: number;
   private w: number;
@@ -25,7 +23,7 @@ class Liquid{
 
 // Is the Mover in the Liquid?
   contains(m: LiquidGravityDummy) {
-  var p = m.position;
+  const p = m.position;
   return p.x > this.x && p.x < this.x + this.w &&
     p.y > this.y && p.y < this.y + this.h;
   }
@@ -33,26 +31,26 @@ class Liquid{
   // Calculate drag force
   calculateDrag(m: LiquidGravityDummy) {
   // Magnitude is coefficient * speed squared
-  var speed = m.velocity.mag();
-  var dragMagnitude = this.c * speed * speed;
+  const speed = m.velocity.mag();
+  const dragMagnitude = this.c * speed * speed;
 
   // Direction is inverse of velocity
-  var dragForce = m.velocity.get();
+  const dragForce = m.velocity.get();
   dragForce.mult(-1);
 
   // Scale according to magnitude
   dragForce.normalize();
   dragForce.mult(dragMagnitude);
   return dragForce;
-};
+}
 
   display = function() {
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
     // noStroke();
-    context.fillStyle = "rgba(0,0,200,0.5)";
+    context.fillStyle = 'rgba(0,0,200,0.5)';
     context.rect(this.x, this.y, this.w, this.h);
-    context.fill()
+    context.fill();
   };
 
 }
@@ -77,7 +75,7 @@ export class LiquidGravityDummy extends ObjDrone {
     this.position = new PointVector(30, RandomUtil.random(this.canvas.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
-    this.liquid = new Liquid(0, this.canvas.height/2, this.canvas.width, this.canvas.height/2, 0.1,this.canvas);
+    this.liquid = new Liquid(0, this.canvas.height / 2, this.canvas.width, this.canvas.height / 2, 0.1, this.canvas);
   }
 
 
@@ -88,22 +86,22 @@ export class LiquidGravityDummy extends ObjDrone {
 
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
-    context.fillStyle = "#0FF0F0";
-    context.strokeStyle = "#000000";
+    context.fillStyle = '#0FF0F0';
+    context.strokeStyle = '#000000';
     context.save();
     context.beginPath();
 
     // Is the Mover in the liquid?
     if (this.liquid.contains(this)) {
       // Calculate drag force
-      var dragForce = this.liquid.calculateDrag(this);
+      const dragForce = this.liquid.calculateDrag(this);
       // Apply drag force to Mover
       this.applyForce(dragForce);
     }
 
 
     // Gravity is scaled by mass here!
-    var gravity = new PointVector(0, 0.1*this.mass);
+    const gravity = new PointVector(0, 0.1 * this.mass);
     this.applyForce(gravity);
 
 
@@ -119,9 +117,9 @@ export class LiquidGravityDummy extends ObjDrone {
 
     //display
     context.beginPath();
-    context.strokeStyle = "#FFFF00";
+    context.strokeStyle = '#FFFF00';
     context.lineWidth = 2;
-    context.arc(this.position.x, this.position.y, this.mass*16, 0, 2 * Math.PI);
+    context.arc(this.position.x, this.position.y, this.mass * 16, 0, 2 * Math.PI);
     context.fill();
 
 
@@ -147,9 +145,9 @@ export class LiquidGravityDummy extends ObjDrone {
 
 
   applyForce(force: PointVector) {
-    var f = PointVector.div(force, this.mass);
+    const f = PointVector.div(force, this.mass);
     this.acceleration.add(f);
-  };
+  }
 
 
 
@@ -158,8 +156,8 @@ export class LiquidGravityDummy extends ObjDrone {
     console.log('Mouse onStop');
   }
 
-  intentSignal(intent: Intent<GameData>) {
-  }
+  // intentSignal(intent: Intent<GameData>) {
+  // }
 
 
 

@@ -3,96 +3,85 @@ import {DroneStageIntro} from './stage/DroneStageIntro';
 import {DroneStageGame} from './stage/DroneStageGame';
 import {DroneStageEnd} from './stage/DroneStageEnd';
 import {LifeCycle} from '../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
+import {isNullOrUndefined} from 'util';
 
 export class DroneStageManager implements LifeCycle {
 
+  private static instance: DroneStageManager;
 
-
-
-  private position: number = 0;
-  private stages: Array<DroneStage>;
-  private canvas: HTMLCanvasElement;
+  private position = 0;
+  private stages: Array<DroneStage> ;
 
   //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
-  private static instance: DroneStageManager;
-  static getInstance(canvas: HTMLCanvasElement) {
+  static getInstance() {
     if (!DroneStageManager.instance) {
-      DroneStageManager.instance = new DroneStageManager(canvas);
+      DroneStageManager.instance = new DroneStageManager();
     }
     return DroneStageManager.instance;
   }
 
-
-
-
-  private constructor(canvas: HTMLCanvasElement) {
+  private constructor() {
     this.stages = new Array<DroneStage>();
-    this.canvas= canvas;
-    this.init();
   }
 
-  private init() {
-    this.pushStage(new DroneStageIntro(this.canvas));
-    this.pushStage(new DroneStageGame(this.canvas,));
-    this.pushStage(new DroneStageEnd(this.canvas));
-  }
-
-  public nextPosition(): number{
+  public nextPosition(): number {
     let p = this.position;
     p++;
-    if(p >= this.stages.length){
-      p = this.stages.length-1;
+    if (p >= this.stages.length) {
+      p = this.stages.length - 1;
     }
     return p;
   }
-  public previousPosition(): number{
+  public previousPosition(): number {
     let p = this.position;
     p--;
-    if(p < 0){
+    if (p < 0) {
       p = 0;
     }
     return p;
   }
 
-
-  public next(data?: any): DroneStage {
+  public nextStage(data?: any): DroneStage {
     this.currentStage().onStop(data);
     this.position = this.nextPosition();
-    let nextStage: DroneStage = this.stages[this.position];
+    const nextStage: DroneStage = this.stages[this.position];
     nextStage.onStart(data);
     return nextStage;
 
   }
-  public previous(data?: any): DroneStage {
+  public previousStage(data?: any): DroneStage {
     this.currentStage().onStop(data);
     this.position = this.previousPosition();
-    let previousStage: DroneStage = this.stages[this.position];
+    const previousStage: DroneStage = this.stages[this.position];
     previousStage.onStart(data);
     return previousStage;
   }
 
-  //RxJs 좀헛갈리지만 이벤트 중심으로 하려고 한다.
   public pushStage(stage: DroneStage): void {
-    stage.nextSubscribe(value=>{this.next(value)});
-    stage.previousSubscribe(value=>{this.previous(value)});
     this.stages.push(stage);
-    stage.onCreate();
   }
 
   public currentStage(): DroneStage {
     return this.stages[this.position];
   }
 
-  onCreate(data?: any) {}
-  public onStart(): void {
-    this.currentStage().onStart();
+  onCreate(canvas: HTMLCanvasElement) {
+    this.pushStage(new DroneStageIntro(canvas));
+    this.pushStage(new DroneStageGame(canvas));
+    this.pushStage(new DroneStageEnd(canvas));
+    this.stages.forEach(it => it.onCreate());
   }
-  onPause(data?: any) {}
-  onRestart(data?: any) {}
-  onResume(data?: any) {}
-  onStop(data?: any) {}
-  onDestroy(data?: any) {}
+
+  onStart(): void { this.currentStage().onStart(); }
+  onPause(data?: any) { this.currentStage().onPause(); }
+  onRestart(data?: any) { this.currentStage().onRestart(); }
+  onResume(data?: any) { this.currentStage().onResume(); }
+  onStop(data?: any) { this.currentStage().onStop(); }
+  onDestroy(data?: any) {
+    this.stages.forEach(it => it.onDestroy());
+    this.stages.length = 0;
+  }
 
   // private restore(position: number) {
   //     this.clock.subscribe((x)=>{

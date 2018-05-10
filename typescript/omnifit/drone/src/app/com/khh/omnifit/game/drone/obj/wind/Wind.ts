@@ -1,6 +1,5 @@
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
-import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
@@ -8,8 +7,8 @@ import {Subscription} from 'rxjs/Subscription';
 // import { Point } from '../org/Point';
 export class Wind extends ObjDrone {
 
-  private beforeIntent: Intent<GameData>;
-  private intent: Intent<GameData>;
+  // private beforeIntent: Intent<GameData>;
+  // private intent: Intent<GameData>;
   private resizeSubscription: Subscription;
 
   constructor(stage: DroneStage,x: number, y: number, z: number, canvas: HTMLCanvasElement) {
@@ -50,7 +49,7 @@ export class Wind extends ObjDrone {
 
   onStop(data?: any) {
     super.onStop(data);
-    if(this.resizeSubscription){
+    if (this.resizeSubscription) {
       this.resizeSubscription.unsubscribe();
     }
   }

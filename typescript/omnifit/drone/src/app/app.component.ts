@@ -41,7 +41,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
-    this.manager = DroneStageManager.getInstance(this.canvas);
+    this.manager = DroneStageManager.getInstance();
+    this.manager.onCreate(this.canvas);
     this.manager.onStart();
   }
 

@@ -1,6 +1,5 @@
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
-import {GameData} from '../../vo/GameData';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
 export class Gravity extends ObjDrone{
@@ -9,8 +8,8 @@ export class Gravity extends ObjDrone{
 
   onDraw(): void {
   }
-  intentSignal(intent: Intent<GameData>) {
-  }
+  // intentSignal(intent: Intent<GameData>) {
+  // }
 
 
   onStart(data?: any) {

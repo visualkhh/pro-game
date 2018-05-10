@@ -22,7 +22,7 @@ import {PointVector} from '../../../../../../../../lib-typescript/com/khh/math/P
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
-export class DroneStageGame extends DroneStage{
+export class DroneStageGame extends DroneStage {
 
   private bufferCanvas: HTMLCanvasElement;
   private windObservable: Observable<PointVector>;
@@ -42,11 +42,11 @@ export class DroneStageGame extends DroneStage{
 
 
     //x,y,z
-    let drone = new Drone(this, 0, 0, 20,this.bufferCanvas);
-    let cloud = new Cloud(this, 0, 0, 10, this.bufferCanvas);
-    let score = new Score(this, 0, 0, 500, this.bufferCanvas);
-    let wind = new Wind(this, 0, 0, 500, this.bufferCanvas);
-    let ground = new Ground(this, 0, 0, 5, this.bufferCanvas);
+    const drone = new Drone(this, 0, 0, 20, this.bufferCanvas);
+    const cloud = new Cloud(this, 0, 0, 10, this.bufferCanvas);
+    const score = new Score(this, 0, 0, 500, this.bufferCanvas);
+    const wind = new Wind(this, 0, 0, 500, this.bufferCanvas);
+    const ground = new Ground(this, 0, 0, 5, this.bufferCanvas);
     // let gravity = new Gravity(this, 0, 0, 0, this.bufferCanvas);
 
     this.objPush(cloud);
@@ -72,7 +72,7 @@ export class DroneStageGame extends DroneStage{
 
 
     //wind
-    this.windObservable = interval(5000).map(_=>this.createRandomWind());
+    this.windObservable = interval(5000).map(_ => this.createRandomWind());
   }
 
 
@@ -80,19 +80,19 @@ export class DroneStageGame extends DroneStage{
 
 
   onDraw(): void {
-    let context = this.canvas.getContext("2d");
+    const context = this.canvas.getContext('2d');
     const width = this.canvas.width;
     const height = this.canvas.height;
     const x = width / 2;
     const y = height / 2;
 
-    let ctxBuffer:CanvasRenderingContext2D = this.bufferCanvas.getContext("2d");
+    const ctxBuffer: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
     ctxBuffer.canvas.width = width;
     ctxBuffer.canvas.height = height;
     ctxBuffer.font = '30pt Calibri';
     ctxBuffer.textAlign = 'center';
     ctxBuffer.fillStyle = 'pink';
-    ctxBuffer.fillRect(0,0,width, height);
+    ctxBuffer.fillRect(0, 0, width, height);
     ctxBuffer.fillStyle = 'blue';
     //console.log(this.canvas.width+"     "+height)
     ctxBuffer.fillText('********GAME********', x, y);
@@ -106,23 +106,23 @@ export class DroneStageGame extends DroneStage{
 
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     //final draw
-    context.drawImage(this.bufferCanvas,0,0);
+    context.drawImage(this.bufferCanvas, 0, 0);
 
 
   }
 
   onStart(data?: any): void {
     super.onStart(data);
-    this.objs.forEach(it=>it.onStart());
-    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
+    this.objs.forEach(it => it.onStart());
+    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event) => {
       this.onDraw();
     });
   }
 
   onStop(data?: any): void {
     super.onStop(data);
-    this.objs.forEach(it=>it.onStop());
-    if(this.resizeSubscription){
+    this.objs.forEach(it => it.onStop());
+    if (this.resizeSubscription) {
       this.resizeSubscription.unsubscribe();
     }
 
@@ -135,11 +135,11 @@ export class DroneStageGame extends DroneStage{
     return new PointVector(Math.floor(RandomUtil.random((this.canvas.width / 3) * -1, this.canvas.width / 3)));
   }
 
-  public clockSubscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
-    return this.clock.subscribe(next,error,complete);
-  }
+  // public clockSubscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
+  //   return this.clock.subscribe(next, error, complete);
+  // }
   public windSubscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
-    return this.windObservable.subscribe(next,error,complete);
+    return this.windObservable.subscribe(next, error, complete);
   }
 
   // intentSignal(intent: Intent<number>) {

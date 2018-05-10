@@ -1,8 +1,6 @@
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
-import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/newtons-laws-of-motion
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/modeling-gravity-and-friction
@@ -35,8 +33,8 @@ export class EarthGravityDummy extends ObjDrone {
 
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
-    context.fillStyle = "#0FF0F0";
-    context.strokeStyle = "#000000";
+    context.fillStyle = '#0FF0F0';
+    context.strokeStyle = '#000000';
     context.save();
     context.beginPath();
 
@@ -45,10 +43,10 @@ export class EarthGravityDummy extends ObjDrone {
     //마찰력
     const wind = new PointVector(0.01, 0);
     const gravity = new PointVector(0, 0.1 * this.mass);
-    let c = 0.01; //마찰강도
-    let normal = 1; //수직힘.
-    let frictionMag = c * normal;
-    let friction = this.velocity.get();
+    const c = 0.01; //마찰강도
+    const normal = 1; //수직힘.
+    const frictionMag = c * normal;
+    const friction = this.velocity.get();
     friction.mult(-1);
     friction.normalize();
     friction.mult(frictionMag);
@@ -75,9 +73,9 @@ export class EarthGravityDummy extends ObjDrone {
 
     //display
     context.beginPath();
-    context.strokeStyle = "#FFFF00";
+    context.strokeStyle = '#FFFF00';
     context.lineWidth = 2;
-    context.arc(this.position.x, this.position.y, this.mass*16, 0, 2 * Math.PI);
+    context.arc(this.position.x, this.position.y, this.mass * 16, 0, 2 * Math.PI);
     context.fill();
 
 
@@ -103,9 +101,9 @@ export class EarthGravityDummy extends ObjDrone {
 
 
   applyForce(force: PointVector) {
-    var f = PointVector.div(force, this.mass);
+    const f = PointVector.div(force, this.mass);
     this.acceleration.add(f);
-  };
+  }
 
 
 
@@ -114,8 +112,8 @@ export class EarthGravityDummy extends ObjDrone {
     console.log('Mouse onStop');
   }
 
-  intentSignal(intent: Intent<GameData>) {
-  }
+  // intentSignal(intent: Intent<GameData>) {
+  // }
 
 
 

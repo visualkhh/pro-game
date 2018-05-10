@@ -1,8 +1,6 @@
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
-import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 
 export class MouseDummy extends ObjDrone {
@@ -37,14 +35,14 @@ export class MouseDummy extends ObjDrone {
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
-    let mouseX = this.mousemoveEvent?this.mousemoveEvent.offsetX:1;
-    let mouseY = this.mousemoveEvent?this.mousemoveEvent.offsetY:1;
+    const mouseX = this.mousemoveEvent ? this.mousemoveEvent.offsetX : 1;
+    const mouseY = this.mousemoveEvent ? this.mousemoveEvent.offsetY : 1;
     context.setTransform(1, 0, 0, 1, 0, 0);
 
     // console.log("MouseDummy ("+this.mousemoveEvent+")"+mouseX+","+mouseY);
     //////update
-    var mouse = new PointVector(mouseX, mouseY);
-    var dir = PointVector.sub(mouse, this.position);
+    const mouse = new PointVector(mouseX, mouseY);
+    const dir = PointVector.sub(mouse, this.position);
     dir.normalize();
     dir.mult(0.5);
     this.acceleration = dir;
@@ -68,7 +66,7 @@ export class MouseDummy extends ObjDrone {
 
     //display
     context.beginPath();
-    context.strokeStyle = "#FF0000";
+    context.strokeStyle = '#FF0000';
     context.lineWidth = 2;
     context.arc(this.position.x, this.position.y, 5, 0, 2 * Math.PI);
     context.fill();
@@ -88,8 +86,8 @@ export class MouseDummy extends ObjDrone {
     console.log('Mouse onStop');
   }
 
-  intentSignal(intent: Intent<GameData>) {
-  }
+  // intentSignal(intent: Intent<GameData>) {
+  // }
 
 
 

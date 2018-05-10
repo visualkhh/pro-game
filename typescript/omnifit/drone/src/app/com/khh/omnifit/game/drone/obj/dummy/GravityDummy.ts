@@ -1,8 +1,6 @@
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
-import {GameData} from '../../vo/GameData';
 import {DroneStage} from '../../stage/DroneStage';
 
 //뉴턴 운동법칙
@@ -34,8 +32,8 @@ export class GravityDummy extends ObjDrone {
 
     const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
-    context.fillStyle = "#000000";
-    context.strokeStyle = "#000000";
+    context.fillStyle = '#000000';
+    context.strokeStyle = '#000000';
     context.save();
     context.beginPath();
 
@@ -64,9 +62,9 @@ export class GravityDummy extends ObjDrone {
 
     //display
     context.beginPath();
-    context.strokeStyle = "#FFFF00";
+    context.strokeStyle = '#FFFF00';
     context.lineWidth = 2;
-    context.arc(this.position.x, this.position.y, this.mass*30, 0, 2 * Math.PI);
+    context.arc(this.position.x, this.position.y, this.mass * 30, 0, 2 * Math.PI);
     context.fill();
 
 
@@ -92,9 +90,9 @@ export class GravityDummy extends ObjDrone {
 
 
   applyForce(force: PointVector) {
-    var f = PointVector.div(force, this.mass);
+    let f = PointVector.div(force, this.mass);
     this.acceleration.add(f);
-  };
+  }
 
 
 
@@ -103,8 +101,8 @@ export class GravityDummy extends ObjDrone {
     console.log('Mouse onStop');
   }
 
-  intentSignal(intent: Intent<GameData>) {
-  }
+  // intentSignal(intent: Intent<GameData>) {
+  // }
 
 
 
