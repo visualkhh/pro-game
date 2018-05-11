@@ -2,38 +2,34 @@ import {ObjImg} from '../../../../../../../../lib-typescript/com/khh/graphics/Ob
 import {Point} from '../../../../../../../../lib-typescript/com/khh/graphics/Point';
 import {DroneStage} from '../stage/DroneStage';
 import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
+import {ViewInterface} from '../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
 
-export abstract class ObjDrone extends ObjImg implements LifeCycle{
-
+export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterface {
   private _stage: DroneStage;
+
 
   get stage(): DroneStage {
     return this._stage;
   }
 
-  constructor(stage: DroneStage, x: number = 0, y: number = 0, z: number = 0, canvas: HTMLCanvasElement, img?: HTMLImageElement, head?: Point) {
-    super(x, y, z, canvas, img, head);
+  constructor(stage: DroneStage, x: number = 0, y: number = 0, z: number = 0, img?: HTMLImageElement, head?: Point) {
+    super(x, y, z, img, head);
     this._stage = stage;
   }
 
-  onCreate(data?: any) {
-  }
+  abstract onCreate(data?: any);
 
-  onStart(data?: any) {
-  }
+  abstract onDestroy(data?: any);
 
-  onResume(data?: any) {
-  }
+  abstract onPause(data?: any);
 
-  onRestart(data?: any) {
-  }
+  abstract onRestart(data?: any);
 
-  onPause(data?: any) {
-  }
+  abstract onResume(data?: any);
 
-  onStop(data?: any) {
-  }
+  abstract onStart(data?: any);
 
-  onDestroy(data?: any) {
-  }
+  abstract onStop(data?: any);
+
+  abstract onDraw(CanvasRenderingContext2D): void;
 }

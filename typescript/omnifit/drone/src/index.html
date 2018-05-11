@@ -26,7 +26,7 @@
     // // Add an event listener
     // Create the event
     // var event = new CustomEvent('omnifit-concentration', {'detail': {'name':'omnifit', 'data': Number(data)} });
-    var event = new CustomEvent('omnifit-concentration', {'detail': Number(data)});
+    var event = new CustomEvent('omnifit-headset-concentration', {'detail': Number(data)});
     // Dispatch/Trigger/Fire the event
     var a = window.dispatchEvent(event)
     console.log("callJS "+data+"-=--"+a);
@@ -48,7 +48,7 @@
       var max = 10;
       var min = 0;
       var data = Math.floor(Math.random() * (max - min)) + min;
-      var event = new CustomEvent('omnifit-concentration', {'detail': Number(data)+0.1});
+      var event = new CustomEvent('omnifit-headset-concentration', {'detail': Number(data)});
       var a = window.dispatchEvent(event)
       console.log("dummy "+data+"  "+a);
     },interval);

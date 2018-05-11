@@ -3,9 +3,9 @@ import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/mat
 import {DroneStage} from '../../stage/DroneStage';
 import {isNullOrUndefined} from 'util';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
-import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {DeviceManager} from '../../../../drive/DeviceManager';
+import {DroneStageGame} from '../../stage/DroneStageGame';
 
 export class Drone extends ObjDrone {
   private position: PointVector;
@@ -15,33 +15,29 @@ export class Drone extends ObjDrone {
 
   private beforeHeadsetConcentration = 0;
   private headsetConcentration = 0;
-  private beforeWind = 0;
-  private wind = 0;
+  private beforeWind = new PointVector();
+  private wind = new PointVector();
 
 
-  private windSubscription: Subscription;
   private concentrationSubscription: Subscription;
-  private resizeSubscription: Subscription;
-  private clockSubscription: Subscription;
+  private windSubscription: Subscription;
+  // private clockSubscription: Subscription;
 
 
-  constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(stage, x, y, z, canvas);
-    this.onStart();
-    this.img = new Image();
-    this.img.src = 'assets/image/drone.png';
+  constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
+    super(stage, x, y, z, img);
   }
 
-  onDraw(): void {
-    const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+  onDraw(context: CanvasRenderingContext2D): void {
+    // const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
 
     //height
-    const stepVal = (this.canvas.height - this.img.height) / 10;
+    const stepVal = (this.stage.height - this.img.height) / 10;
     const conStepVal = (stepVal * this.headsetConcentration);
 
     //var mouse = new PointVector((this.canvas.width/2)+RandomUtil.random((this.img.width/2)*-1,this.img.width/2), (this.canvas.height - this.img.height/2) - conStepVal);
-    const targetPosition = new PointVector((this.canvas.width / 2), (this.canvas.height - this.img.height / 2) - conStepVal);
+    const targetPosition = new PointVector((this.stage.width / 2), (this.stage.height - this.img.height / 2) - conStepVal);
     targetPosition.add(this.wind);
 
     // console.log("MouseDummy ("+this.mousemoveEvent+")"+mouseX+","+mouseY);
@@ -56,16 +52,16 @@ export class Drone extends ObjDrone {
 
 
     //checkEdges
-    if (this.position.x > this.canvas.width) {
+    if (this.position.x > this.stage.width) {
       this.position.x = 0;
     } else if (this.position.x < 0) {
-      this.position.x = this.canvas.width;
+      this.position.x = this.stage.width;
     }
 
-    if (this.position.y > this.canvas.height) {
+    if (this.position.y > this.stage.height) {
       this.position.y = 0;
     } else if (this.position.y < 0) {
-      this.position.y = this.canvas.height;
+      this.position.y = this.stage.height;
     }
     //display
     //http://creativejs.com/2012/01/day-10-drawing-rotated-images-into-canvas/index.html
@@ -75,14 +71,14 @@ export class Drone extends ObjDrone {
     // context.drawImage(this.img, this.position.x - this.img.width/2, this.position.y - this.img.height/2, this.img.width * 0.3, this.img.height * 0.3);
 
     context.fillStyle = 'rgba(0, 0, 0, 0.2)';
-    context.arc(this.position.x, this.canvas.height, 20, 0, 2 * Math.PI);
+    context.arc(this.position.x, this.stage.height, 20, 0, 2 * Math.PI);
     context.fill();
     context.restore();
     context.translate(this.position.x, this.position.y);
     if (!isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x > 0) {
-      context.rotate(-0.06);
+      context.rotate(-0.01);
     }else if (!isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x < 0) {
-      context.rotate(0.06);
+      context.rotate(0.01);
     }
 
     context.scale(0.5, 0.5);
@@ -95,37 +91,42 @@ export class Drone extends ObjDrone {
   }
 
 
-  onStart() {
-    super.onStart();
+  onStart(data?: any) {
     // this.position = new PointVector(this.canvas.width/2, this.canvas.height/2);
-    this.position = new PointVector(RandomUtil.random(this.canvas.width), RandomUtil.random(this.canvas.height));
+    this.position = new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
-    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event) => {
-      this.onDraw();
-    });
-
     //집중도
     this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe(concentration => {
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration;
     });
-    this.windSubscription = this.stage.subscribe('windObservable', wind => {
+    //바람
+    this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
       this.beforeWind = this.wind;
-      this.wind = wind;
-    });
-    this.clockSubscription = this.stage.clockSubscribe((date: Date) => {
-      console.log('clock  ' + date);
+      this.wind = wdata;
     });
 
   }
 
   onStop() {
-    super.onStop();
-    if (!isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
     if (!isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
     if (!isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
-    if (!isNullOrUndefined(this.clockSubscription)) {this.clockSubscription.unsubscribe(); }
+  }
+
+  onCreate(data?: any) {
+  }
+
+  onDestroy(data?: any) {
+  }
+
+  onPause(data?: any) {
+  }
+
+  onRestart(data?: any) {
+  }
+
+  onResume(data?: any) {
   }
 
 }

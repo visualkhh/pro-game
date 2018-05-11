@@ -6,64 +6,49 @@ import {DroneStage} from '../../stage/DroneStage';
 import {DroneStageManager} from '../../DroneStageManager';
 import {isNullOrUndefined} from 'util';
 import {DeviceManager} from '../../../../drive/DeviceManager';
+import {interval} from 'rxjs/observable/interval';
 
 export class Score extends ObjDrone {
-
   // private beforeIntent: Intent<GameData>;
   // private intent: Intent<GameData>;
 
+  // private pointObservable: Observable<number>;
 
-  private pointObservable: Observable<number>;
+
   private pointSubscription: Subscription;
   private point: number;
   private timeSecond: number;
   private resizeSubscription: Subscription;
   private concentrationSubscription: Subscription;
-  private beforeHeadsetConcentration: number;
-  private headsetConcentration: number;
-
-  constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(stage, x, y, z, canvas);
-    this.img = new Image();
-    this.img.src = 'assets/image/drone.png';
-    this.pointObservable = timer(1000, 1000); // 1second
+  private beforeHeadsetConcentration = 0;
+  private headsetConcentration = 0;
+  constructor(stage: DroneStage, x: number, y: number, z: number) {
+    super(stage, x, y, z);
   }
 
-
-
-  onDraw(): void {
-
-    const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+  onDraw(context: CanvasRenderingContext2D): void {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.beginPath();
     context.fillStyle = '#FF0000';
-    context.font = '30pt Calibri';
+    context.font = '10pt Calibri';
     context.textAlign = 'left';
     context.fillText('con:' + this.headsetConcentration + ' [' + (this.headsetConcentration - this.beforeHeadsetConcentration) + ']', 50, 50);
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.beginPath();
-    context.fillStyle = '#FF0000';
-    context.font = '30pt Calibri';
-    context.textAlign = 'right';
-    context.fillText('time(' + this.timeSecond + ') point(' + this.point + ')', this.canvas.width, 50);
-
-
+    context.fillText('time(' + this.timeSecond + ') point(' + this.point + ')', 50, 60);
   }
 
 
+
   onStart(data?: any) {
-    super.onStart();
     this.point = 0;
     this.timeSecond = 60;
-    this.pointSubscription = this.pointObservable.subscribe((it) => {
+    this.pointSubscription = interval(1000).subscribe((it) => {
       this.timeSecond--;
       console.log('timeSecond' + this.timeSecond);
       if (this.timeSecond <= 0) {
         DroneStageManager.getInstance().nextStage(this.point);
       }
-    });
-    this.resizeSubscription = Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event) => {
-      this.onDraw();
     });
     //집중도
     this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe(concentration => {
@@ -75,14 +60,25 @@ export class Score extends ObjDrone {
 
 
   onStop(data: any) {
-    super.onStop();
-    if (this.pointSubscription) {
-      this.pointSubscription.unsubscribe();
-    }
-    if (this.resizeSubscription) {
-      this.resizeSubscription.unsubscribe();
-    }
+    if (!isNullOrUndefined(this.pointSubscription)) {this.pointSubscription.unsubscribe(); }
+    if (!isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
     if (!isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
+  }
+
+
+  onCreate(data?: any) {
+  }
+
+  onDestroy(data?: any) {
+  }
+
+  onPause(data?: any) {
+  }
+
+  onRestart(data?: any) {
+  }
+
+  onResume(data?: any) {
   }
 
 }

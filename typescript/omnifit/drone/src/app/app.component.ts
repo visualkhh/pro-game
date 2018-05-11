@@ -8,6 +8,16 @@ import 'rxjs/add/operator/filter';
 import {hello} from 'assets/javascript/omnifit';
 import {Intent} from '../../lib-typescript/com/khh/data/Intent';
 import {DroneStageManager} from './com/khh/omnifit/game/drone/DroneStageManager';
+import {DroneStageEnd} from './com/khh/omnifit/game/drone/stage/DroneStageEnd';
+import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntro';
+import {DroneStageGame} from './com/khh/omnifit/game/drone/stage/DroneStageGame';
+import {DroneStage} from './com/khh/omnifit/game/drone/stage/DroneStage';
+import {Drone} from './com/khh/omnifit/game/drone/obj/drone/Drone';
+import {Ground} from './com/khh/omnifit/game/drone/obj/ground/Ground';
+import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
+import {Cloud} from './com/khh/omnifit/game/drone/obj/cloud/Cloud';
+import {Score} from './com/khh/omnifit/game/drone/obj/score/Score';
+import {createElement} from '@angular/core/src/view/element';
 
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
@@ -19,7 +29,7 @@ import {DroneStageManager} from './com/khh/omnifit/game/drone/DroneStageManager'
 // https://github.com/Reactive-Extensions/RxJS/blob/master/doc/gettingstarted/creating.md
 // https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators
 // http://reactivex.io/
-declare var Processing :any;   // not required
+declare var Processing: any;   // not required
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -41,9 +51,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
-    this.manager = DroneStageManager.getInstance();
-    this.manager.onCreate(this.canvas);
-    this.manager.onStart();
+
+
   }
 
   @HostListener('window:resize', ['$event'])
@@ -55,7 +64,43 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    //game initialize
+    this.manager = DroneStageManager.getInstance();
+
+    //stage Intro
+    const droneStageIntro = new DroneStageIntro(this.canvas);
+
+    //Stage Game
+    const droneStageGame = new DroneStageGame(this.canvas);
+
+    const droneImg = new Image(); droneImg.src = 'assets/image/drone.png';
+    const drone = new Drone(droneStageGame, 0, 0, 20, droneImg);
+
+    const cloudImg = new Image(); cloudImg.src = 'assets/image/cloud.png';
+    const cloud = new Cloud(droneStageGame, 0, 0, 10, cloudImg);
+
+    const groundImg = new Image(); groundImg.src = 'assets/image/ground.png';
+    const ground = new Ground(droneStageGame, 0, 0, 5, groundImg);
+
+    const score = new Score(droneStageGame, 0, 0, 500);
+    const wind = new Wind(droneStageGame, 0, 0, 500);
+    droneStageGame.objPush([cloud, drone, wind, score, ground]);
+
+    //Stage End
+    const droneStageEnd = new DroneStageEnd(this.canvas);
+
+
+    // this.manager.onCreate(this.canvas, [droneStageIntro, droneStageGame, droneStageEnd]);
+    this.manager.pushStage(droneStageIntro);
+    this.manager.pushStage(droneStageGame);
+    this.manager.pushStage(droneStageEnd);
+    this.manager.onCreate(this.canvas);
+    this.manager.onStart();
+
     //customEvent
+    // Observable.fromEvent(this.canvas, 'load').subscribe((event) => {
+    //   console.log('load');
+    // });
     // Observable.fromEvent(this.canvas, 'mousedown').subscribe((event: MouseEvent)=>{
     //   if(this.manager)this.manager.mousedown(event);
     // });

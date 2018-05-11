@@ -1,40 +1,67 @@
 import {ObjDrone} from '../ObjDrone';
 import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {DroneStage} from '../../stage/DroneStage';
+import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
+import {isNullOrUndefined} from "util";
+import {DroneStageGame} from '../../stage/DroneStageGame';
+import {Subscription} from 'rxjs/Subscription';
 
 // import { Point } from '../org/Point';
 export class Cloud extends ObjDrone {
 
   private maxX = 50;
   private currentX = 0;
-  private beforeWind = 0;
-  private wind = 0;
+  private beforeWind = new PointVector();
+  private wind = new PointVector();
+  private windSubscription: Subscription;
 
-  constructor(stage: DroneStage, x: number, y: number, z: number, canvas: HTMLCanvasElement) {
-    super(stage, x, y, z, canvas);
-    this.img = new Image();
-    this.img.src = 'assets/image/cloud.png';
+  constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
+    super(stage, x, y, z, img);
   }
 
 
-  onDraw(): void {
-    const x = this.canvas.width / 2;
-    const y = this.canvas.height / 2;
+  onDraw(context: CanvasRenderingContext2D): void {
+    const x = this.stage.width / 2;
+    const y = this.stage.height / 2;
 
-    if (this.beforeWind - this.wind > 0){
-      this.currentX += 0.1;
-    }else if (this.beforeWind - this.wind < 0){
-      this.currentX -= 0.1;
+    if (this.beforeWind.x - this.wind.x > 0) {
+      this.currentX += 0.05;
+    }else if (this.beforeWind.x - this.wind.x < 0) {
+      this.currentX -= 0.05;
     }
-
-
-    const ctxBuffer: CanvasRenderingContext2D = this.canvas.getContext('2d');
-    ctxBuffer.drawImage(this.img, (x - this.img.width / 2)  + this.currentX, 0);
+    context.drawImage(this.img, (x - this.img.width / 2)  + this.currentX, 0);
   }
 
-  clockSignal(value?: any) {
-    this.onDraw();
+  onCreate(data?: any) {
   }
+
+  onDestroy(data?: any) {
+  }
+
+  onPause(data?: any) {
+  }
+
+  onRestart(data?: any) {
+  }
+
+  onResume(data?: any) {
+  }
+
+  onStart(data?: any) {
+    //바람
+    this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
+      this.beforeWind = this.wind;
+      this.wind = wdata;
+    });
+  }
+
+  onStop(data?: any) {
+    if (!isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
+  }
+
+  // clockSignal(value?: any) {
+  //   this.onDraw();
+  // }
 
   // intentSignal(intent: Intent<GameData>) {
   //   if (this.beforeWind != intent.data.wind.x){

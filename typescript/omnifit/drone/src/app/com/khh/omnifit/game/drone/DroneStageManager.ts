@@ -42,17 +42,28 @@ export class DroneStageManager implements LifeCycle {
     return p;
   }
 
+  public goStage(idx: number, data?: any): DroneStage {
+    console.log('goStage ' + idx + ' ' + data);
+    this.currentStage().onStop(data);
+    const nextStage: DroneStage = this.stages[idx];
+    nextStage.onStart(data);
+    this.position = idx;
+    return nextStage;
+  }
+
   public nextStage(data?: any): DroneStage {
+    console.log('nextStage ' + this.position + ', ' + data);
     this.currentStage().onStop(data);
     this.position = this.nextPosition();
     const nextStage: DroneStage = this.stages[this.position];
     nextStage.onStart(data);
     return nextStage;
-
   }
+
   public previousStage(data?: any): DroneStage {
     this.currentStage().onStop(data);
     this.position = this.previousPosition();
+    console.log('previousStage ' + this.position + ', ' + data);
     const previousStage: DroneStage = this.stages[this.position];
     previousStage.onStart(data);
     return previousStage;
@@ -66,20 +77,20 @@ export class DroneStageManager implements LifeCycle {
     return this.stages[this.position];
   }
 
+  // onCreate(canvas: HTMLCanvasElement, ... stages: DroneStage[]) {
   onCreate(canvas: HTMLCanvasElement) {
-    this.pushStage(new DroneStageIntro(canvas));
-    this.pushStage(new DroneStageGame(canvas));
-    this.pushStage(new DroneStageEnd(canvas));
-    this.stages.forEach(it => it.onCreate());
+    this.position = 0;
+    //this.stages.forEach(it => it.onCreate());
+    this.currentStage().onCreate({'data': 'start'});
   }
 
-  onStart(): void { this.currentStage().onStart(); }
-  onPause(data?: any) { this.currentStage().onPause(); }
-  onRestart(data?: any) { this.currentStage().onRestart(); }
-  onResume(data?: any) { this.currentStage().onResume(); }
-  onStop(data?: any) { this.currentStage().onStop(); }
+  onStart(data?: any): void { this.currentStage().onStart(data); }
+  onPause(data?: any) { this.currentStage().onPause(data); }
+  onRestart(data?: any) { this.currentStage().onRestart(data); }
+  onResume(data?: any) { this.currentStage().onResume(data); }
+  onStop(data?: any) { this.currentStage().onStop(data); }
   onDestroy(data?: any) {
-    this.stages.forEach(it => it.onDestroy());
+    this.stages.forEach(it => it.onDestroy(data));
     this.stages.length = 0;
   }
 
