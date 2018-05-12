@@ -1,5 +1,4 @@
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
 import {DroneStage} from '../../stage/DroneStage';
@@ -29,7 +28,6 @@ export class ArcWaveDummy extends ObjDrone {
     const x = Math.sin(this.angle.x) * this.amplitude.x;
     const y = Math.sin(this.angle.y) * this.amplitude.y;
 
-
     context.beginPath();
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.strokeStyle = '#FFFF00';
@@ -48,29 +46,13 @@ export class ArcWaveDummy extends ObjDrone {
     this.angle.add(this.velocity);
   }
 
+  onStop() {}
+  onCreate(data?: any) {}
+  onDestroy(data?: any) {}
+  onPause(data?: any) {}
+  onRestart(data?: any) {}
+  onResume(data?: any) {}
 
-
-  onStop() {
-    console.log('Mouse onStop.');
-  }
-
-  onCreate(data?: any) {
-  }
-
-  onDestroy(data?: any) {
-  }
-
-  onPause(data?: any) {
-  }
-
-  onRestart(data?: any) {
-  }
-
-  onResume(data?: any) {
-  }
-
-  // intentSignal(intent: Intent<GameData>) {
-  // }
 
 
 

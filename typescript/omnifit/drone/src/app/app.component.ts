@@ -1,27 +1,22 @@
 // import * as Processing from 'assets/javascript/processing-1.4.1';
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 // Observable operators
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import {hello} from 'assets/javascript/omnifit';
-import {Intent} from '../../lib-typescript/com/khh/data/Intent';
 import {DroneStageManager} from './com/khh/omnifit/game/drone/DroneStageManager';
 import {DroneStageEnd} from './com/khh/omnifit/game/drone/stage/DroneStageEnd';
 import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntro';
 import {DroneStageGame} from './com/khh/omnifit/game/drone/stage/DroneStageGame';
-import {DroneStage} from './com/khh/omnifit/game/drone/stage/DroneStage';
 import {Drone} from './com/khh/omnifit/game/drone/obj/drone/Drone';
 import {Ground} from './com/khh/omnifit/game/drone/obj/ground/Ground';
 import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
 import {Cloud} from './com/khh/omnifit/game/drone/obj/cloud/Cloud';
 import {Score} from './com/khh/omnifit/game/drone/obj/score/Score';
-import {createElement} from '@angular/core/src/view/element';
 
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
-
 // typescript observable subscribe example
 // https://xgrommx.github.io/rx-book/content/getting_started_with_rxjs/creating_and_querying_observable_sequences/creating_and_subscribing_to_simple_observable_sequences.html
 // https://wonism.github.io/rxjs-5/

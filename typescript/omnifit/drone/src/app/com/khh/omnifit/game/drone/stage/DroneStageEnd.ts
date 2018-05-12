@@ -27,40 +27,27 @@ export class DroneStageEnd extends DroneStage {
     this.flushBufferToCanvas();
   }
 
-
-  onCreate(data?: any): void {
-
-  }
+  onCreate(data?: any): void {}
   onStart(data?: any): void {
     this.previousStageData = data;
     this.onDraw();
-    this.resizeSubscription = this.canvasSubscribe('resize', _ => this.onDraw());
-    this.mouseDownSubscription = this.canvasSubscribe('mousedown', (event: MouseEvent) => {
+    this.resizeSubscription = this.canvasEventSubscribe('resize', _ => this.onDraw());
+    this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => {
       console.log({x: event.layerX, y: event.layerY});
       console.log('click END: ' + event.offsetX + '/' + event.offsetY);
       DroneStageManager.getInstance().previousStage();
     });
   }
 
-
   onStop(data?: any): void {
     if (isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
     if (isNullOrUndefined(this.mouseDownSubscription)) {this.mouseDownSubscription.unsubscribe(); }
   }
 
-  onDestroy(data?: any) {
-  }
-
-  onPause(data?: any) {
-  }
-
-  onRestart(data?: any) {
-  }
-
-  onResume(data?: any) {
-  }
-
-
+  onDestroy(data?: any) {}
+  onPause(data?: any) {}
+  onRestart(data?: any) {}
+  onResume(data?: any) {}
   eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
     return undefined;
   }

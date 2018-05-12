@@ -7,7 +7,6 @@ import {ViewInterface} from '../../../../../../../../lib-typescript/com/khh/grap
 export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterface {
   private _stage: DroneStage;
 
-
   get stage(): DroneStage {
     return this._stage;
   }
@@ -18,18 +17,11 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterfac
   }
 
   abstract onCreate(data?: any);
-
   abstract onDestroy(data?: any);
-
   abstract onPause(data?: any);
-
   abstract onRestart(data?: any);
-
   abstract onResume(data?: any);
-
   abstract onStart(data?: any);
-
   abstract onStop(data?: any);
-
   abstract onDraw(CanvasRenderingContext2D): void;
 }

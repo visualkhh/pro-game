@@ -1,5 +1,4 @@
 import {DroneStage} from './DroneStage';
-import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {ObjDrone} from '../obj/ObjDrone';
 import {isNullOrUndefined} from 'util';
@@ -9,16 +8,6 @@ export class DroneStageIntro extends DroneStage {
 
   private resizeSubscription: Subscription;
   private mouseDownSubscription: Subscription;
-
-  constructor(canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
-    super(canvas, objs);
-  }
-
-  // mousedown(event: MouseEvent): void {
-  //   console.log({x: event.layerX, y: event.layerY});
-  //   console.log('click Intro: ' + event.offsetX + '/' + event.offsetY);
-  //   this.next();
-  // }
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
@@ -35,7 +24,6 @@ export class DroneStageIntro extends DroneStage {
 
     //objs draw
     this.objs.forEach(it => it.onDraw(context));
-
     this.flushBufferToCanvas();
   }
 
@@ -46,10 +34,8 @@ export class DroneStageIntro extends DroneStage {
   onStart(data?: any): void {
     console.log('intro onStart');
     this.onDraw();
-    this.resizeSubscription = this.canvasSubscribe('resize', (evnet: Event) => {
-      this.onDraw();
-    });
-    this.mouseDownSubscription = this.canvasSubscribe('mousedown', (event: MouseEvent) => DroneStageManager.getInstance().nextStage());
+    this.resizeSubscription = this.canvasEventSubscribe('resize', (evnet: Event) => this.onDraw());
+    this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => DroneStageManager.getInstance().nextStage());
     this.objs.forEach(it => it.onStart(data));
   }
 

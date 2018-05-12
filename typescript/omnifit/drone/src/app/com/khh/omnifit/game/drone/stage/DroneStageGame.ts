@@ -10,17 +10,11 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {ObjDrone} from '../obj/ObjDrone';
 import {interval} from 'rxjs/observable/interval';
 import {RandomUtil} from '../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
 import {PointVector} from '../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {DroneStageManager} from '../DroneStageManager';
 import {isNullOrUndefined} from 'util';
-import {timer} from 'rxjs/observable/timer';
-import {Subject} from 'rxjs/Subject';
-import {EventEmitter} from 'events';
-import {Observer} from 'rxjs/Observer';
-import {Subscriber} from 'rxjs/Subscriber';
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
@@ -33,89 +27,21 @@ export class DroneStageGame extends DroneStage {
   private clockSubscription: Subscription;
   private wind = new PointVector();
   private windIntervalSubscription: Subscription;
-  // private windIntervalObservable: Observable<number>;
-
-  constructor(canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
-    super(canvas, objs);
-    this.init();
-  }
-  private init() {
-    // //x,y,z
-    // const drone = new Drone(this, 0, 0, 20, this.bufferCanvas);
-    // const cloud = new Cloud(this, 0, 0, 10, this.bufferCanvas);
-    // const score = new Score(this, 0, 0, 500, this.bufferCanvas);
-    // const wind = new Wind(this, 0, 0, 500, this.bufferCanvas);
-    // const ground = new Ground(this, 0, 0, 5, this.bufferCanvas);
-    // // let gravity = new Gravity(this, 0, 0, 0, this.bufferCanvas);
-    //
-    // this.objPush(cloud);
-    // this.objPush(drone);
-    // this.objPush(score);
-    // // for (let i = 0; i < 30; i++) {
-    // //   this.objPush(new MouseDummy(this, 0, 0, 100, this.bufferCanvas));
-    // // }
-    // // for (let i = 0; i < 2; i++) {
-    // //   this.objPush(new GravityDummy(this,0, 0, 100, this.bufferCanvas));
-    // // }
-    // // for (let i = 0; i < 2; i++) {
-    // //   this.objPush(new ArcWaveDummy(this, 0, 0, 101, this.bufferCanvas));
-    // // }
-    // this.objPush(ground);
-    // this.objPush(wind);
-    // this.objPush(new Drone(this, 0, 0, 20,this.bufferCanvas));
-
-    // this.objPush(new GravityDummy(this, 0, 0, 100, this.bufferCanvas));
-    // this.objPush(new MouseDummy(this, 0, 0, 100, this.bufferCanvas));
-    // this.objPush(new EarthGravityDummy(this, 0, 0, 101, this.bufferCanvas));
-    // this.objPush(new LiquidGravityDummy(this, 0, 0, 101, this.bufferCanvas));
-
-  // Subject().subscribe()
-
-
-    //wind
-    // const windObservable = interval(5000).pipe()
-    // const windObservable = interval(5000).map(_ => this.createRandomWind());
-    // const windObservable = interval(5000).take(this.createRandomWind())
-    // const windObservable = timer(0, 5000).flatMap(() => this.createRandomWind());
-    //switchMap(_ => this.createRandomWind());
-
-    // const windObservable = interval(5000).switchMap((e) => {
-    //   return Observable.create(ob => {
-    //     ob.next(this.createRandomWind());
-    //   });
-    // });
-    // const windObservable = interval(5000);
-
-
-  }
-
-
-
-
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
-    const width = this.width;
-    const height = this.height;
-    const x = width / 2;
-    const y = height / 2;
+    const x = this.width / 2;
+    const y = this.height / 2;
 
-    context.canvas.width = width;
-    context.canvas.height = height;
     context.font = '30pt Calibri';
     context.textAlign = 'center';
     context.fillStyle = 'pink';
-    context.fillRect(0, 0, width, height);
+    context.fillRect(0, 0, this.width, this.height);
     context.fillStyle = 'blue';
-    //console.log(this.canvas.width+"     "+height)
     context.fillText('********GAME********', x, y);
-    //ctxBuffer.save();
-
 
     //objs draw
     this.objs.forEach(it => it.onDraw(context));
-
-
     this.flushBufferToCanvas();
   }
 
@@ -124,20 +50,16 @@ export class DroneStageGame extends DroneStage {
   }
   onStart(data?: any): void {
 
-    const windObservable = interval(1000).map( n => this.wind);
+    const windObservable = interval(50).map( n => this.wind);
     this.eventSubscribes = new Map<string, Observable<any>>();
     this.eventSubscribes.set(DroneStageGame.EVENT_WIND, windObservable);
 
     this.objs.forEach(it => it.onStart());
     this.onDraw();
-    this.windIntervalSubscription = interval(3000).subscribe( n => this.wind = this.createRandomWind());
-    this.clockSubscription = this.clockSubscribe((date: Date) => {
-      this.onDraw();
-    });
-    this.resizeSubscription = this.canvasSubscribe('resize', (event: Event) => {
-      this.onDraw();
-    });
-    this.mouseDownSubscription = this.canvasSubscribe('mousedown', (event: MouseEvent) => DroneStageManager.getInstance().nextStage());
+    this.windIntervalSubscription = interval(50).subscribe( n => this.wind = this.createRandomWind());
+    this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
+    this.resizeSubscription = this.canvasEventSubscribe('resize', (event: Event) => this.onDraw());
+    this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => DroneStageManager.getInstance().nextStage());
   }
 
   onStop(data?: any): void {
@@ -149,16 +71,8 @@ export class DroneStageGame extends DroneStage {
   }
 
   private createRandomWind(): PointVector {
-    // return new PointVector(RandomUtil.random((this.canvas.width / 2) * -1, this.canvas.width / 2), RandomUtil.random((this.canvas.height / 2) * -1, this.canvas.height / 2));
-    // return new PointVector(Math.floor(RandomUtil.random(-10, 10)), Math.floor(RandomUtil.random(0, 0)));
-    // return this.wind.set(Math.floor(RandomUtil.random((this.canvas.width / 3) * -1, this.canvas.width / 3)));
-    const p = new PointVector(Math.floor(RandomUtil.random((this.width / 3) * -1, this.width / 3)));
-    return p;
+    return new PointVector(Math.floor(RandomUtil.random((this.width / 3) * -1, this.width / 3)));
   }
-
-  // public clockSubscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
-  //   return this.clock.subscribe(next, error, complete);
-  // }
 
   eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
     return this.eventSubscribes.get(eventName).subscribe(next, error, complete);
@@ -179,13 +93,4 @@ export class DroneStageGame extends DroneStage {
   onResume(data?: any) {
     this.objs.forEach(it => it.onResume(data));
   }
-
-  // intentSignal(intent: Intent<number>) {
-  //   console.log("intent game : "+intent.data);
-  //   let newItent = new Intent<GameData>(new GameData());
-  //   newItent.data.con = intent.data;
-  //   newItent.data.wind = this.wind;
-  //   newItent.name = intent.name;
-  //   this.objs.forEach(it=>it.intentSignal(newItent))
-  // }
 }

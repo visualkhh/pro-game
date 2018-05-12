@@ -1,17 +1,12 @@
 import {ObjDrone} from '../ObjDrone';
-import {Intent} from '../../../../../../../../../lib-typescript/com/khh/data/Intent';
 import {DroneStage} from '../../stage/DroneStage';
-import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {isNullOrUndefined} from 'util';
 import {DroneStageGame} from '../../stage/DroneStageGame';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 
-// import { Point } from '../org/Point';
 export class Wind extends ObjDrone {
 
-  // private beforeIntent: Intent<GameData>;
-  // private intent: Intent<GameData>;
   private resizeSubscription: Subscription;
   private windSubscription: Subscription;
 
@@ -45,20 +40,9 @@ export class Wind extends ObjDrone {
     if (!isNullOrUndefined(this.resizeSubscription)) { this.resizeSubscription.unsubscribe(); }
     if (!isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
   }
-
-  onCreate(data?: any) {
-  }
-
-  onDestroy(data?: any) {
-  }
-
-  onPause(data?: any) {
-  }
-
-  onRestart(data?: any) {
-  }
-
-  onResume(data?: any) {
-  }
-
+  onCreate(data?: any) {}
+  onDestroy(data?: any) {}
+  onPause(data?: any) {}
+  onRestart(data?: any) {}
+  onResume(data?: any) {}
 }

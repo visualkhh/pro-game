@@ -21,7 +21,6 @@ export class Drone extends ObjDrone {
 
   private concentrationSubscription: Subscription;
   private windSubscription: Subscription;
-  // private clockSubscription: Subscription;
 
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
@@ -29,18 +28,15 @@ export class Drone extends ObjDrone {
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-    // const context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
 
     //height
     const stepVal = (this.stage.height - this.img.height) / 10;
     const conStepVal = (stepVal * this.headsetConcentration);
 
-    //var mouse = new PointVector((this.canvas.width/2)+RandomUtil.random((this.img.width/2)*-1,this.img.width/2), (this.canvas.height - this.img.height/2) - conStepVal);
     const targetPosition = new PointVector((this.stage.width / 2), (this.stage.height - this.img.height / 2) - conStepVal);
     targetPosition.add(this.wind);
 
-    // console.log("MouseDummy ("+this.mousemoveEvent+")"+mouseX+","+mouseY);
     //////update
     const dir = PointVector.sub(targetPosition, this.position);
     dir.normalize();
@@ -68,8 +64,6 @@ export class Drone extends ObjDrone {
     context.beginPath();
     context.strokeStyle = '#FF0000';
     context.lineWidth = 2;
-    // context.drawImage(this.img, this.position.x - this.img.width/2, this.position.y - this.img.height/2, this.img.width * 0.3, this.img.height * 0.3);
-
     context.fillStyle = 'rgba(0, 0, 0, 0.2)';
     context.arc(this.position.x, this.stage.height, 20, 0, 2 * Math.PI);
     context.fill();
@@ -92,7 +86,6 @@ export class Drone extends ObjDrone {
 
 
   onStart(data?: any) {
-    // this.position = new PointVector(this.canvas.width/2, this.canvas.height/2);
     this.position = new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
@@ -114,19 +107,10 @@ export class Drone extends ObjDrone {
     if (!isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
   }
 
-  onCreate(data?: any) {
-  }
-
-  onDestroy(data?: any) {
-  }
-
-  onPause(data?: any) {
-  }
-
-  onRestart(data?: any) {
-  }
-
-  onResume(data?: any) {
-  }
+  onCreate(data?: any) {}
+  onDestroy(data?: any) {}
+  onPause(data?: any) {}
+  onRestart(data?: any) {}
+  onResume(data?: any) {}
 
 }

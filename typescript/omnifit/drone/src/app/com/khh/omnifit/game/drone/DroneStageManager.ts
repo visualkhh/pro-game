@@ -1,9 +1,5 @@
 import {DroneStage} from './stage/DroneStage';
-import {DroneStageIntro} from './stage/DroneStageIntro';
-import {DroneStageGame} from './stage/DroneStageGame';
-import {DroneStageEnd} from './stage/DroneStageEnd';
 import {LifeCycle} from '../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
-import {isNullOrUndefined} from 'util';
 
 export class DroneStageManager implements LifeCycle {
 
@@ -28,17 +24,13 @@ export class DroneStageManager implements LifeCycle {
   public nextPosition(): number {
     let p = this.position;
     p++;
-    if (p >= this.stages.length) {
-      p = this.stages.length - 1;
-    }
+    if (p >= this.stages.length) { p = this.stages.length - 1; }
     return p;
   }
   public previousPosition(): number {
     let p = this.position;
     p--;
-    if (p < 0) {
-      p = 0;
-    }
+    if (p < 0) { p = 0; }
     return p;
   }
 
@@ -52,7 +44,6 @@ export class DroneStageManager implements LifeCycle {
   }
 
   public nextStage(data?: any): DroneStage {
-    console.log('nextStage ' + this.position + ', ' + data);
     this.currentStage().onStop(data);
     this.position = this.nextPosition();
     const nextStage: DroneStage = this.stages[this.position];
@@ -63,7 +54,6 @@ export class DroneStageManager implements LifeCycle {
   public previousStage(data?: any): DroneStage {
     this.currentStage().onStop(data);
     this.position = this.previousPosition();
-    console.log('previousStage ' + this.position + ', ' + data);
     const previousStage: DroneStage = this.stages[this.position];
     previousStage.onStart(data);
     return previousStage;
@@ -77,10 +67,8 @@ export class DroneStageManager implements LifeCycle {
     return this.stages[this.position];
   }
 
-  // onCreate(canvas: HTMLCanvasElement, ... stages: DroneStage[]) {
   onCreate(canvas: HTMLCanvasElement) {
     this.position = 0;
-    //this.stages.forEach(it => it.onCreate());
     this.currentStage().onCreate({'data': 'start'});
   }
 
@@ -94,9 +82,4 @@ export class DroneStageManager implements LifeCycle {
     this.stages.length = 0;
   }
 
-  // private restore(position: number) {
-  //     this.clock.subscribe((x)=>{
-  //       this.clockSignal(x)
-  //     });
-  // }
 }
