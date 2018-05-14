@@ -1,12 +1,15 @@
 import * as express from 'express';
 import * as http from 'http';
+import {IncomingMessage, Server} from 'http';
+import {AddressInfo} from 'net';
 import * as WebSocket from 'ws';
 import {Clock} from '../lib-typescript/com/khh/clock/Clock';
+import {DroneRouter} from './src/com/khh/omnifit/game/drone/DroneRouter';
 //https://medium.com/factory-mind/websocket-node-js-express-step-by-step-using-typescript-725114ad5fe4
 const app = express();
 
 //initialize a simple http server
-const server = http.createServer(app);
+const server: Server = http.createServer(app);
 
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ server });
@@ -25,27 +28,26 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     //send immediatly a feedback to the incoming connection
     ws.send('Hi there, I am a WebSocket server4444dd44');
 
-    ws.on('request', (req) => {
-        // Parse the requested URL:
-        const url = require('url').parse(req.httpRequest.url);
-
-        // Assume that the token is passed as path:
-        // ws://url/TOKEN
-        const token = url.pathname.substring(1); // .substring(1) to strip off the leading `/`
-
-        // Validate token (implementation-dependent):
-        // if (! isValidToken(token)) return req.reject();
-
-        // Accept the request.
-        return req.accept();
+    ws.on('close', (closeCode: number) => {
+        console.log('websocket closed' + closeCode );
     });
+
 });
 
 //start our server
 server.listen(process.env.PORT || 8999, () => {
-    console.log(`Server started on port ${server.address().port} :)`);
+    const info: AddressInfo = server.address() as AddressInfo;
+    console.log(`Server started on port ${info.port} :)`);
 });
 
+const c = new Clock(1000);
+c.subscribe((it) => {
+    wss.clients.forEach((sit) => {
+       console.log('sit ' + sit);
+    });
+});
+
+// console.log(global)
 //
 // var WebSocketServer = require('ws').Server;
 // var wss = new WebSocketServer({ port: 1234 });

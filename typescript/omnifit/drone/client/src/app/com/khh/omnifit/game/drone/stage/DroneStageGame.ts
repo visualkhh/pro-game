@@ -11,7 +11,7 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import {interval} from 'rxjs/observable/interval';
-import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
+import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {DroneStageManager} from '../DroneStageManager';
 import {isNullOrUndefined} from 'util';

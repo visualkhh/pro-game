@@ -2,7 +2,7 @@ import {ObjDrone} from '../ObjDrone';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {DroneStage} from '../../stage/DroneStage';
 import {isNullOrUndefined} from 'util';
-import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
+import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {Subscription} from 'rxjs/Subscription';
 import {DeviceManager} from '../../../../drive/DeviceManager';
 import {DroneStageGame} from '../../stage/DroneStageGame';

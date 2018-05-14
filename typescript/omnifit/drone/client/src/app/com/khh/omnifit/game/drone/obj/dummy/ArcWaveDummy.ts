@@ -1,6 +1,6 @@
 import {ObjDrone} from '../ObjDrone';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
-import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/RandomUtil';
+import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {DroneStage} from '../../stage/DroneStage';
 
 export class ArcWaveDummy extends ObjDrone {
