@@ -1,6 +1,3 @@
 [submodule "lib-typescript"]
     path = typescript/omnifit/drone/lib-typescript
     url = https://github.com/visualkhh/lib-typescript.git
-[submodule "typescript/omnifit/drone-server/lib-typescript"]
-	path = typescript/omnifit/drone-server/lib-typescript
-	url = https://github.com/visualkhh/lib-typescript.git
