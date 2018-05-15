@@ -4,32 +4,56 @@ import {IncomingMessage, Server} from 'http';
 import {AddressInfo} from 'net';
 import * as WebSocket from 'ws';
 import {Clock} from '../lib-typescript/com/khh/clock/Clock';
+import {RandomUtil} from '../lib-typescript/com/khh/random/RandomUtil';
 import {DroneRouter} from './src/com/khh/omnifit/game/drone/DroneRouter';
+import {Telegram} from '../common/com/khh/omnifit/game/drone/domain/Telegram';
+import {StatusCode} from './src/com/khh/omnifit/game/drone/StatusCode';
+import {SessionManager} from './src/com/khh/omnifit/game/drone/session/SessionManager';
+import {ConvertUtil} from '../lib-typescript/com/khh/convert/ConvertUtil';
+import {ValidUtil} from '../lib-typescript/com/khh/valid/ValidUtil';
+import {RoomService} from './src/com/khh/omnifit/game/drone/service/RoomService';
 //https://medium.com/factory-mind/websocket-node-js-express-step-by-step-using-typescript-725114ad5fe4
 const app = express();
-
 //initialize a simple http server
 const server: Server = http.createServer(app);
-
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ server });
 
+const router = new DroneRouter();
 wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
 
-    console.log(ws);
+    //session
+    const session = new Map<string, any>();
+    const uuid = RandomUtil.uuid();
+    session.set('uuid', uuid);
+    session.set('name', uuid);
+    SessionManager.getInstance().sessions.set(ws, session);
+
+    // console.log(ws);
     //connection is up, let's add a simple simple event ss
     ws.on('message', (message: string) => {
-
         //log the received message and send it back to the client
         console.log('received: %s', message);
-        ws.send(`Hello, you sent -> ${message}`);
+        const request = ConvertUtil.strToObject(message) as Telegram<any>;
+        request.ws = ws;
+        const response = router.request(request);
+        delete response['ws'];
+        ws.send(ConvertUtil.toJson(response));
     });
 
-    //send immediatly a feedback to the incoming connection
-    ws.send('Hi there, I am a WebSocket server4444dd44');
+
+    router.request(new Telegram(ws, 'rooms/join', 'put', RoomService.ROOM_WAITING));
+
+    const init = new Telegram<Map<string,any>>(ws, 'welcome', req.method, session, StatusCode.OK);
+    delete init['ws'];
+    ws.send(ConvertUtil.toJson(init));
+
 
     ws.on('close', (closeCode: number) => {
         console.log('websocket closed' + closeCode );
+        SessionManager.getInstance().sessions.delete(ws);
+        const exitRoom = new Telegram(ws, 'rooms', 'delete');
+        router.request(exitRoom);
     });
 
 });
@@ -40,7 +64,7 @@ server.listen(process.env.PORT || 8999, () => {
     console.log(`Server started on port ${info.port} :)`);
 });
 
-const c = new Clock(1000);
+const c = new Clock(5000);
 c.subscribe((it) => {
     wss.clients.forEach((sit) => {
        console.log('sit ' + sit);
