@@ -1,26 +1,29 @@
-import {DroneStage} from './DroneStage';
-import {Subscription} from 'rxjs/Subscription';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/zip';
 import 'rxjs/add/observable/bindCallback';
 import 'rxjs/add/observable/range';
 import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/skip';
+import 'rxjs/add/observable/zip';
+import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/skip';
+import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs/observable/interval';
-import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
-import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
-import {DroneStageManager} from '../DroneStageManager';
+import {Subscription} from 'rxjs/Subscription';
 import {isNullOrUndefined} from 'util';
+import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
+import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
+import {DroneStage} from './DroneStage';
+import {DroneStageManager} from '../DroneStageManager';
+import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
 export class DroneStageGame extends DroneStage {
 
   public static readonly EVENT_WIND = 'WIND';
+  public static readonly EVENT_CONCENTRATION = 'CONCENTRATION';
+
   private resizeSubscription: Subscription;
   private mouseDownSubscription: Subscription;
   private eventSubscribes: Map<string, Observable<any>>;
@@ -41,33 +44,33 @@ export class DroneStageGame extends DroneStage {
     context.fillText('********GAME********', x, y);
 
     //objs draw
-    this.objs.forEach(it => it.onDraw(context));
+    this.objs.forEach((it) => it.onDraw(context));
     this.flushBufferToCanvas();
   }
 
   onCreate(data?: any): void {
-    this.objs.forEach(it => it.onCreate(data));
+    this.objs.forEach((it) => it.onCreate(data));
   }
   onStart(data?: any): void {
 
-    const windObservable = interval(50).map( n => this.wind);
+    const windObservable = interval(50).map( (n) => this.wind);
     this.eventSubscribes = new Map<string, Observable<any>>();
     this.eventSubscribes.set(DroneStageGame.EVENT_WIND, windObservable);
 
-    this.objs.forEach(it => it.onStart());
+    this.objs.forEach((it) => it.onStart());
     this.onDraw();
-    this.windIntervalSubscription = interval(50).subscribe( n => this.wind = this.createRandomWind());
+    this.windIntervalSubscription = interval(50).subscribe( (n) => this.wind = this.createRandomWind());
     this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.resizeSubscription = this.canvasEventSubscribe('resize', (event: Event) => this.onDraw());
-    this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => DroneStageManager.getInstance().nextStage());
+    // this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => DroneStageManager.getInstance().nextStage());
   }
 
   onStop(data?: any): void {
-    this.objs.forEach(it => it.onStop(data));
-    if (!isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
-    if (!isNullOrUndefined(this.mouseDownSubscription)) { this.mouseDownSubscription.unsubscribe(); }
-    if (!isNullOrUndefined(this.windIntervalSubscription)) { this.windIntervalSubscription.unsubscribe(); }
-    if (!isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
+    this.objs.forEach((it) => it.onStop(data));
+    if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.mouseDownSubscription)) { this.mouseDownSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.windIntervalSubscription)) { this.windIntervalSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
   }
 
   private createRandomWind(): PointVector {
@@ -79,18 +82,18 @@ export class DroneStageGame extends DroneStage {
   }
 
   onDestroy(data?: any) {
-    this.objs.forEach(it => it.onDestroy(data));
+    this.objs.forEach((it) => it.onDestroy(data));
   }
 
   onPause(data?: any) {
-    this.objs.forEach(it => it.onPause(data));
+    this.objs.forEach((it) => it.onPause(data));
   }
 
   onRestart(data?: any) {
-    this.objs.forEach(it => it.onRestart(data));
+    this.objs.forEach((it) => it.onRestart(data));
   }
 
   onResume(data?: any) {
-    this.objs.forEach(it => it.onResume(data));
+    this.objs.forEach((it) => it.onResume(data));
   }
 }

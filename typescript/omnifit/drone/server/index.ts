@@ -1,17 +1,17 @@
 import * as express from 'express';
-import * as http from 'http';
 import {IncomingMessage, Server} from 'http';
+import * as http from 'http';
 import {AddressInfo} from 'net';
 import * as WebSocket from 'ws';
+import {StatusCode} from '../common/com/khh/omnifit/game/drone/code/StatusCode';
+import {Telegram} from '../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {Clock} from '../lib-typescript/com/khh/clock/Clock';
+import {ConvertUtil} from '../lib-typescript/com/khh/convert/ConvertUtil';
 import {RandomUtil} from '../lib-typescript/com/khh/random/RandomUtil';
 import {DroneRouter} from './src/com/khh/omnifit/game/drone/DroneRouter';
-import {Telegram} from '../common/com/khh/omnifit/game/drone/domain/Telegram';
-import {StatusCode} from './src/com/khh/omnifit/game/drone/StatusCode';
-import {SessionManager} from './src/com/khh/omnifit/game/drone/session/SessionManager';
-import {ConvertUtil} from '../lib-typescript/com/khh/convert/ConvertUtil';
-import {ValidUtil} from '../lib-typescript/com/khh/valid/ValidUtil';
 import {RoomService} from './src/com/khh/omnifit/game/drone/service/RoomService';
+import {SessionManager} from './src/com/khh/omnifit/game/drone/session/SessionManager';
+import {ServerTelegram} from './src/com/khh/omnifit/game/drone/dto/ServerTelegram';
 //https://medium.com/factory-mind/websocket-node-js-express-step-by-step-using-typescript-725114ad5fe4
 const app = express();
 //initialize a simple http server
@@ -34,25 +34,22 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     ws.on('message', (message: string) => {
         //log the received message and send it back to the client
         console.log('received: %s', message);
-        const request = ConvertUtil.strToObject(message) as Telegram<any>;
+        const request = ConvertUtil.strToObject(message) as ServerTelegram<any>;
         request.ws = ws;
         const response = router.request(request);
         delete response['ws'];
         ws.send(ConvertUtil.toJson(response));
     });
 
+    router.request(new ServerTelegram(ws, 'rooms/join', 'put', RoomService.ROOM_WAITING));
 
-    router.request(new Telegram(ws, 'rooms/join', 'put', RoomService.ROOM_WAITING));
-
-    const init = new Telegram<Map<string,any>>(ws, 'welcome', req.method, session, StatusCode.OK);
-    delete init['ws'];
+    const init = new Telegram<Map<string, any>>('welcome', req.method, session, StatusCode.OK);
     ws.send(ConvertUtil.toJson(init));
-
 
     ws.on('close', (closeCode: number) => {
         console.log('websocket closed' + closeCode );
         SessionManager.getInstance().sessions.delete(ws);
-        const exitRoom = new Telegram(ws, 'rooms', 'delete');
+        const exitRoom = new ServerTelegram(ws, 'rooms', 'delete');
         router.request(exitRoom);
     });
 

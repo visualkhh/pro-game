@@ -1,5 +1,6 @@
 import {ConvertUtil} from '../../lib-typescript/com/khh/convert/ConvertUtil';
 import {ObjectMapper} from 'json-object-mapper';
+import {RandomUtil} from '../../lib-typescript/com/khh/random/RandomUtil';
 
 // const map = new Map<string, string>();
 const arr = new Array<string>();
@@ -37,3 +38,4 @@ var trigger = "rooms/asd",
     regexp = new RegExp('rooms/'),
     test = regexp.test(trigger);
 console.log(test + ""); // will display true
+console.log(RandomUtil.uuid()); // will display true

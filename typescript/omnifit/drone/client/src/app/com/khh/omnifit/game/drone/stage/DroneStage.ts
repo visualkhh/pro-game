@@ -1,26 +1,24 @@
 import {Observable} from 'rxjs/Observable';
-import {Subscription} from 'rxjs/Subscription';
-import {ObjDrone} from '../obj/ObjDrone';
-import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
-import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {interval} from 'rxjs/observable/interval';
+import {Subscription} from 'rxjs/Subscription';
+import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
-import {isNullOrUndefined} from 'util';
+import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
+import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {ObjDrone} from '../obj/ObjDrone';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
 
-
   public static readonly EVENT_CLOCK = 'CLOCK';
 
-  private _objs: Array<ObjDrone>;
+  private _objs: ObjDrone[];
   private clock: Observable<number>;
-  protected clockInterval = 5;
+  protected clockInterval = 100;
   private _canvas: HTMLCanvasElement;
   private _bufferCanvas: HTMLCanvasElement;
 
-
   //http://xgrommx.github.io/rx-book/content/observable/observable_methods/fromeventpattern.html
-  constructor(canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
+  constructor(canvas: HTMLCanvasElement, objs: ObjDrone[] = new Array<ObjDrone>()) {
     super();
     this._canvas = canvas;
     this._objs = objs;
@@ -52,22 +50,22 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
     context.drawImage(canvas, 0, 0);
   }
 
-  objPush(obj: ObjDrone| Array<ObjDrone>) {
+  objPush(obj: ObjDrone| ObjDrone[]) {
     if (obj instanceof Array) {
-      obj.forEach(it => this.objs.push(it));
+      obj.forEach((it) => this.objs.push(it));
     }else {
       this.objs.push(obj);
     }
   }
 
-  get objs(): Array<ObjDrone> {
+  get objs(): ObjDrone[] {
     return this._objs.sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
   }
 
   abstract onDraw(): void;
 
   protected clockIntervalSubscribe(next: (value: number) => void): Subscription {
-    if (isNullOrUndefined(this.clock)) {
+    if (ValidUtil.isNullOrUndefined(this.clock)) {
       this.clock = interval(this.clockInterval);
     }
     return this.clock.subscribe(next);

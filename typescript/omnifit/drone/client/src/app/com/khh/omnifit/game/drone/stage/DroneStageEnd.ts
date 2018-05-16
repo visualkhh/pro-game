@@ -3,6 +3,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {ObjDrone} from '../obj/ObjDrone';
 import {isNullOrUndefined} from 'util';
 import {DroneStageManager} from '../DroneStageManager';
+import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 
 export class DroneStageEnd extends DroneStage {
 
@@ -40,8 +41,8 @@ export class DroneStageEnd extends DroneStage {
   }
 
   onStop(data?: any): void {
-    if (isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
-    if (isNullOrUndefined(this.mouseDownSubscription)) {this.mouseDownSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.mouseDownSubscription)) {this.mouseDownSubscription.unsubscribe(); }
   }
 
   onDestroy(data?: any) {}

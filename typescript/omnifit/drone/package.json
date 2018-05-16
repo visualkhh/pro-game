@@ -1,5 +1,5 @@
 {
-  "name": "drone-server",
+  "name": "drone",
   "version": "1.0.0",
   "description": "npm init\r npm install typscript --save",
   "main": "index.js",

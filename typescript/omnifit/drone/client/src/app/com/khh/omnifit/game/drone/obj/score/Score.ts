@@ -1,10 +1,10 @@
-import {ObjDrone} from '../ObjDrone';
-import {Subscription} from 'rxjs/Subscription';
-import {DroneStage} from '../../stage/DroneStage';
-import {DroneStageManager} from '../../DroneStageManager';
-import {isNullOrUndefined} from 'util';
-import {DeviceManager} from '../../../../drive/DeviceManager';
 import {interval} from 'rxjs/observable/interval';
+import {Subscription} from 'rxjs/Subscription';
+import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DroneStageManager} from '../../DroneStageManager';
+import {DroneStage} from '../../stage/DroneStage';
+import {ObjDrone} from '../ObjDrone';
+import {DeviceManager} from '../../../../drive/DeviceManager';
 
 export class Score extends ObjDrone {
 
@@ -13,6 +13,7 @@ export class Score extends ObjDrone {
   private timeSecond: number;
   private resizeSubscription: Subscription;
   private concentrationSubscription: Subscription;
+  private keySubscription: Subscription;
   private beforeHeadsetConcentration = 0;
   private headsetConcentration = 0;
   constructor(stage: DroneStage, x: number, y: number, z: number) {
@@ -41,8 +42,19 @@ export class Score extends ObjDrone {
         DroneStageManager.getInstance().nextStage(this.point);
       }
     });
+    //key
+    this.keySubscription = DeviceManager.getInstance().fromeEvent('keydown', (e: KeyboardEvent) => {
+      // console.log('event ' + e.key + e.code);
+      let at = this.headsetConcentration;
+      if ('ArrowUp' === e.key) {
+        at++;
+      }else if ('ArrowDown' === e.key) {
+        at--;
+      }
+      DeviceManager.getInstance().dispatchCustomEvent(new CustomEvent(DeviceManager.EVENT_OMNIFIT_HEADSET_CONCENTRATION, {detail: at}));
+    });
     //집중도
-    this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe(concentration => {
+    this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration;
       this.point += Number(concentration);
@@ -50,9 +62,10 @@ export class Score extends ObjDrone {
   }
 
   onStop(data: any) {
-    if (!isNullOrUndefined(this.pointSubscription)) {this.pointSubscription.unsubscribe(); }
-    if (!isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
-    if (!isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.pointSubscription)) {this.pointSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.keySubscription)) {this.keySubscription.unsubscribe(); }
   }
 
   onCreate(data?: any) {}

@@ -1,8 +1,8 @@
+import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ObjImg} from '../../../../../../../../../lib-typescript/com/khh/graphics/ObjImg';
 import {Point} from '../../../../../../../../../lib-typescript/com/khh/graphics/Point';
-import {DroneStage} from '../stage/DroneStage';
-import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
+import {DroneStage} from '../stage/DroneStage';
 
 export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterface {
   private _stage: DroneStage;

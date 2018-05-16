@@ -1,11 +1,11 @@
-import {ObjDrone} from '../ObjDrone';
-import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
-import {DroneStage} from '../../stage/DroneStage';
-import {isNullOrUndefined} from 'util';
-import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {Subscription} from 'rxjs/Subscription';
+import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
+import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
+import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DeviceManager} from '../../../../drive/DeviceManager';
+import {DroneStage} from '../../stage/DroneStage';
 import {DroneStageGame} from '../../stage/DroneStageGame';
+import {ObjDrone} from '../ObjDrone';
 
 export class Drone extends ObjDrone {
   private position: PointVector;
@@ -18,10 +18,8 @@ export class Drone extends ObjDrone {
   private beforeWind = new PointVector();
   private wind = new PointVector();
 
-
   private concentrationSubscription: Subscription;
   private windSubscription: Subscription;
-
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
@@ -46,7 +44,6 @@ export class Drone extends ObjDrone {
     this.velocity.limit(2);
     this.position.add(this.velocity);
 
-
     //checkEdges
     if (this.position.x > this.stage.width) {
       this.position.x = 0;
@@ -69,9 +66,9 @@ export class Drone extends ObjDrone {
     context.fill();
     context.restore();
     context.translate(this.position.x, this.position.y);
-    if (!isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x > 0) {
+    if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x > 0) {
       context.rotate(-0.01);
-    }else if (!isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x < 0) {
+    }else if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x < 0) {
       context.rotate(0.01);
     }
 
@@ -84,27 +81,26 @@ export class Drone extends ObjDrone {
     this.beforePoint = this.position.get();
   }
 
-
   onStart(data?: any) {
     this.position = new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
     //집중도
-    this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe(concentration => {
+    this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration;
     });
-    //바람
-    this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
-      this.beforeWind = this.wind;
-      this.wind = wdata;
-    });
+    // //바람
+    // this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
+    //   this.beforeWind = this.wind;
+    //   this.wind = wdata;
+    // });
 
   }
 
   onStop() {
-    if (!isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
-    if (!isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
+    // if (!ValidUtil.isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
   }
 
   onCreate(data?: any) {}

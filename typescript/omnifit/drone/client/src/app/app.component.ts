@@ -14,6 +14,7 @@ import {Ground} from './com/khh/omnifit/game/drone/obj/ground/Ground';
 import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
 import {Cloud} from './com/khh/omnifit/game/drone/obj/cloud/Cloud';
 import {Score} from './com/khh/omnifit/game/drone/obj/score/Score';
+import {ReadyButton} from './com/khh/omnifit/game/drone/obj/button/ReadyButton';
 
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
@@ -77,13 +78,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     const groundImg = new Image(); groundImg.src = 'assets/image/ground.png';
     const ground = new Ground(droneStageGame, 0, 0, 5, groundImg);
 
+    const readyGreenImg = new Image(); readyGreenImg.src = 'assets/image/button/green-chrome.png';
+    const readyBlueImg = new Image(); readyBlueImg.src = 'assets/image/button/blue-chrome.png';
+    const readyYellowImg = new Image(); readyYellowImg.src = 'assets/image/button/yellow-chrome.png';
+    const readyBtn = new ReadyButton(droneStageGame, 0, 0, 400, readyGreenImg, readyYellowImg);
+
     const score = new Score(droneStageGame, 0, 0, 500);
     const wind = new Wind(droneStageGame, 0, 0, 500);
-    droneStageGame.objPush([cloud, drone, wind, score, ground]);
+    droneStageGame.objPush([cloud, drone, wind, score, ground, readyBtn]);
 
     //Stage End
     const droneStageEnd = new DroneStageEnd(this.canvas);
-
 
     // this.manager.onCreate(this.canvas, [droneStageIntro, droneStageGame, droneStageEnd]);
     this.manager.pushStage(droneStageIntro);
@@ -125,8 +130,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   this.manager.intentSignal(intent);
     // });
 
-
-
     //Observable
     //// this will capture all mousedown events from teh canvas element
     //  .fromEvent(this.canvas, 'mousedown')
@@ -161,13 +164,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     //    this.drawOnCanvas(prevPos, currentPos);
     //  });
   }
-
-
-
-
-
-
-
   // addReSizeSubscribe(next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription{
   //   // return Observable.fromEvent(window, 'resize').subscribe(e => console.log(e));
   //   return Observable.fromEvent(window, 'resize').subscribe(next);

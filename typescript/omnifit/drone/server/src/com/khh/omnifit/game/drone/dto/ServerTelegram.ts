@@ -1,17 +1,13 @@
-// import WebSocket = require('ws');
-import {StatusCode} from '../code/StatusCode';
+import WebSocket = require('ws');
+import {StatusCode} from '../../../../../../../../common/com/khh/omnifit/game/drone/code/StatusCode';
+import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 
-export class Telegram<T> {
-    public action = '';
-    public method = '';
-    public status: number;
-    public body: T;
+export class ServerTelegram<T> extends Telegram<T> {
+    public ws: WebSocket;
 
-    constructor(action: string = '', method: string = '', body: T = new Object() as T, status: number = StatusCode.OK) {
-        this.action = action;
-        this.method = method;
-        this.status = status;
-        this.body = body;
+    constructor(ws: WebSocket, action: string = '', method: string = '', body: T = new Object() as T, status: number = StatusCode.OK) {
+        super(action, method, body, status)
+        this.ws = ws;
     }
 
     // lift<R>(operator: Operator<T, R>): Observable<R> {
