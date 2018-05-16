@@ -10,12 +10,15 @@ import 'rxjs/add/operator/skip';
 import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
-import {isNullOrUndefined} from 'util';
+import {Telegram} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
-import {DroneStage} from './DroneStage';
-import {DroneStageManager} from '../DroneStageManager';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DeviceManager} from '../../../drive/DeviceManager';
+import {DroneStageManager} from '../DroneStageManager';
+import {DroneStage} from './DroneStage';
+import {Drone} from '../obj/drone/Drone';
+import {DroneResourceManager} from '../DroneResourceManager';
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
@@ -25,11 +28,13 @@ export class DroneStageGame extends DroneStage {
   public static readonly EVENT_CONCENTRATION = 'CONCENTRATION';
 
   private resizeSubscription: Subscription;
-  private mouseDownSubscription: Subscription;
   private eventSubscribes: Map<string, Observable<any>>;
   private clockSubscription: Subscription;
   private wind = new PointVector();
   private windIntervalSubscription: Subscription;
+  private concentrationSubscription: Subscription;
+
+  private drons: Map<string, Drone> = new Map<string, Drone>();
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
@@ -62,15 +67,34 @@ export class DroneStageGame extends DroneStage {
     this.windIntervalSubscription = interval(50).subscribe( (n) => this.wind = this.createRandomWind());
     this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.resizeSubscription = this.canvasEventSubscribe('resize', (event: Event) => this.onDraw());
-    // this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => DroneStageManager.getInstance().nextStage());
+    this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
+      if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
+        DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {headsetConcentration: concentration}));
+      }
+    });
+
+    //online offline
+    if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
+      DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
+        console.log('telegram game ' + telegram);
+        (telegram.body as any[]).forEach((it) => {
+          let drone = this.drons.get(it.uuid);
+          if (ValidUtil.isNullOrUndefined(drone)) {
+            drone = this.addDrone(it.uuid);
+          }
+        });
+      });
+    }else {
+      this.addDrone('local');
+    }
   }
 
   onStop(data?: any): void {
     this.objs.forEach((it) => it.onStop(data));
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
-    if (!ValidUtil.isNullOrUndefined(this.mouseDownSubscription)) { this.mouseDownSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.windIntervalSubscription)) { this.windIntervalSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
   }
 
   private createRandomWind(): PointVector {
@@ -79,6 +103,16 @@ export class DroneStageGame extends DroneStage {
 
   eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
     return this.eventSubscribes.get(eventName).subscribe(next, error, complete);
+  }
+
+  addDrone(id: string): Drone {
+    const droneImg = DroneResourceManager.getInstance().resources.get('droneImg');
+    const drone = new Drone(this, 0, 0, 20, droneImg);
+    drone.id = id;
+    drone.onStart();
+    this.drons.set(id, drone);
+    this.objPush(drone);
+    return drone;
   }
 
   onDestroy(data?: any) {

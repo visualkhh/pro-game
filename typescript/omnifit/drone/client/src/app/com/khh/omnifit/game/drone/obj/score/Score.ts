@@ -5,6 +5,7 @@ import {DroneStageManager} from '../../DroneStageManager';
 import {DroneStage} from '../../stage/DroneStage';
 import {ObjDrone} from '../ObjDrone';
 import {DeviceManager} from '../../../../drive/DeviceManager';
+import {Telegram} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 
 export class Score extends ObjDrone {
 
@@ -34,7 +35,7 @@ export class Score extends ObjDrone {
 
   onStart(data?: any) {
     this.point = 0;
-    this.timeSecond = 60;
+    this.timeSecond = 5;
     this.pointSubscription = interval(1000).subscribe((it) => {
       this.timeSecond--;
       console.log('timeSecond' + this.timeSecond);
@@ -44,7 +45,6 @@ export class Score extends ObjDrone {
     });
     //key
     this.keySubscription = DeviceManager.getInstance().fromeEvent('keydown', (e: KeyboardEvent) => {
-      // console.log('event ' + e.key + e.code);
       let at = this.headsetConcentration;
       if ('ArrowUp' === e.key) {
         at++;
@@ -58,6 +58,9 @@ export class Score extends ObjDrone {
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration;
       this.point += Number(concentration);
+      if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
+        DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {score: this.point}));
+      }
     });
   }
 

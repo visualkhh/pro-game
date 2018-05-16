@@ -6,14 +6,23 @@ import {DroneStage} from '../stage/DroneStage';
 
 export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterface {
   private _stage: DroneStage;
+  private _id: string;
+
+  constructor(stage: DroneStage, x: number = 0, y: number = 0, z: number = 0, img?: HTMLImageElement, head?: Point) {
+    super(x, y, z, img, head);
+    this._stage = stage;
+  }
 
   get stage(): DroneStage {
     return this._stage;
   }
 
-  constructor(stage: DroneStage, x: number = 0, y: number = 0, z: number = 0, img?: HTMLImageElement, head?: Point) {
-    super(x, y, z, img, head);
-    this._stage = stage;
+  get id(): string {
+    return this._id;
+  }
+
+  set id(value: string) {
+    this._id = value;
   }
 
   abstract onCreate(data?: any);

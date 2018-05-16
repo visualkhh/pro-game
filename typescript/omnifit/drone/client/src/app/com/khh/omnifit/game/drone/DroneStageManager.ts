@@ -4,6 +4,7 @@ import {Subject} from 'rxjs/Subject';
 import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {DroneStage} from './stage/DroneStage';
 import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
+import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 
 export class DroneStageManager implements LifeCycle {
 
@@ -12,7 +13,7 @@ export class DroneStageManager implements LifeCycle {
   private position = 0;
   private stages: DroneStage[];
   private _webSocket: WebSocket;
-  private _webScoketSubject: Subject<Telegram<any>>;
+  private _webSocketSubject: Subject<Telegram<any>>;
 
 //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
@@ -26,8 +27,7 @@ export class DroneStageManager implements LifeCycle {
   private constructor() {
     this.stages = new Array<DroneStage>();
     this._webSocket = new WebSocket('ws://localhost:8999');
-    const observable = Observable.create(
-      (obs: Observer<MessageEvent>) => {
+    const observable = Observable.create((obs: Observer<MessageEvent>) => {
         this._webSocket.onmessage = obs.next.bind(obs);
         this._webSocket.onerror = obs.error.bind(obs);
         this._webSocket.onclose = obs.complete.bind(obs);
@@ -43,7 +43,7 @@ export class DroneStageManager implements LifeCycle {
         console.log('error websocket');
       },
     };
-    this._webScoketSubject = Subject.create(observer as Observer<any>, observable).map((response: MessageEvent): Telegram<any> => {
+    this._webSocketSubject = Subject.create(observer as Observer<any>, observable).map((response: MessageEvent): Telegram<any> => {
       const data = JSON.parse(response.data) as Telegram<any>;
       return data;
     });
@@ -53,8 +53,8 @@ export class DroneStageManager implements LifeCycle {
     return this._webSocket;
   }
 
-  get webScoketSubject(): Subject<Telegram<any>> {
-    return this._webScoketSubject;
+  get webSocketSubject(): Subject<Telegram<any>> {
+    return this._webSocketSubject;
   }
 
   public nextPosition(): number {
@@ -112,7 +112,10 @@ export class DroneStageManager implements LifeCycle {
   onPause(data?: any) { this.currentStage().onPause(data); }
   onRestart(data?: any) { this.currentStage().onRestart(data); }
   onResume(data?: any) { this.currentStage().onResume(data); }
-  onStop(data?: any) { this.currentStage().onStop(data); }
+  onStop(data?: any) {
+    this.currentStage().onStop(data);
+    if (!ValidUtil.isNullOrUndefined(this._webSocketSubject)) { this._webSocketSubject.unsubscribe()}
+  }
   onDestroy(data?: any) {
     this.stages.forEach((it) => it.onDestroy(data));
     this.stages.length = 0;

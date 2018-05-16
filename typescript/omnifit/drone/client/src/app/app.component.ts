@@ -15,6 +15,7 @@ import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
 import {Cloud} from './com/khh/omnifit/game/drone/obj/cloud/Cloud';
 import {Score} from './com/khh/omnifit/game/drone/obj/score/Score';
 import {ReadyButton} from './com/khh/omnifit/game/drone/obj/button/ReadyButton';
+import {DroneResourceManager} from './com/khh/omnifit/game/drone/DroneResourceManager';
 
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
@@ -38,6 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private manager: DroneStageManager;
   private context: CanvasRenderingContext2D | null;
   @ViewChild('canvas') public canvasElementRef: ElementRef;
+  private resourceManager: DroneResourceManager;
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
   }
 
@@ -62,6 +64,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     //game initialize
     this.manager = DroneStageManager.getInstance();
+    this.resourceManager = DroneResourceManager.getInstance();
 
     //stage Intro
     const droneStageIntro = new DroneStageIntro(this.canvas);
@@ -69,23 +72,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     //Stage Game
     const droneStageGame = new DroneStageGame(this.canvas);
 
-    const droneImg = new Image(); droneImg.src = 'assets/image/drone.png';
-    const drone = new Drone(droneStageGame, 0, 0, 20, droneImg);
+    // const droneImg = new Image(); droneImg.src = 'assets/image/drone.png';
+    // const drone = new Drone(droneStageGame, 0, 0, 20, droneImg);
 
-    const cloudImg = new Image(); cloudImg.src = 'assets/image/cloud.png';
+    const cloudImg = this.resourceManager.resources.get('cloudImg');
     const cloud = new Cloud(droneStageGame, 0, 0, 10, cloudImg);
 
-    const groundImg = new Image(); groundImg.src = 'assets/image/ground.png';
+    const groundImg = this.resourceManager.resources.get('groundImg');
     const ground = new Ground(droneStageGame, 0, 0, 5, groundImg);
 
-    const readyGreenImg = new Image(); readyGreenImg.src = 'assets/image/button/green-chrome.png';
-    const readyBlueImg = new Image(); readyBlueImg.src = 'assets/image/button/blue-chrome.png';
-    const readyYellowImg = new Image(); readyYellowImg.src = 'assets/image/button/yellow-chrome.png';
+    const readyGreenImg = this.resourceManager.resources.get('readyGreenImg');
+    const readyBlueImg = this.resourceManager.resources.get('readyBlueImg');
+    const readyYellowImg = this.resourceManager.resources.get('readyYellowImg');
     const readyBtn = new ReadyButton(droneStageGame, 0, 0, 400, readyGreenImg, readyYellowImg);
 
     const score = new Score(droneStageGame, 0, 0, 500);
     const wind = new Wind(droneStageGame, 0, 0, 500);
-    droneStageGame.objPush([cloud, drone, wind, score, ground, readyBtn]);
+    droneStageGame.objPush([cloud, wind, score, ground, readyBtn]);
 
     //Stage End
     const droneStageEnd = new DroneStageEnd(this.canvas);

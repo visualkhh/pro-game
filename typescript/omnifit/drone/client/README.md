@@ -5,7 +5,7 @@
 
 #ng build
 1. ng build  --base-href "."  or ng build --prod --env=prod --output-path=dist-prod/
-
+2. ./node_modules/@angular/cli/bin/ng build -w -op ../resources/webapp --dev
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.3.
 

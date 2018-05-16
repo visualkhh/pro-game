@@ -4,10 +4,11 @@ import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/r
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DeviceManager} from '../../../../drive/DeviceManager';
 import {DroneStage} from '../../stage/DroneStage';
-import {DroneStageGame} from '../../stage/DroneStageGame';
 import {ObjDrone} from '../ObjDrone';
 
 export class Drone extends ObjDrone {
+  static readonly STATUS_REMOTE = 'REMOTE';
+  static readonly STATUS_LOCAL = 'LOCAL';
   private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
@@ -20,6 +21,7 @@ export class Drone extends ObjDrone {
 
   private concentrationSubscription: Subscription;
   private windSubscription: Subscription;
+  private status: string = Drone.STATUS_LOCAL;
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
@@ -86,10 +88,12 @@ export class Drone extends ObjDrone {
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
     //집중도
-    this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
-      this.beforeHeadsetConcentration = this.headsetConcentration;
-      this.headsetConcentration = concentration;
-    });
+    if (this.status === Drone.STATUS_LOCAL) {
+      this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
+        this.beforeHeadsetConcentration = this.headsetConcentration;
+        this.headsetConcentration = concentration;
+      });
+    }
     // //바람
     // this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
     //   this.beforeWind = this.wind;
