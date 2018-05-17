@@ -26,7 +26,7 @@ export class DroneStageManager implements LifeCycle {
 
   private constructor() {
     this.stages = new Array<DroneStage>();
-    this._webSocket = new WebSocket('ws://localhost:8999');
+    this._webSocket = new WebSocket('ws://192.168.13.58:8999');
     const observable = Observable.create((obs: Observer<MessageEvent>) => {
         this._webSocket.onmessage = obs.next.bind(obs);
         this._webSocket.onerror = obs.error.bind(obs);
@@ -114,7 +114,7 @@ export class DroneStageManager implements LifeCycle {
   onResume(data?: any) { this.currentStage().onResume(data); }
   onStop(data?: any) {
     this.currentStage().onStop(data);
-    if (!ValidUtil.isNullOrUndefined(this._webSocketSubject)) { this._webSocketSubject.unsubscribe()}
+    if (!ValidUtil.isNullOrUndefined(this._webSocketSubject)) { this._webSocketSubject.unsubscribe(); }
   }
   onDestroy(data?: any) {
     this.stages.forEach((it) => it.onDestroy(data));

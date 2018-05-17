@@ -7,21 +7,19 @@ import {DroneStage} from '../../stage/DroneStage';
 import {ObjDrone} from '../ObjDrone';
 
 export class Drone extends ObjDrone {
-  static readonly STATUS_REMOTE = 'REMOTE';
-  static readonly STATUS_LOCAL = 'LOCAL';
+  private _initX: number;
   private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
   private beforePoint: PointVector;
 
-  private beforeHeadsetConcentration = 0;
-  private headsetConcentration = 0;
+  private beforeConcentration = 0;
+  private concentration = 0;
   private beforeWind = new PointVector();
   private wind = new PointVector();
 
   private concentrationSubscription: Subscription;
   private windSubscription: Subscription;
-  private status: string = Drone.STATUS_LOCAL;
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
@@ -32,12 +30,14 @@ export class Drone extends ObjDrone {
 
     //height
     const stepVal = (this.stage.height - this.img.height) / 10;
-    const conStepVal = (stepVal * this.headsetConcentration);
+    const conStepVal = (stepVal * this.concentration);
 
-    const targetPosition = new PointVector((this.stage.width / 2), (this.stage.height - this.img.height / 2) - conStepVal);
+    //targetPosition
+    const targetPosition = new PointVector(this._initX || (this.stage.width / 2), (this.stage.height - this.img.height / 2) - conStepVal);
     targetPosition.add(this.wind);
 
     //////update
+    //방향
     const dir = PointVector.sub(targetPosition, this.position);
     dir.normalize();
     dir.mult(0.2);
@@ -74,26 +74,28 @@ export class Drone extends ObjDrone {
       context.rotate(0.01);
     }
 
-    context.scale(0.5, 0.5);
+    // context.scale(0.5, 0.5);
     context.drawImage(this.img, -this.img.width / 2, -this.img.height / 2);
     context.arc(0, 0, 5, 0, 2 * Math.PI);
-    context.fill();
 
+    context.font = '10pt Calibri';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillStyle = 'blue';
+    context.fillText(this.id, (-this.img.width / 2) + this.img.width / 2, (-this.img.height / 2));
     context.beginPath();
     this.beforePoint = this.position.get();
   }
 
   onStart(data?: any) {
-    this.position = new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
+    this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
     //집중도
-    if (this.status === Drone.STATUS_LOCAL) {
-      this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
-        this.beforeHeadsetConcentration = this.headsetConcentration;
-        this.headsetConcentration = concentration;
-      });
-    }
+    //   this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
+    //     this.beforeConcentration = this.concentration;
+    //     this.concentration = concentration;
+    //   });
     // //바람
     // this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
     //   this.beforeWind = this.wind;
@@ -103,7 +105,7 @@ export class Drone extends ObjDrone {
   }
 
   onStop() {
-    if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
+    // if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
     // if (!ValidUtil.isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
   }
 
@@ -113,4 +115,16 @@ export class Drone extends ObjDrone {
   onRestart(data?: any) {}
   onResume(data?: any) {}
 
+  get initX(): number {
+    return this._initX;
+  }
+
+  set initX(value: number) {
+    this._initX = value;
+  }
+
+  public setConcentration(concentration: number): void {
+    this.beforeConcentration = this.concentration;
+    this.concentration = concentration;
+  }
 }

@@ -19,6 +19,7 @@ import {DroneStageManager} from '../DroneStageManager';
 import {DroneStage} from './DroneStage';
 import {Drone} from '../obj/drone/Drone';
 import {DroneResourceManager} from '../DroneResourceManager';
+import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
@@ -34,8 +35,10 @@ export class DroneStageGame extends DroneStage {
   private windIntervalSubscription: Subscription;
   private concentrationSubscription: Subscription;
 
-  private drons: Map<string, Drone> = new Map<string, Drone>();
+  private drones: Map<string, Drone> = new Map<string, Drone>();
   private websocketSubscription: Subscription;
+
+  private hostDrone: Drone;
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
@@ -69,6 +72,7 @@ export class DroneStageGame extends DroneStage {
     this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.resizeSubscription = this.canvasEventSubscribe('resize', (event: Event) => this.onDraw());
     this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
+      this.hostDrone.setConcentration(concentration);
       if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
         DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {headsetConcentration: concentration}));
       }
@@ -78,15 +82,27 @@ export class DroneStageGame extends DroneStage {
     if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
       this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
         console.log('telegram game ' + telegram);
-        (telegram.body as any[]).forEach((it) => {
-          let drone = this.drons.get(it.uuid);
+        const users = telegram.body as any[];
+        const wjumpSize = this.width / (users.length + 1);
+        let wjump = 0;
+        //유저 정리
+        CollectionUtil.ignoreMapItem(this.drones, new Set(users.map((it) => it.uuid)), (it) => this.removeObjsOnStopDestory(it));
+        users.forEach((it) => {
+          let drone  = this.drones.get(it.uuid);
           if (ValidUtil.isNullOrUndefined(drone)) {
-            drone = this.addDrone(it.uuid);
+            drone = this.addDroneOnCreateStart(it.uuid, it.host);
           }
+          if ('host' === it.host) {
+            this.hostDrone = drone;
+          }else if ('other' === it.host) {
+            drone.setConcentration(it.headsetConcentration || 0);
+          }
+          wjump += wjumpSize;
+          drone.initX = wjump;
         });
       });
     }else {
-      this.addDrone('local');
+      this.hostDrone = this.addDroneOnCreateStart('local', 'host');
     }
   }
 
@@ -107,12 +123,21 @@ export class DroneStageGame extends DroneStage {
     return this.eventSubscribes.get(eventName).subscribe(next, error, complete);
   }
 
-  addDrone(id: string): Drone {
-    const droneImg = DroneResourceManager.getInstance().resources.get('droneImg');
-    const drone = new Drone(this, 0, 0, 20, droneImg);
+  addDroneOnCreateStart(id: string, host?: string): Drone {
+    let drone = this.drones.get(id);
+    if (!ValidUtil.isNullOrUndefined(drone)) {
+      this.removeObjsOnStopDestory(drone);
+    }
+
+    let droneImg = DroneResourceManager.getInstance().resources.get('droneImg');
+    if ('host' === host) {
+      droneImg = DroneResourceManager.getInstance().resources.get('hostDroneImg');
+    }
+    drone = new Drone(this, 0, 0, 20, droneImg);
     drone.id = id;
+    drone.onCreate();
     drone.onStart();
-    this.drons.set(id, drone);
+    this.drones.set(id, drone);
     this.objPush(drone);
     return drone;
   }

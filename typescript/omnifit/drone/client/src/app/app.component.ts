@@ -87,8 +87,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     const readyBtn = new ReadyButton(droneStageGame, 0, 0, 400, readyGreenImg, readyYellowImg);
 
     const score = new Score(droneStageGame, 0, 0, 500);
-    const wind = new Wind(droneStageGame, 0, 0, 500);
-    droneStageGame.objPush([cloud, wind, score, ground, readyBtn]);
+    // const wind = new Wind(droneStageGame, 0, 0, 500);
+    droneStageGame.objPush([cloud, score, ground, readyBtn]);
 
     //Stage End
     const droneStageEnd = new DroneStageEnd(this.canvas);

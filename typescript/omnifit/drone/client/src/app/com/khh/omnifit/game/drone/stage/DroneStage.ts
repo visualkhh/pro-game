@@ -6,6 +6,7 @@ import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/g
 import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {ObjDrone} from '../obj/ObjDrone';
+import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
 
@@ -13,7 +14,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
 
   private _objs: ObjDrone[];
   private clock: Observable<number>;
-  protected clockInterval = 100;
+  protected clockInterval = 10;
   private _canvas: HTMLCanvasElement;
   private _bufferCanvas: HTMLCanvasElement;
 
@@ -60,6 +61,12 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
 
   get objs(): ObjDrone[] {
     return this._objs.sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
+  }
+  removeObjsOnStopDestory(obj: ObjDrone): void {
+     CollectionUtil.deleteArrayItem(this._objs, obj, (it) => {
+       it.onStop();
+       it.onDestroy();
+     });
   }
 
   abstract onDraw(): void;

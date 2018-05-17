@@ -25,6 +25,7 @@ export class DroneResourceManager implements LifeCycle {
     const readyBlueImg = new Image(); readyBlueImg.src = 'assets/image/button/blue-chrome.png';
     const readyYellowImg = new Image(); readyYellowImg.src = 'assets/image/button/yellow-chrome.png';
     const droneImg = new Image(); droneImg.src = 'assets/image/drone.png';
+    const hostDroneImg = new Image(); hostDroneImg.src = 'assets/image/host-drone.png';
 
     this._resources = new Map<string, HTMLImageElement>();
     this._resources.set('cloudImg', cloudImg);
@@ -33,6 +34,7 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('readyBlueImg', readyBlueImg);
     this._resources.set('readyYellowImg', readyYellowImg);
     this._resources.set('droneImg', droneImg);
+    this._resources.set('hostDroneImg', hostDroneImg);
 
     this._resources.forEach((v, k) => {
       Observable.fromEvent(v, 'load').subscribe( (it) => {

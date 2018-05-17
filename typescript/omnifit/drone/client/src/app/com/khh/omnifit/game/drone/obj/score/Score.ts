@@ -35,12 +35,12 @@ export class Score extends ObjDrone {
 
   onStart(data?: any) {
     this.point = 0;
-    this.timeSecond = 5;
+    this.timeSecond = 60;
     this.pointSubscription = interval(1000).subscribe((it) => {
       this.timeSecond--;
       console.log('timeSecond' + this.timeSecond);
       if (this.timeSecond <= 0) {
-        DroneStageManager.getInstance().nextStage(this.point);
+       // DroneStageManager.getInstance().nextStage(this.point);
       }
     });
     //key

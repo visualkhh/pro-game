@@ -4,6 +4,8 @@ import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/dron
 import {ConvertUtil} from '../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 import {RandomUtil} from '../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {SessionManager} from '../session/SessionManager';
+import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {CollectionUtil} from '../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 
 export class RoomService {
     static readonly ROOM_WAITING = 'waiting-room';
@@ -13,7 +15,9 @@ export class RoomService {
         this.rooms.set(RoomService.ROOM_WAITING, []);
         interval(1000).subscribe((it) => {
             this.rooms.forEach((v, k) => {
-                v.forEach((user) => user.send(ConvertUtil.toJson(new Telegram('rooms', 'detail', this.getRoom(k)))));
+                v.forEach((user) => {
+                    user.send(ConvertUtil.toJson(new Telegram('rooms', 'detail', this.getRoom(k, user))));
+                });
             });
         });
     }
@@ -21,13 +25,8 @@ export class RoomService {
     public exitRoom(ws: WebSocket): string[] {
         const r = new Array<string>();
         this.rooms.forEach((v: WebSocket[], k: string, map: Map<string, WebSocket[]>) => {
-            v.forEach((it, idx) => {
-                if (it === ws) {
-                    v.splice(idx, 1);
-                    r.push(k);
-                }
-            });
-            if ('waiting-room' !== k && v.length <= 0) {
+            CollectionUtil.deleteArrayItem(v, ws, (it) => r.push(k));
+            if (RoomService.ROOM_WAITING !== k && v.length <= 0) {
                 map.delete(k);
             }
         });
@@ -48,10 +47,18 @@ export class RoomService {
     public getRoomWebSocket(name: string): WebSocket[] {
         return this.rooms.get(name) || new Array<WebSocket>();
     }
-    public getRoom(name: string): Array<Map<string, any>> {
+    public getRoom(name: string, user?: WebSocket): Array<Map<string, any>> {
         const users = Array<Map<string, any>>();
         const list = this.rooms.get(name) || new Array<WebSocket>();
-        list.forEach((it) => users.push(SessionManager.getInstance().get(it)));
+        list.forEach((it) => {
+            const map = new Map<string, any>(SessionManager.getInstance().get(it));
+            if (!ValidUtil.isNullOrUndefined(user) && user === it) {
+                map.set('host', 'host');
+            }else {
+                map.set('host', 'other');
+            }
+            users.push(map);
+        });
         return users;
     }
     public sendRoom(name: string, send: Telegram<any> | string): number {
