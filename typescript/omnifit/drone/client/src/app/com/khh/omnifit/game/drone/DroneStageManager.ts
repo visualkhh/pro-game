@@ -1,10 +1,10 @@
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 import {Subject} from 'rxjs/Subject';
-import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
-import {DroneStage} from './stage/DroneStage';
 import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
+import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DroneStage} from './stage/DroneStage';
 
 export class DroneStageManager implements LifeCycle {
 
