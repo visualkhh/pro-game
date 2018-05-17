@@ -35,6 +35,7 @@ export class DroneStageGame extends DroneStage {
   private concentrationSubscription: Subscription;
 
   private drons: Map<string, Drone> = new Map<string, Drone>();
+  private websocketSubscription: Subscription;
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
@@ -75,7 +76,7 @@ export class DroneStageGame extends DroneStage {
 
     //online offline
     if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
-      DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
+      this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
         console.log('telegram game ' + telegram);
         (telegram.body as any[]).forEach((it) => {
           let drone = this.drons.get(it.uuid);
@@ -95,6 +96,7 @@ export class DroneStageGame extends DroneStage {
     if (!ValidUtil.isNullOrUndefined(this.windIntervalSubscription)) { this.windIntervalSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.websocketSubscription)) {this.websocketSubscription.unsubscribe(); }
   }
 
   private createRandomWind(): PointVector {

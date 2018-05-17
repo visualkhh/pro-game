@@ -10,6 +10,7 @@ export class DroneStageIntro extends DroneStage {
   private resizeSubscription: Subscription;
   private mouseDownSubscription: Subscription;
   private clockSubscription: Subscription;
+  private websocketSubscription: Subscription;
 
   constructor(canvas: HTMLCanvasElement, objs?: ObjDrone[]) {
     super(canvas, objs);
@@ -39,7 +40,7 @@ export class DroneStageIntro extends DroneStage {
 
   onStart(data?: any): void {
 
-    DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'welcome').subscribe((telegram) => {
+    this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'welcome').subscribe((telegram) => {
       console.log('telegram Intro ' + telegram);
     });
 
@@ -56,6 +57,7 @@ export class DroneStageIntro extends DroneStage {
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) { this.resizeSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.mouseDownSubscription)) { this.mouseDownSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.websocketSubscription)) { this.websocketSubscription.unsubscribe(); }
   }
 
   eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {

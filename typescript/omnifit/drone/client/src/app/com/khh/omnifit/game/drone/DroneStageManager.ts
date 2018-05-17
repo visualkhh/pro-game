@@ -31,7 +31,7 @@ export class DroneStageManager implements LifeCycle {
         this._webSocket.onmessage = obs.next.bind(obs);
         this._webSocket.onerror = obs.error.bind(obs);
         this._webSocket.onclose = obs.complete.bind(obs);
-        return this._webSocket.close.bind(this._webSocket);
+        //return this._webSocket.close.bind(this._webSocket);
       });
     const observer = {
       next: (data: any) => {
