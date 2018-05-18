@@ -8,6 +8,9 @@ import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Sta
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
+import {DroneResourceManager} from '../DroneResourceManager';
+import {Drone} from '../obj/drone/Drone';
+import {Obj} from '../../../../../../../../../lib-typescript/com/khh/obj/Obj';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
 
@@ -75,13 +78,18 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
     this.objsAll.forEach((it) => it.onDraw(context));
     this.flushCanvas(canvas);
   }
-  removeObjsOnStopDestory(obj: ObjDrone): void {
+  removeObjOnStopDestory(obj: ObjDrone): void {
      CollectionUtil.deleteArrayItem(this._objs, obj, (it) => {
        it.onStop();
        it.onDestroy();
      });
   }
-
+  addObjCreateStart(obj: ObjDrone): ObjDrone {
+    obj.onCreate();
+    obj.onStart();
+    this.pushObj(obj);
+    return obj;
+  }
   abstract onDraw(): void;
 
   protected clockIntervalSubscribe(next: (value: number) => void): Subscription {
@@ -93,6 +101,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
   canvasEventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
     return Observable.fromEvent(this._canvas, eventName).subscribe(next);
   }
+
   abstract eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription;
 
   abstract onCreate(data?: any);

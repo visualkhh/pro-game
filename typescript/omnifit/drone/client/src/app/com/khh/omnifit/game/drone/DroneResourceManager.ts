@@ -7,7 +7,7 @@ import {DroneStage} from './stage/DroneStage';
 export class DroneResourceManager implements LifeCycle {
   private static instance: DroneResourceManager;
 
-  private _resources: Map<string, HTMLImageElement>;
+  private _resources: Map<string, any>;
 
 //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
@@ -26,6 +26,9 @@ export class DroneResourceManager implements LifeCycle {
     const readyYellowImg = new Image(); readyYellowImg.src = 'assets/image/button/yellow-chrome.png';
     const droneImg = new Image(); droneImg.src = 'assets/image/drone.png';
     const hostDroneImg = new Image(); hostDroneImg.src = 'assets/image/host-drone.png';
+    const character_01Img = new Image(); character_01Img.src = 'assets/image/character_01.png';
+    const character_02Img = new Image(); character_02Img.src = 'assets/image/character_02.png';
+    const character_03Img = new Image(); character_03Img.src = 'assets/image/character_03.png';
 
     this._resources = new Map<string, HTMLImageElement>();
     this._resources.set('cloudImg', cloudImg);
@@ -35,6 +38,9 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('readyYellowImg', readyYellowImg);
     this._resources.set('droneImg', droneImg);
     this._resources.set('hostDroneImg', hostDroneImg);
+    this._resources.set('character_01Img', character_01Img);
+    this._resources.set('character_02Img', character_02Img);
+    this._resources.set('character_03Img', character_03Img);
 
     this._resources.forEach((v, k) => {
       Observable.fromEvent(v, 'load').subscribe( (it: Event) => {
@@ -44,8 +50,15 @@ export class DroneResourceManager implements LifeCycle {
     });
   }
 
-  get resources(): Map<string, HTMLImageElement> {
-    return this._resources;
+  resources(name: string): any {
+    return this._resources.get(name);
+  }
+
+  setImageResources(name: string, src: string, load: (it: Event) => void): HTMLImageElement {
+    const img = new Image(); img.src = src;
+    Observable.fromEvent(img, 'load').subscribe(load);
+    this._resources.set(name, img);
+    return img;
   }
 
   onCreate(...data: any[]) {

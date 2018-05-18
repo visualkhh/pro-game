@@ -3,7 +3,6 @@ import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid
 import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
 import {DroneStage} from './DroneStage';
-import {Star} from '../obj/star/Star';
 
 //websocket https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/
 export class DroneStageIntro extends DroneStage {
@@ -15,7 +14,7 @@ export class DroneStageIntro extends DroneStage {
 
   constructor(canvas: HTMLCanvasElement, objs?: ObjDrone[]) {
     super(canvas, objs);
-    this.clockInterval = 1000;
+    this.clockInterval = 10;
   }
 
   onDraw(): void {

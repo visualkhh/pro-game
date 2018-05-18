@@ -5,19 +5,11 @@ import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/va
 import {DeviceManager} from '../../../../drive/DeviceManager';
 import {DroneStage} from '../../stage/DroneStage';
 import {ObjDrone} from '../ObjDrone';
-import {DroneResourceManager} from '../../DroneResourceManager';
 
-export class Drone extends ObjDrone {
-  private _initX: number;
+export class Mountain extends ObjDrone {
   private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
-  private beforePoint: PointVector;
-
-  private beforeConcentration = 0;
-  private concentration = 0;
-  private beforeWind = new PointVector();
-  private wind = new PointVector();
 
   private concentrationSubscription: Subscription;
   private windSubscription: Subscription;
@@ -29,22 +21,8 @@ export class Drone extends ObjDrone {
   onDraw(context: CanvasRenderingContext2D): void {
     context.setTransform(1, 0, 0, 1, 0, 0);
 
-    //img
-    if (this.beforeConcentration < this.concentration) {
-      this.img = DroneResourceManager.getInstance().resources('character_02Img');
-    }else if (this.beforeConcentration > this.concentration) {
-      this.img = DroneResourceManager.getInstance().resources('character_03Img');
-    }else {
-      this.img = DroneResourceManager.getInstance().resources('character_01Img');
-    }
-
-    //height
-    const stepVal = (this.stage.height - this.img.height) / 10;
-    const conStepVal = (stepVal * this.concentration);
-
     //targetPosition
-    const targetPosition = new PointVector(this._initX || (this.stage.width / 2), (this.stage.height - this.img.height / 2) - conStepVal);
-    targetPosition.add(this.wind);
+    const targetPosition = new PointVector((this.stage.width / 2) - (this.img.width / 2), (this.stage.height - this.img.height / 2) - (this.img.height / 2));
 
     //////update
     //방향
@@ -53,21 +31,25 @@ export class Drone extends ObjDrone {
     dir.mult(0.2);
     this.acceleration = dir;
     this.velocity.add(this.acceleration);
-    this.velocity.limit(2);
+    if (this.position.y < this.stage.height - this.img.height) {
+      this.velocity.limit(0);
+    }else {
+      this.velocity.limit(2);
+    }
     this.position.add(this.velocity);
 
     //checkEdges
-    if (this.position.x > this.stage.width) {
-      this.position.x = 0;
-    } else if (this.position.x < 0) {
-      this.position.x = this.stage.width;
-    }
-
-    if (this.position.y > this.stage.height) {
-      this.position.y = 0;
-    } else if (this.position.y < 0) {
-      this.position.y = this.stage.height;
-    }
+    // if (this.position.x > this.stage.width) {
+    //   this.position.x = 0;
+    // } else if (this.position.x < 0) {
+    //   this.position.x = this.stage.width;
+    // }
+    //
+    // if (this.position.y > this.stage.height) {
+    //   this.position.y = 0;
+    // } else if (this.position.y < 0) {
+    //   this.position.y = this.stage.height;
+    // }
     //display
     //http://creativejs.com/2012/01/day-10-drawing-rotated-images-into-canvas/index.html
     context.beginPath();
@@ -77,28 +59,13 @@ export class Drone extends ObjDrone {
     context.arc(this.position.x, this.stage.height, 20, 0, 2 * Math.PI);
     context.fill();
     context.restore();
-    context.translate(this.position.x, this.position.y);
-    if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x > 0) {
-      context.rotate(-0.01);
-    }else if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x < 0) {
-      context.rotate(0.01);
-    }
-
     // context.scale(0.5, 0.5);
-    context.drawImage(this.img, -this.img.width / 2, -this.img.height / 2);
-    context.arc(0, 0, 5, 0, 2 * Math.PI);
+    context.drawImage(this.img, this.position.x, this.position.y);
 
-    context.font = '10pt Calibri';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillStyle = 'blue';
-    context.fillText(this.id, (-this.img.width / 2) + this.img.width / 2, (-this.img.height / 2));
-    context.beginPath();
-    this.beforePoint = this.position.get();
   }
 
   onStart(data?: any) {
-    this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
+    this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), this.stage.height);
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
     //집중도
@@ -125,16 +92,4 @@ export class Drone extends ObjDrone {
   onRestart(data?: any) {}
   onResume(data?: any) {}
 
-  get initX(): number {
-    return this._initX;
-  }
-
-  set initX(value: number) {
-    this._initX = value;
-  }
-
-  public setConcentration(concentration: number): void {
-    this.beforeConcentration = this.concentration;
-    this.concentration = concentration;
-  }
 }

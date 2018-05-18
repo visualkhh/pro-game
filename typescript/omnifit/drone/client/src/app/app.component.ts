@@ -19,6 +19,8 @@ import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
 import {DroneStageEnd} from './com/khh/omnifit/game/drone/stage/DroneStageEnd';
 import {DroneStageGame} from './com/khh/omnifit/game/drone/stage/DroneStageGame';
 import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntro';
+import {Moon} from './com/khh/omnifit/game/drone/obj/background/Moon';
+import {Mountain} from './com/khh/omnifit/game/drone/obj/background/Mountain';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 // typescript observable subscribe example
@@ -64,13 +66,23 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     //game initialize
     this.manager = DroneStageManager.getInstance(this.canvas);
-    this.manager.pushObj(new BackGround(this.manager, 0, 0, 0));
-    for (let i = 0; i < 20 ; i++) {
+    //resource
+    this.resourceManager = DroneResourceManager.getInstance();
+
+    let i = 0;
+    this.manager.pushObj(new BackGround(this.manager, 0, 0, i));
+    for (; i <= 20 ; i++) {
       this.manager.pushObj(new Star(this.manager, 0, 0, i));
     }
 
-    //resource
-    this.resourceManager = DroneResourceManager.getInstance();
+    this.resourceManager.setImageResources('moonImg', 'assets/image/game_bg_moon.png', (event: Event) => {
+      const at = new Moon(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      this.manager.addObjCreateStart(at);
+    });
+    this.resourceManager.setImageResources('mountainImg', 'assets/image/game_bg_mountain.png', (event: Event) => {
+      const at = new Mountain(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      this.manager.addObjCreateStart(at);
+    });
 
     //stage Intro
     const droneStageIntro = new DroneStageIntro(this.canvas);
@@ -81,20 +93,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     // const droneImg = new Image(); droneImg.src = 'assets/image/drone.png';
     // const drone = new Drone(droneStageGame, 0, 0, 20, droneImg);
 
-    const cloudImg = this.resourceManager.resources.get('cloudImg');
-    const cloud = new Cloud(droneStageGame, 0, 0, 10, cloudImg);
+    // const cloudImg = this.resourceManager.resources('cloudImg');
+    // const cloud = new Cloud(droneStageGame, 0, 0, 10, cloudImg);
 
-    const groundImg = this.resourceManager.resources.get('groundImg');
-    const ground = new Ground(droneStageGame, 0, 0, 5, groundImg);
+    // const groundImg = this.resourceManager.resources('groundImg');
+    // const ground = new Ground(droneStageGame, 0, 0, 5, groundImg);
 
-    const readyGreenImg = this.resourceManager.resources.get('readyGreenImg');
-    const readyBlueImg = this.resourceManager.resources.get('readyBlueImg');
-    const readyYellowImg = this.resourceManager.resources.get('readyYellowImg');
-    const readyBtn = new ReadyButton(droneStageGame, 0, 0, 400, readyGreenImg, readyYellowImg);
+    // const readyGreenImg = this.resourceManager.resources('readyGreenImg');
+    // const readyBlueImg = this.resourceManager.resources('readyBlueImg');
+    // const readyYellowImg = this.resourceManager.resources('readyYellowImg');
+    // const readyBtn = new ReadyButton(droneStageGame, 0, 0, 400, readyGreenImg, readyYellowImg);
 
     const score = new Score(droneStageGame, 0, 0, 500);
     // const wind = new Wind(droneStageGame, 0, 0, 500);
-    droneStageGame.pushObj([cloud, score, ground, readyBtn]);
+    droneStageGame.pushObj([score]);
 
     //Stage End
     const droneStageEnd = new DroneStageEnd(this.canvas);

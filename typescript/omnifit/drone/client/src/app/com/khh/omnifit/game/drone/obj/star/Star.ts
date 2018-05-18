@@ -16,6 +16,7 @@ export class Star extends ObjDrone {
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
+    context.setTransform(1, 0, 0, 1, 0, 0);
     const x = this.stage.width / 2;
     const y = this.stage.height / 2;
 

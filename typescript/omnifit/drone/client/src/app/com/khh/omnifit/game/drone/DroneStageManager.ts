@@ -3,12 +3,10 @@ import {Observer} from 'rxjs/Observer';
 import {Subject} from 'rxjs/Subject';
 import {Subscription} from 'rxjs/Subscription';
 import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
-import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {ObjDrone} from './obj/ObjDrone';
 import {DroneStage} from './stage/DroneStage';
 
-// export class DroneStageManager implements LifeCycle {
 export class DroneStageManager extends DroneStage {
 
   private static instance: DroneStageManager;
@@ -17,6 +15,8 @@ export class DroneStageManager extends DroneStage {
   private stages: DroneStage[];
   private _webSocket: WebSocket;
   private _webSocketSubject: Subject<Telegram<any>>;
+  // private clockSubscription: Subscription;
+
   //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
   static getInstance(canvas?: HTMLCanvasElement, objs?: ObjDrone[]) {
@@ -28,6 +28,7 @@ export class DroneStageManager extends DroneStage {
 
   private constructor(canvas: HTMLCanvasElement, objs: ObjDrone[] = new Array<ObjDrone>()) {
     super(canvas, objs);
+    // this.clockInterval = 10;
     this.stages = new Array<DroneStage>();
     this._webSocket = new WebSocket('ws://192.168.13.58:8999');
     const observable = Observable.create((obs: Observer<MessageEvent>) => {
@@ -121,6 +122,7 @@ export class DroneStageManager extends DroneStage {
   }
 
   onStart(data?: any): void {
+    // this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.objs.forEach((it) => it.onStart());
     this.currentStage().onStart(data);
   }
@@ -140,6 +142,7 @@ export class DroneStageManager extends DroneStage {
     this.objs.forEach((it) => it.onResume());
     this.currentStage().onStop(data);
     if (!ValidUtil.isNullOrUndefined(this._webSocketSubject)) { this._webSocketSubject.unsubscribe(); }
+    // if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
   }
   onDestroy(data?: any) {
     this.stages.forEach((it) => it.onDestroy(data));

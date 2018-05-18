@@ -53,8 +53,7 @@ export class DroneStageGame extends DroneStage {
     context.fillText('********GAME********', x, y);
 
     //objs draw
-    this.objs.forEach((it) => it.onDraw(context));
-    this.flushBufferToCanvas();
+    this.drawObjsAllAndFlush(context);
   }
 
   onCreate(data?: any): void {
@@ -86,7 +85,7 @@ export class DroneStageGame extends DroneStage {
         const wjumpSize = this.width / (users.length + 1);
         let wjump = 0;
         //유저 정리
-        CollectionUtil.ignoreMapItem(this.drones, new Set(users.map((it) => it.uuid)), (it) => this.removeObjsOnStopDestory(it));
+        CollectionUtil.ignoreMapItem(this.drones, new Set(users.map((it) => it.uuid)), (it) => this.removeObjOnStopDestory(it));
         users.forEach((it) => {
           let drone  = this.drones.get(it.uuid);
           if (ValidUtil.isNullOrUndefined(drone)) {
@@ -126,14 +125,14 @@ export class DroneStageGame extends DroneStage {
   addDroneOnCreateStart(id: string, host?: string): Drone {
     let drone = this.drones.get(id);
     if (!ValidUtil.isNullOrUndefined(drone)) {
-      this.removeObjsOnStopDestory(drone);
+      this.removeObjOnStopDestory(drone);
     }
 
-    let droneImg = DroneResourceManager.getInstance().resources.get('droneImg');
+    let droneImg = DroneResourceManager.getInstance().resources('character_01Img');
     if ('host' === host) {
-      droneImg = DroneResourceManager.getInstance().resources.get('hostDroneImg');
+      droneImg = DroneResourceManager.getInstance().resources('character_01Img');
     }
-    drone = new Drone(this, 0, 0, 20, droneImg);
+    drone = new Drone(this, 0, 0, 100, droneImg);
     drone.id = id;
     drone.onCreate();
     drone.onStart();
