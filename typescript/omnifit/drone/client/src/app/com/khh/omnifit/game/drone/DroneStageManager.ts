@@ -1,12 +1,15 @@
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 import {Subject} from 'rxjs/Subject';
+import {Subscription} from 'rxjs/Subscription';
 import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {ObjDrone} from './obj/ObjDrone';
 import {DroneStage} from './stage/DroneStage';
 
-export class DroneStageManager implements LifeCycle {
+// export class DroneStageManager implements LifeCycle {
+export class DroneStageManager extends DroneStage {
 
   private static instance: DroneStageManager;
 
@@ -14,17 +17,17 @@ export class DroneStageManager implements LifeCycle {
   private stages: DroneStage[];
   private _webSocket: WebSocket;
   private _webSocketSubject: Subject<Telegram<any>>;
-
-//singletone pattern
+  //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
-  static getInstance() {
+  static getInstance(canvas?: HTMLCanvasElement, objs?: ObjDrone[]) {
     if (!DroneStageManager.instance) {
-      DroneStageManager.instance = new DroneStageManager();
+      DroneStageManager.instance = new DroneStageManager(canvas, objs);
     }
     return DroneStageManager.instance;
   }
 
-  private constructor() {
+  private constructor(canvas: HTMLCanvasElement, objs: ObjDrone[] = new Array<ObjDrone>()) {
+    super(canvas, objs);
     this.stages = new Array<DroneStage>();
     this._webSocket = new WebSocket('ws://192.168.13.58:8999');
     const observable = Observable.create((obs: Observer<MessageEvent>) => {
@@ -103,16 +106,38 @@ export class DroneStageManager implements LifeCycle {
     return this.stages[this.position];
   }
 
+  eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
+    return undefined;
+  }
+
+  onDraw(): void {
+
+  }
+
   onCreate(canvas: HTMLCanvasElement) {
     this.position = 0;
+    this.objs.forEach((it) => it.onStop());
     this.currentStage().onCreate({data: 'start'});
   }
 
-  onStart(data?: any): void { this.currentStage().onStart(data); }
-  onPause(data?: any) { this.currentStage().onPause(data); }
-  onRestart(data?: any) { this.currentStage().onRestart(data); }
-  onResume(data?: any) { this.currentStage().onResume(data); }
+  onStart(data?: any): void {
+    this.objs.forEach((it) => it.onStart());
+    this.currentStage().onStart(data);
+  }
+  onPause(data?: any) {
+    this.objs.forEach((it) => it.onPause());
+    this.currentStage().onPause(data);
+  }
+  onRestart(data?: any) {
+    this.objs.forEach((it) => it.onRestart());
+    this.currentStage().onRestart(data);
+  }
+  onResume(data?: any) {
+    this.objs.forEach((it) => it.onResume());
+    this.currentStage().onResume(data);
+  }
   onStop(data?: any) {
+    this.objs.forEach((it) => it.onResume());
     this.currentStage().onStop(data);
     if (!ValidUtil.isNullOrUndefined(this._webSocketSubject)) { this._webSocketSubject.unsubscribe(); }
   }
@@ -120,5 +145,4 @@ export class DroneStageManager implements LifeCycle {
     this.stages.forEach((it) => it.onDestroy(data));
     this.stages.length = 0;
   }
-
 }

@@ -3,6 +3,7 @@ import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid
 import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
 import {DroneStage} from './DroneStage';
+import {Star} from '../obj/star/Star';
 
 //websocket https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/
 export class DroneStageIntro extends DroneStage {
@@ -20,6 +21,7 @@ export class DroneStageIntro extends DroneStage {
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
+
     const x = this.width / 2;
     const y = this.height / 2;
     context.font = '10pt Calibri';
@@ -30,8 +32,7 @@ export class DroneStageIntro extends DroneStage {
     context.fillText('(시작하기)(' + WebSocket.CLOSED + ', ' + WebSocket.OPEN + '(open), ' + WebSocket.CLOSING + ', ' + WebSocket.CONNECTING + ')' + DroneStageManager.getInstance().webSocket.readyState, x, y + 30);
 
     //objs draw
-    this.objs.forEach((it) => it.onDraw(context));
-    this.flushBufferToCanvas();
+    this.drawObjsAllAndFlush(context);
   }
 
   onCreate(data?: any): void {

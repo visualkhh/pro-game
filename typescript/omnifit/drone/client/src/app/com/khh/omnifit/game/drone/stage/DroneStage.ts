@@ -1,12 +1,13 @@
 import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
+import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
 import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
-import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
 
@@ -17,6 +18,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
   protected clockInterval = 10;
   private _canvas: HTMLCanvasElement;
   private _bufferCanvas: HTMLCanvasElement;
+  private reSizeSubscription: Subscription;
 
   //http://xgrommx.github.io/rx-book/content/observable/observable_methods/fromeventpattern.html
   constructor(canvas: HTMLCanvasElement, objs: ObjDrone[] = new Array<ObjDrone>()) {
@@ -30,7 +32,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
     this.height = this._canvas.height;
 
     ////////////event
-    Observable.fromEvent(this._canvas, 'resize').subscribe((event: Event) => {
+    this.reSizeSubscription = Observable.fromEvent(this._canvas, 'resize').subscribe((event: Event) => {
       this.height = event.srcElement.clientHeight;
       this.width = event.srcElement.clientWidth;
       this._bufferCanvas.width = this.width;
@@ -45,13 +47,13 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
   flushBufferToCanvas() {
     this.flushCanvas(this._bufferCanvas);
   }
-  flushCanvas(canvas: HTMLCanvasElement) {
+  flushCanvas(canvas: HTMLCanvasElement = this._bufferCanvas) {
     const context = this._canvas.getContext('2d');
     context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     context.drawImage(canvas, 0, 0);
   }
 
-  objPush(obj: ObjDrone| ObjDrone[]) {
+  pushObj(obj: ObjDrone| ObjDrone[]) {
     if (obj instanceof Array) {
       obj.forEach((it) => this.objs.push(it));
     }else {
@@ -61,6 +63,17 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
 
   get objs(): ObjDrone[] {
     return this._objs.sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
+  }
+  get objsAll(): ObjDrone[] {
+    return this._objs.concat(DroneStageManager.getInstance().objs).sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
+  }
+  drawObjsAndFlush(context: CanvasRenderingContext2D, canvas?: HTMLCanvasElement): void {
+    this.objs.forEach((it) => it.onDraw(context));
+    this.flushCanvas(canvas);
+  }
+  drawObjsAllAndFlush(context: CanvasRenderingContext2D, canvas?: HTMLCanvasElement): void {
+    this.objsAll.forEach((it) => it.onDraw(context));
+    this.flushCanvas(canvas);
   }
   removeObjsOnStopDestory(obj: ObjDrone): void {
      CollectionUtil.deleteArrayItem(this._objs, obj, (it) => {

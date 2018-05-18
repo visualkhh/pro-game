@@ -1,22 +1,24 @@
 // import * as Processing from 'assets/javascript/processing-1.4.1';
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {hello} from 'assets/javascript/omnifit';
 // Observable operators
 import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
-import {hello} from 'assets/javascript/omnifit';
+import 'rxjs/add/operator/map';
+import {Observable} from 'rxjs/Observable';
+import {DroneResourceManager} from './com/khh/omnifit/game/drone/DroneResourceManager';
 import {DroneStageManager} from './com/khh/omnifit/game/drone/DroneStageManager';
-import {DroneStageEnd} from './com/khh/omnifit/game/drone/stage/DroneStageEnd';
-import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntro';
-import {DroneStageGame} from './com/khh/omnifit/game/drone/stage/DroneStageGame';
+import {BackGround} from './com/khh/omnifit/game/drone/obj/background/BackGround';
+import {ReadyButton} from './com/khh/omnifit/game/drone/obj/button/ReadyButton';
+import {Cloud} from './com/khh/omnifit/game/drone/obj/cloud/Cloud';
 import {Drone} from './com/khh/omnifit/game/drone/obj/drone/Drone';
 import {Ground} from './com/khh/omnifit/game/drone/obj/ground/Ground';
-import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
-import {Cloud} from './com/khh/omnifit/game/drone/obj/cloud/Cloud';
 import {Score} from './com/khh/omnifit/game/drone/obj/score/Score';
-import {ReadyButton} from './com/khh/omnifit/game/drone/obj/button/ReadyButton';
-import {DroneResourceManager} from './com/khh/omnifit/game/drone/DroneResourceManager';
-
+import {Star} from './com/khh/omnifit/game/drone/obj/star/Star';
+import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
+import {DroneStageEnd} from './com/khh/omnifit/game/drone/stage/DroneStageEnd';
+import {DroneStageGame} from './com/khh/omnifit/game/drone/stage/DroneStageGame';
+import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntro';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 // typescript observable subscribe example
@@ -30,7 +32,7 @@ declare var Processing: any;   // not required
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit, AfterViewInit {
   private title = 'app';
@@ -43,13 +45,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
   }
 
-
   ngOnInit(): void {
     this.canvas = this.canvasElementRef.nativeElement;
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
-
 
   }
 
@@ -63,7 +63,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     //game initialize
-    this.manager = DroneStageManager.getInstance();
+    this.manager = DroneStageManager.getInstance(this.canvas);
+    this.manager.pushObj(new BackGround(this.manager, 0, 0, 0));
+    for (let i = 0; i < 20 ; i++) {
+      this.manager.pushObj(new Star(this.manager, 0, 0, i));
+    }
+
+    //resource
     this.resourceManager = DroneResourceManager.getInstance();
 
     //stage Intro
@@ -88,7 +94,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     const score = new Score(droneStageGame, 0, 0, 500);
     // const wind = new Wind(droneStageGame, 0, 0, 500);
-    droneStageGame.objPush([cloud, score, ground, readyBtn]);
+    droneStageGame.pushObj([cloud, score, ground, readyBtn]);
 
     //Stage End
     const droneStageEnd = new DroneStageEnd(this.canvas);
@@ -121,8 +127,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   if(this.manager)this.manager.keyup(event);
     // });
     //
-    // Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event)=>{
-    //   console.log("rrrrrrrrrrrrrrrrrsssssssssssssssssszzzzzz")
+    // Observable.fromEvent(this.canvas, 'resize').subscribe((event: Event) => {
+    //   console.log('rrrrrrrrrrrrrrrrrsssssssssssssssssszzzzzz');
     //   // if(this.manager)this.manager.eventSignal(event);
     // });
     // //customEvent

@@ -1,12 +1,11 @@
-import {ObjDrone} from '../ObjDrone';
-import {DroneStage} from '../../stage/DroneStage';
 import {Subscription} from 'rxjs/Subscription';
 import {isNullOrUndefined} from 'util';
-import {DroneStageGame} from '../../stage/DroneStageGame';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
+import {DroneStage} from '../../stage/DroneStage';
+import {DroneStageGame} from '../../stage/DroneStageGame';
+import {ObjDrone} from '../ObjDrone';
 
 export class Ground extends ObjDrone {
-
 
   private maxX = 50;
   private currentX = 0;

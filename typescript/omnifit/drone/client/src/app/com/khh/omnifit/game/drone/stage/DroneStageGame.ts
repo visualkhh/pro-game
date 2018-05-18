@@ -138,7 +138,7 @@ export class DroneStageGame extends DroneStage {
     drone.onCreate();
     drone.onStart();
     this.drones.set(id, drone);
-    this.objPush(drone);
+    this.pushObj(drone);
     return drone;
   }
 

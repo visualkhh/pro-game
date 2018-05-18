@@ -1,10 +1,12 @@
 import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
+import {ResizeSignal} from '../../../../../../../../../lib-typescript/com/khh/event/window/ResizeSignal';
 import {ObjImg} from '../../../../../../../../../lib-typescript/com/khh/graphics/ObjImg';
 import {Point} from '../../../../../../../../../lib-typescript/com/khh/graphics/Point';
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
 import {DroneStage} from '../stage/DroneStage';
 
 export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterface {
+  // private _stage: DroneStage | ((_?) => DroneStage);
   private _stage: DroneStage;
   private _id: string;
 
@@ -14,6 +16,9 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterfac
   }
 
   get stage(): DroneStage {
+    // if (typeof this._stage === 'function') {
+    //   return this._stage();
+    // }
     return this._stage;
   }
 
@@ -33,4 +38,5 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterfac
   abstract onStart(data?: any);
   abstract onStop(data?: any);
   abstract onDraw(CanvasRenderingContext2D): void;
+
 }

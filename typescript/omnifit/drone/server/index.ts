@@ -29,8 +29,6 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     session.set('name', uuid);
     SessionManager.getInstance().sessions.set(ws, session);
 
-    // console.log(ws);
-    //connection is up, let's add a simple simple event ss
     ws.on('message', (message: string) => {
         //log the received message and send it back to the client
         console.log('received: %s', message);
@@ -68,25 +66,3 @@ c.subscribe((it) => {
     });
 });
 
-// console.log(global)
-//
-// var WebSocketServer = require('ws').Server;
-// var wss = new WebSocketServer({ port: 1234 });
-// wss.on('connection', function(req) {
-//     console.log('good stuff'+req);
-//
-//     wss.on('request', function(req) {
-//         // Parse the requested URL:
-//         let url = require('url').parse(req.httpRequest.url);
-//
-//         // Assume that the token is passed as path:
-//         // ws://url/TOKEN
-//         let token = url.pathname.substring(1); // .substring(1) to strip off the leading `/`
-//
-//         // Validate token (implementation-dependent):
-//         // if (! isValidToken(token)) return req.reject();
-//
-//         // Accept the request.
-//         return req.accept();
-//     });
-// });

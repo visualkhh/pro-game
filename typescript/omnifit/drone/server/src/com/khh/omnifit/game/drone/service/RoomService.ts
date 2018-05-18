@@ -1,11 +1,11 @@
 import {interval} from 'rxjs/observable/interval';
 import WebSocket = require('ws');
 import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
+import {CollectionUtil} from '../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {ConvertUtil} from '../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 import {RandomUtil} from '../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
-import {SessionManager} from '../session/SessionManager';
 import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {CollectionUtil} from '../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
+import {SessionManager} from '../session/SessionManager';
 
 export class RoomService {
     static readonly ROOM_WAITING = 'waiting-room';
@@ -34,7 +34,7 @@ export class RoomService {
     }
 
     public getRooms(): Map<string, Array<Map<string, any>>> {
-        const r = new Map<string, Array<Map<string, any>>>()
+        const r = new Map<string, Array<Map<string, any>>>();
         this.rooms.forEach((value, key, map) => {
             const users = new Array<Map<string, any>>();
             value.forEach((it) => users.push(SessionManager.getInstance().get(it)));
