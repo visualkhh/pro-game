@@ -10,8 +10,6 @@ export class ArcWaveDummy extends ObjDrone {
   private angle: PointVector;
   private amplitude: PointVector;
 
-
-
   constructor(stage: DroneStage, x: number, y: number, z: number) {
     super(stage, x, y, z);
   }
@@ -21,7 +19,6 @@ export class ArcWaveDummy extends ObjDrone {
     this.velocity = new PointVector(RandomUtil.random(-0.05, 0.05), RandomUtil.random(-0.05, 0.05));
     this.amplitude = new PointVector(RandomUtil.random(20, this.stage.width / 2), RandomUtil.random(20, this.stage.height / 2));
   }
-
 
   onDraw(context: CanvasRenderingContext2D): void {
     this.oscillate();
@@ -41,7 +38,6 @@ export class ArcWaveDummy extends ObjDrone {
     context.fill();
   }
 
-
   oscillate() {
     this.angle.add(this.velocity);
   }
@@ -52,8 +48,5 @@ export class ArcWaveDummy extends ObjDrone {
   onPause(data?: any) {}
   onRestart(data?: any) {}
   onResume(data?: any) {}
-
-
-
 
 }

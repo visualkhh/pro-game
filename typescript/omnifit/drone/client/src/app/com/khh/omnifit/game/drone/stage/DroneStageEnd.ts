@@ -1,16 +1,15 @@
-import {DroneStage} from './DroneStage';
 import {Subscription} from 'rxjs/Subscription';
-import {ObjDrone} from '../obj/ObjDrone';
-import {isNullOrUndefined} from 'util';
-import {DroneStageManager} from '../DroneStageManager';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DroneStageManager} from '../DroneStageManager';
+import {ObjDrone} from '../obj/ObjDrone';
+import {DroneStage} from './DroneStage';
 
 export class DroneStageEnd extends DroneStage {
 
   private previousStageData: any | undefined;
   private resizeSubscription: Subscription;
   private mouseDownSubscription: Subscription;
-  constructor(canvas: HTMLCanvasElement, objs: Array<ObjDrone> = new Array<ObjDrone>()) {
+  constructor(canvas: HTMLCanvasElement, objs: ObjDrone[] = new Array<ObjDrone>()) {
     super(canvas, objs);
   }
 

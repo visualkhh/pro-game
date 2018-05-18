@@ -1,8 +1,8 @@
+import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
+import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {LifeCycle} from '../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {DroneStage} from './stage/DroneStage';
-import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
-import {Observable} from 'rxjs/Observable';
 
 export class DroneResourceManager implements LifeCycle {
   private static instance: DroneResourceManager;
@@ -37,7 +37,8 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('hostDroneImg', hostDroneImg);
 
     this._resources.forEach((v, k) => {
-      Observable.fromEvent(v, 'load').subscribe( (it) => {
+      Observable.fromEvent(v, 'load').subscribe( (it: Event) => {
+        //it.srcElement;
         console.log(it);
       });
     });
