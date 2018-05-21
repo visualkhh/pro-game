@@ -33,10 +33,13 @@ export class Drone extends ObjDrone {
     if (this.beforeConcentration < this.concentration) {
       this.img = DroneResourceManager.getInstance().resources('character_01Img');
     }else if (this.beforeConcentration > this.concentration) {
-      this.img = DroneResourceManager.getInstance().resources('character_03Img');
+      const img = DroneResourceManager.getInstance().resources('character_03Img');
+      if (img.src !== this.img.src) {
+        this.velocity.mult(0);
+      }
+      this.img = img;
       //this.velocity.mult(0);
       // if (this.velocity.y > 0) {
-      //   this.velocity.y = 0;
       // }
     }else {
       this.img = DroneResourceManager.getInstance().resources('character_02Img');
@@ -64,15 +67,15 @@ export class Drone extends ObjDrone {
     //   this.img = DroneResourceManager.getInstance().resources('character_02Img');
     // }
     dir.normalize();
-    dir.mult(0.1);
+    dir.mult(1);
     this.acceleration = dir;
     this.velocity.add(this.acceleration);
     this.velocity.limit(2);
     const oldPosition = this.get();
     this.add(this.velocity);
 
-    // const oldCheck = PointVector.sub(oldPosition, targetPosition);
-    // const check = PointVector.sub(this, targetPosition);
+    const oldCheck = PointVector.sub(oldPosition, targetPosition);
+    const check = PointVector.sub(this, targetPosition);
     // if (oldCheck.x <= 0 && check.x > 0 || oldCheck.x >= 0 && check.x < 0) {
     //   console.log('---')
     // }
@@ -80,6 +83,31 @@ export class Drone extends ObjDrone {
     //   this.y = targetPosition.y;
     //   console.log('--**-')
     // }
+
+    // const gap = oldPosition.y - this.y;
+    // // console.log('--'+ Math.abs(gap))
+    // if (gap < 0 && Math.abs(gap) > 2) {
+    //   this.img = DroneResourceManager.getInstance().resources('character_03Img');
+    // } else if (gap > 0 && Math.abs(gap) > 2) {
+    //   this.img = DroneResourceManager.getInstance().resources('character_01Img');
+    // } else {
+    //   this.img = DroneResourceManager.getInstance().resources('character_02Img');
+    // }
+    // if (this.beforeConcentration < this.concentration) {
+    //   this.img = DroneResourceManager.getInstance().resources('character_01Img');
+    // }else if (this.beforeConcentration > this.concentration) {
+    //   const img = DroneResourceManager.getInstance().resources('character_03Img');
+    //   if (img.src !== this.img.src) {
+    //     this.velocity.mult(0);
+    //   }
+    //   this.img = img;
+    //   //this.velocity.mult(0);
+    //   // if (this.velocity.y > 0) {
+    //   // }
+    // }else {
+    //   this.img = DroneResourceManager.getInstance().resources('character_02Img');
+    // }
+
 
     //checkEdges
     // if (this.x > this.stage.width) {
@@ -134,24 +162,10 @@ export class Drone extends ObjDrone {
     this.set(new PointVector(RandomUtil.random(this.stage.width), this.stage.height));
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
-    //집중도
-    //   this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
-    //     this.beforeConcentration = this.concentration;
-    //     this.concentration = concentration;
-    //   });
-    // //바람
-    // this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
-    //   this.beforeWind = this.wind;
-    //   this.wind = wdata;
-    // });
 
   }
 
-  onStop() {
-    // if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
-    // if (!ValidUtil.isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
-  }
-
+  onStop() {}
   onCreate(data?: any) {}
   onDestroy(data?: any) {}
   onPause(data?: any) {}
