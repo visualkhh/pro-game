@@ -53,7 +53,10 @@ export class DroneStageGame extends DroneStage {
     context.fillText('********GAME********', x, y);
 
     //objs draw
-    this.drawObjsAllAndFlush(context);
+    DroneStageManager.getInstance().getObjs(this).concat(this.objs).sort((n1, n2) => (n1.z > n2.z ? 1 : -1)).forEach( (it) => {
+      it.onDraw(context);
+    });
+    this.flushBufferToCanvas();
   }
 
   onCreate(data?: any): void {
@@ -132,7 +135,7 @@ export class DroneStageGame extends DroneStage {
     if ('host' === host) {
       droneImg = DroneResourceManager.getInstance().resources('character_01Img');
     }
-    drone = new Drone(this, 0, 0, 100, droneImg);
+    drone = new Drone(this, 0, 0, 500, droneImg);
     drone.id = id;
     drone.onCreate();
     drone.onStart();

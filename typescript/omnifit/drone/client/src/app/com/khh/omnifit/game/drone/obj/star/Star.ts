@@ -53,9 +53,8 @@ export class Star extends ObjDrone {
   }
 
   initSetting() {
-    console.log('ini nini');
     this.x = RandomUtil.random(0, this.stage.width);
-    this.y = RandomUtil.random(0, MathUtil.percent(this.stage.height, 70));
+    this.y = RandomUtil.random(0, MathUtil.getValueByTotInPercent(this.stage.height, 70));
     this.z = RandomUtil.random(0, 4);
   }
 }

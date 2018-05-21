@@ -148,4 +148,11 @@ export class DroneStageManager extends DroneStage {
     this.stages.forEach((it) => it.onDestroy(data));
     this.stages.length = 0;
   }
+
+  getObjs(stage: DroneStage): ObjDrone[] {
+    return this.objs.map((it) => {
+      it.stage = stage;
+      return it;
+    });
+  }
 }

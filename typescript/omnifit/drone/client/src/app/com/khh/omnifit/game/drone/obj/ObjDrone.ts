@@ -22,6 +22,10 @@ export abstract class ObjDrone extends ObjImg implements LifeCycle, ViewInterfac
     return this._stage;
   }
 
+  set stage(value: DroneStage) {
+    this._stage = value;
+  }
+
   get id(): string {
     return this._id;
   }

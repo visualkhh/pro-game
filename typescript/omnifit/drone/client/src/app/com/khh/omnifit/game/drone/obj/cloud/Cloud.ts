@@ -1,72 +1,52 @@
-import {ObjDrone} from '../ObjDrone';
-import {DroneStage} from '../../stage/DroneStage';
-import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
-import {isNullOrUndefined} from 'util';
-import {DroneStageGame} from '../../stage/DroneStageGame';
 import {Subscription} from 'rxjs/Subscription';
+import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/MathUtil';
+import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
+import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DroneStage} from '../../stage/DroneStage';
+import {ObjDrone} from '../ObjDrone';
 
 // import { Point } from '../org/Point';
 export class Cloud extends ObjDrone {
 
   private maxX = 50;
   private currentX = 0;
-  private beforeWind = new PointVector();
-  private wind = new PointVector();
-  private windSubscription: Subscription;
-
+  private resizeSubscription: Subscription;
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
+    // console.log('cccccccc');
   }
-
 
   onDraw(context: CanvasRenderingContext2D): void {
-    const x = this.stage.width / 2;
-    const y = this.stage.height / 2;
+    this.x += this.mass;
+    context.drawImage(this.img, this.x, this.y);
+    // console.log('onDraw ' + this.img);
 
-    if (this.beforeWind.x - this.wind.x > 0) {
-      this.currentX += 0.05;
-    }else if (this.beforeWind.x - this.wind.x < 0) {
-      this.currentX -= 0.05;
+    //checkEdges
+    if (this.x > this.stage.width) {
+      this.initSetting();
+      this.x = -this.img.width;
     }
-    context.drawImage(this.img, (x - this.img.width / 2)  + this.currentX, 0);
   }
 
-  onCreate(data?: any) {
-  }
-
-  onDestroy(data?: any) {
-  }
-
-  onPause(data?: any) {
-  }
-
-  onRestart(data?: any) {
-  }
-
-  onResume(data?: any) {
-  }
-
+  onCreate(data?: any) {}
+  onDestroy(data?: any) {}
+  onPause(data?: any) {}
+  onRestart(data?: any) {}
+  onResume(data?: any) {}
   onStart(data?: any) {
-    //바람
-    this.windSubscription = this.stage.eventSubscribe(DroneStageGame.EVENT_WIND, (wdata: PointVector) => {
-      this.beforeWind = this.wind;
-      this.wind = wdata;
-    });
+    this.initSetting();
+    this.resizeSubscription = this.stage.canvasEventSubscribe('resize', (event: Event) => this.initSetting());
   }
 
   onStop(data?: any) {
-    if (!isNullOrUndefined(this.windSubscription)) {this.windSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
   }
 
-  // clockSignal(value?: any) {
-  //   this.onDraw();
-  // }
+  initSetting() {
+    this.set(RandomUtil.random(0, this.stage.width),
+             RandomUtil.random(0, MathUtil.getValueByTotInPercent(this.stage.height, 70)),
+             RandomUtil.random(0, 4));
+    this.mass = Math.random();
+  }
 
-  // intentSignal(intent: Intent<GameData>) {
-  //   if (this.beforeWind != intent.data.wind.x){
-  //     this.beforeWind = intent.data.wind.x;
-  //   }else{
-  //     this.wind = intent.data.wind.x;
-  //   }
-  // }
 }

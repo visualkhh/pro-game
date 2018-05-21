@@ -42,12 +42,12 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('character_02Img', character_02Img);
     this._resources.set('character_03Img', character_03Img);
 
-    this._resources.forEach((v, k) => {
-      Observable.fromEvent(v, 'load').subscribe( (it: Event) => {
-        //it.srcElement;
-        console.log(it);
-      });
-    });
+    // this._resources.forEach((v, k) => {
+    //   Observable.fromEvent(v, 'load').subscribe( (it: Event) => {
+    //     //it.srcElement;
+    //     console.log(it);
+    //   });
+    // });
   }
 
   resources(name: string): any {

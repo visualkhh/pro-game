@@ -21,6 +21,8 @@ import {DroneStageGame} from './com/khh/omnifit/game/drone/stage/DroneStageGame'
 import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntro';
 import {Moon} from './com/khh/omnifit/game/drone/obj/background/Moon';
 import {Mountain} from './com/khh/omnifit/game/drone/obj/background/Mountain';
+import {MoveImg} from './com/khh/omnifit/game/drone/obj/comm/MoveImg';
+import {Intro} from './com/khh/omnifit/game/drone/obj/intro/Intro';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 // typescript observable subscribe example
@@ -71,17 +73,36 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let i = 0;
     this.manager.pushObj(new BackGround(this.manager, 0, 0, i));
-    for (; i <= 20 ; i++) {
+    for (i; i <= 20 ; i++) {
       this.manager.pushObj(new Star(this.manager, 0, 0, i));
     }
 
-    this.resourceManager.setImageResources('moonImg', 'assets/image/game_bg_moon.png', (event: Event) => {
+    this.resourceManager.setImageResources('game_bg_moonImg', 'assets/image/game_bg_moon.png', (event: Event) => {
       const at = new Moon(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
       this.manager.addObjCreateStart(at);
     });
-    this.resourceManager.setImageResources('mountainImg', 'assets/image/game_bg_mountain.png', (event: Event) => {
+    this.resourceManager.setImageResources('game_bg_cloud_04Img', 'assets/image/game_bg_cloud_04.png', (event: Event) => {
+      const g = i + 3;
+      for (i; i <= g ; i++) {
+        const at = new Cloud(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+        this.manager.addObjCreateStart(at);
+      }
+    });
+    this.resourceManager.setImageResources('game_bg_cloud_05Img', 'assets/image/game_bg_cloud_05.png', (event: Event) => {
+      const g = i + 3;
+      for (i; i <= g ; i++) {
+        const at = new Cloud(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+        this.manager.addObjCreateStart(at);
+      }
+    });
+    this.resourceManager.setImageResources('game_bg_mountainImg', 'assets/image/game_bg_mountain.png', (event: Event) => {
       const at = new Mountain(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
       this.manager.addObjCreateStart(at);
+    });
+
+    this.resourceManager.setImageResources('effect_character04_4.png', 'assets/image/effect_character04_4.png', (event: Event) => {
+      const at = new Intro(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      droneStageIntro.addObjCreateStart(at);
     });
 
     //stage Intro

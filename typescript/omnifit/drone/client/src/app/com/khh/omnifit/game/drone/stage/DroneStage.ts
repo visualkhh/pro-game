@@ -4,13 +4,13 @@ import {Subscription} from 'rxjs/Subscription';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
+import {Obj} from '../../../../../../../../../lib-typescript/com/khh/obj/Obj';
 import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {DroneStageManager} from '../DroneStageManager';
-import {ObjDrone} from '../obj/ObjDrone';
 import {DroneResourceManager} from '../DroneResourceManager';
+import {DroneStageManager} from '../DroneStageManager';
 import {Drone} from '../obj/drone/Drone';
-import {Obj} from '../../../../../../../../../lib-typescript/com/khh/obj/Obj';
+import {ObjDrone} from '../obj/ObjDrone';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
 
@@ -18,7 +18,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
 
   private _objs: ObjDrone[];
   private clock: Observable<number>;
-  protected clockInterval = 10;
+  protected clockInterval = 30;
   private _canvas: HTMLCanvasElement;
   private _bufferCanvas: HTMLCanvasElement;
   private reSizeSubscription: Subscription;
@@ -67,17 +67,17 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
   get objs(): ObjDrone[] {
     return this._objs.sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
   }
-  get objsAll(): ObjDrone[] {
-    return this._objs.concat(DroneStageManager.getInstance().objs).sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
-  }
-  drawObjsAndFlush(context: CanvasRenderingContext2D, canvas?: HTMLCanvasElement): void {
-    this.objs.forEach((it) => it.onDraw(context));
-    this.flushCanvas(canvas);
-  }
-  drawObjsAllAndFlush(context: CanvasRenderingContext2D, canvas?: HTMLCanvasElement): void {
-    this.objsAll.forEach((it) => it.onDraw(context));
-    this.flushCanvas(canvas);
-  }
+  // get objsAll(): ObjDrone[] {
+  //   return this._objs.concat(DroneStageManager.getInstance().objs).sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
+  // }
+  // drawObjsAndFlush(context: CanvasRenderingContext2D, canvas?: HTMLCanvasElement): void {
+  //   this.objs.forEach((it) => it.onDraw(context));
+  //   this.flushCanvas(canvas);
+  // }
+  // drawObjsAllAndFlush(context: CanvasRenderingContext2D, canvas?: HTMLCanvasElement): void {
+  //   this.objsAll.forEach((it) => it.onDraw(context));
+  //   this.flushCanvas(canvas);
+  // }
   removeObjOnStopDestory(obj: ObjDrone): void {
      CollectionUtil.deleteArrayItem(this._objs, obj, (it) => {
        it.onStop();
