@@ -31,7 +31,7 @@ export class DroneStageIntro extends DroneStage {
     context.fillText('(시작하기)(' + WebSocket.CLOSED + ', ' + WebSocket.OPEN + '(open), ' + WebSocket.CLOSING + ', ' + WebSocket.CONNECTING + ')' + DroneStageManager.getInstance().webSocket.readyState, x, y + 30);
 
     //objs draw
-    DroneStageManager.getInstance().getObjs(this).concat(this.objs).sort((n1, n2) => (n1.z > n2.z ? 1 : -1)).forEach( (it) => {
+    DroneStageManager.getInstance().getAllObjs(this).forEach( (it) => {
       it.onDraw(context);
     });
     this.flushBufferToCanvas();

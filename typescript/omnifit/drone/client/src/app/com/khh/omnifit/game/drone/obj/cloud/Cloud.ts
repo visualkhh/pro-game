@@ -43,9 +43,8 @@ export class Cloud extends ObjDrone {
   }
 
   initSetting() {
-    this.set(RandomUtil.random(0, this.stage.width),
-             RandomUtil.random(0, MathUtil.getValueByTotInPercent(this.stage.height, 70)),
-             RandomUtil.random(0, 4));
+    this.x = RandomUtil.random(0, this.stage.width);
+    this.y = RandomUtil.random(0, MathUtil.getValueByTotInPercent(this.stage.height, 70));
     this.mass = Math.random();
   }
 

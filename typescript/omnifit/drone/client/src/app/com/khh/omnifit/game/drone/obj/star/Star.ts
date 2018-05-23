@@ -23,7 +23,7 @@ export class Star extends ObjDrone {
     context.beginPath();
     // context.fillStyle = '#FFFFFF';
     context.fillStyle = 'rgba(255,255,255,0.7)';
-    context.arc(this.x, this.y, this.z, 0, 2 * Math.PI);
+    context.arc(this.x, this.y, this.mass, 0, 2 * Math.PI);
     context.fill();
 
   }
@@ -55,6 +55,6 @@ export class Star extends ObjDrone {
   initSetting() {
     this.x = RandomUtil.random(0, this.stage.width);
     this.y = RandomUtil.random(0, MathUtil.getValueByTotInPercent(this.stage.height, 70));
-    this.z = RandomUtil.random(0, 4);
+    this.mass = RandomUtil.random(0, 4);
   }
 }

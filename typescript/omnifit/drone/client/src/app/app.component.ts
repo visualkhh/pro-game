@@ -72,36 +72,46 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.resourceManager = DroneResourceManager.getInstance();
 
     let i = 0;
-    this.manager.pushObj(new BackGround(this.manager, 0, 0, i));
-    for (i; i <= 20 ; i++) {
-      this.manager.pushObj(new Star(this.manager, 0, 0, i));
+    const background = new BackGround(this.manager, 0, 0, 0);
+    background.index = i;
+    this.manager.pushObj(background);
+    let g = i + 20;
+    for (i; i < g ; i++) {
+      const star = new Star(this.manager, 0, 0, 0);
+      star.index = i;
+      this.manager.pushObj(star);
     }
 
     this.resourceManager.setImageResources('game_bg_moonImg', 'assets/image/game_bg_moon.png', (event: Event) => {
-      const at = new Moon(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      const at = new Moon(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
+      at.index = (i++);
       this.manager.addObjCreateStart(at);
     });
     this.resourceManager.setImageResources('game_bg_cloud_04Img', 'assets/image/game_bg_cloud_04.png', (event: Event) => {
-      const g = i + 3;
-      for (i; i <= g ; i++) {
-        const at = new Cloud(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      g = i + 3;
+      for (i; i < g ; i++) {
+        const at = new Cloud(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
+        at.index = i;
         this.manager.addObjCreateStart(at);
       }
     });
     this.resourceManager.setImageResources('game_bg_cloud_05Img', 'assets/image/game_bg_cloud_05.png', (event: Event) => {
-      const g = i + 3;
-      for (i; i <= g ; i++) {
-        const at = new Cloud(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      g = i + 3;
+      for (i; i < g ; i++) {
+        const at = new Cloud(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
+        at.index = i;
         this.manager.addObjCreateStart(at);
       }
     });
     this.resourceManager.setImageResources('game_bg_mountainImg', 'assets/image/game_bg_mountain.png', (event: Event) => {
-      const at = new Mountain(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      const at = new Mountain(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
+      at.index = (i++);
       this.manager.addObjCreateStart(at);
     });
 
     this.resourceManager.setImageResources('effect_character04_4.png', 'assets/image/effect_character04_4.png', (event: Event) => {
-      const at = new Intro(this.manager, 0, 0, i++, event.srcElement as HTMLImageElement);
+      const at = new Intro(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
+      at.index = (i++);
       droneStageIntro.addObjCreateStart(at);
     });
 
