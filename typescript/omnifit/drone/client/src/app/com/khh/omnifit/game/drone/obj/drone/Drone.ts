@@ -16,6 +16,7 @@ export class Drone extends ObjDrone {
 
   private beforeConcentration = 0;
   private concentration = 0;
+  private finishCnt = 3;
   // private beforeWind = new PointVector();
   // private wind = new PointVector();
 
@@ -106,36 +107,47 @@ export class Drone extends ObjDrone {
     //   this.y = this.stage.height;
     // }
 
+    //bg
+    const bgImg = DroneResourceManager.getInstance().resources('character_right_bgImg');
+    const bgImgX = this.x - (bgImg.width / 2);
+    const bgImgY = this.y - (bgImg.height / 2);
+    context.drawImage(bgImg, bgImgX, bgImgY);
+
     //img
-    if (targetPosition.y < this.y) {
+    if (this.finishCnt >= 3 && targetPosition.y < this.y) {
       this.img = DroneResourceManager.getInstance().resources('character_02Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character02Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
-
-    }else if (targetPosition.y > this.y) {
+    }else if (this.finishCnt >= 3 && targetPosition.y > this.y) {
       this.img = DroneResourceManager.getInstance().resources('character_03Img');
-
       const effectImg = DroneResourceManager.getInstance().resources('effect_character03Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height);
       context.drawImage(effectImg, effectImgX, effectImgY);
-
-      // const img = DroneResourceManager.getInstance().resources('character_03Img');
-      // if (img.src !== this.img.src) {
-      //   this.velocity.mult(0);
-      // }
-      // this.img = img;
-      //this.velocity.mult(0);
-      // if (this.velocity.y > 0) {
-      // }
-    }else {
+    }else if (this.finishCnt >= 3) {
       this.img = DroneResourceManager.getInstance().resources('character_01Img');
+    }else if (this.finishCnt === 2) {
+      this.img = DroneResourceManager.getInstance().resources('character_04Img');
+    }else if (this.finishCnt === 1) {
+      this.img = DroneResourceManager.getInstance().resources('character_04Img');
+      const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
+      const effectImgX = this.x - (effectImg.width / 2);
+      const effectImgY = this.y - (effectImg.height / 2);
+      context.drawImage(effectImg, effectImgX, effectImgY);
+    }else if (this.finishCnt <= 0) {
+      this.img = DroneResourceManager.getInstance().resources('character_04Img');
+      const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
+      const effectImgX = this.x - (effectImg.width / 2);
+      const effectImgY = this.y - (effectImg.height / 2);
+      context.drawImage(effectImg, effectImgX, effectImgY);
+
+      const effect2Img = DroneResourceManager.getInstance().resources('effect_character04_4Img');
+      const effect2ImgX = this.x - (effect2Img.width / 2);
+      const effect2ImgY = this.y - (effect2Img.height + this.img.height / 2);
+      context.drawImage(effect2Img, effect2ImgX, effect2ImgY);
     }
-
-
-
 
     //display
     //http://creativejs.com/2012/01/day-10-drawing-rotated-images-into-canvas/index.html
@@ -175,6 +187,7 @@ export class Drone extends ObjDrone {
 
   onStart(data?: any) {
     // this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
+    this.finishCnt = 3;
     this.x  = RandomUtil.random(this.stage.width);
     this.y = this.stage.height;
     this.velocity = new PointVector(0, 0);
@@ -200,5 +213,10 @@ export class Drone extends ObjDrone {
   public setConcentration(concentration: number): void {
     this.beforeConcentration = this.concentration;
     this.concentration = concentration;
+    if (this.beforeConcentration >= 9 && this.concentration >= 9 ) {
+      this.finishCnt--;
+    }else {
+      this.finishCnt = 3;
+    }
   }
 }

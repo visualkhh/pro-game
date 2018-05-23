@@ -23,7 +23,7 @@ export class Moon extends MoveImg {
 
   targetPosition(): PointVector {
     // return super.targetPosition();
-    return new PointVector(MathUtil.getValueByTotInPercent(this.stage.width, 75), 20);
+    return new PointVector(MathUtil.getValueByTotInPercent(this.stage.width, 75), 80);
     // return new PointVector(0, 0);
   }
 }

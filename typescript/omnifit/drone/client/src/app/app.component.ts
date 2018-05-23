@@ -54,6 +54,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
+    // const context = new AudioContext();
+    // const audio = new Audio('assets/audio/CSC018.mp3') ;
+    // audio.currentTime = 0;// - This will rewind the audio to the beginning.
+    // audio.loop = true;// - This will make the audio track loop.
+    // audio.muted = true;// - This will mute the track
+    // audio.play();
 
   }
 
@@ -109,7 +115,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.manager.addObjCreateStart(at);
     });
 
-    this.resourceManager.setImageResources('effect_character04_4.png', 'assets/image/effect_character04_4.png', (event: Event) => {
+    this.resourceManager.setImageResources('effect_character04_4Img', 'assets/image/effect_character04_4.png', (event: Event) => {
       const at = new Intro(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
       at.index = (i++);
       droneStageIntro.addObjCreateStart(at);
@@ -135,7 +141,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     // const readyYellowImg = this.resourceManager.resources('readyYellowImg');
     // const readyBtn = new ReadyButton(droneStageGame, 0, 0, 400, readyGreenImg, readyYellowImg);
 
-    const score = new Score(droneStageGame, 0, 0, 500);
+    const score = new Score(droneStageGame, 0, 0, 500, DroneResourceManager.getInstance().resources('gage_00Img'));
     // const wind = new Wind(droneStageGame, 0, 0, 500);
     droneStageGame.pushObj([score]);
 
