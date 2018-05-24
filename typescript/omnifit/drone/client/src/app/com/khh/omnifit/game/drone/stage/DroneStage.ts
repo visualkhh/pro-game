@@ -64,6 +64,13 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
     }
   }
 
+  resetContext(context: CanvasRenderingContext2D) {
+    context.font = '30pt Calibri';
+    context.textAlign = 'center';
+    context.fillStyle = 'black';
+    context.fillStyle = 'black';
+    context.setTransform(1, 0, 0, 1, 0, 0);
+  }
   get objs(): ObjDrone[] {
     return this._objs.sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
   }

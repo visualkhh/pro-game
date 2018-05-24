@@ -54,6 +54,7 @@ export class DroneStageGame extends DroneStage {
 
     //objs draw
     DroneStageManager.getInstance().getAllObjs(this).forEach( (it) => {
+      this.resetContext(context);
       it.onDraw(context);
     });
     this.flushBufferToCanvas();
