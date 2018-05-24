@@ -59,10 +59,10 @@ server.listen(process.env.PORT || 8999, () => {
     console.log(`Server started on port ${info.port} :)`);
 });
 
-const c = new Clock(5000);
-c.subscribe((it) => {
-    wss.clients.forEach((sit) => {
-       console.log('sit ' + sit);
-    });
-});
+// const c = new Clock(5000);
+// c.subscribe((it) => {
+//     wss.clients.forEach((sit) => {
+//        console.log('sit ' + sit);
+//     });
+// });
 

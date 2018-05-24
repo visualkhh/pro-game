@@ -15,6 +15,7 @@ import {ObjDrone} from '../obj/ObjDrone';
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
 
   public static readonly EVENT_CLOCK = 'CLOCK';
+  public static readonly EVENT_CONCENTRATION = 'CONCENTRATION';
 
   private _objs: ObjDrone[];
   private clock: Observable<number>;
@@ -109,7 +110,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
     return Observable.fromEvent(this._canvas, eventName).subscribe(next);
   }
 
-  abstract eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription;
+  abstract eventObservable(eventName: string): Observable<any>;
 
   abstract onCreate(data?: any);
   abstract onDestroy(data?: any);

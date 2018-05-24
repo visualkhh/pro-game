@@ -3,6 +3,7 @@ import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid
 import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
 import {DroneStage} from './DroneStage';
+import {Observable} from 'rxjs/Observable';
 
 export class DroneStageEnd extends DroneStage {
 
@@ -48,7 +49,8 @@ export class DroneStageEnd extends DroneStage {
   onPause(data?: any) {}
   onRestart(data?: any) {}
   onResume(data?: any) {}
-  eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
+  eventObservable(eventName: string): Observable<any> {
     return undefined;
   }
+
 }

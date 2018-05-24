@@ -2,29 +2,34 @@ import {Subscription} from 'rxjs/Subscription';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {DeviceManager} from '../../../../drive/DeviceManager';
 import {DroneResourceManager} from '../../DroneResourceManager';
 import {DroneStage} from '../../stage/DroneStage';
 import {ObjDrone} from '../ObjDrone';
+import {Score} from '../score/Score';
 
 export class Drone extends ObjDrone {
   private _initX: number;
   // private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
-  private beforePoint: PointVector;
-
+  private _host: string;
   private beforeConcentration = 0;
   private concentration = 0;
   private finishCnt = 3;
-  // private beforeWind = new PointVector();
-  // private wind = new PointVector();
+  private score: Score;
 
   private concentrationSubscription: Subscription;
-  private windSubscription: Subscription;
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
+  }
+
+  get host(): string {
+    return this._host;
+  }
+
+  set host(value: string) {
+    this._host = value;
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
@@ -62,11 +67,9 @@ export class Drone extends ObjDrone {
     const oldCheck = PointVector.sub(oldPosition, targetPosition);
     const check = PointVector.sub(this, targetPosition);
     if (oldCheck.x <= 0 && check.x > 0 || oldCheck.x >= 0 && check.x < 0) {
-      // console.log('---');
     }
     if (oldCheck.y <= 0 && check.y > 0 || oldCheck.y >= 0 && check.y < 0) {
       this.y = targetPosition.y;
-      // console.log('--**-');
     }
 
     // const gap = oldPosition.y - this.y;
@@ -93,7 +96,6 @@ export class Drone extends ObjDrone {
     //   this.img = DroneResourceManager.getInstance().resources('character_02Img');
     // }
 
-
     //checkEdges
     // if (this.x > this.stage.width) {
     //   this.x = 0;
@@ -114,13 +116,14 @@ export class Drone extends ObjDrone {
     context.drawImage(bgImg, bgImgX, bgImgY);
 
     //img
+    //올라가기
     if (this.finishCnt >= 3 && targetPosition.y < this.y) {
       this.img = DroneResourceManager.getInstance().resources('character_02Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character02Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (this.finishCnt >= 3 && targetPosition.y > this.y) {
+    }else if (this.finishCnt >= 3 && targetPosition.y > this.y) {//내려가기
       this.img = DroneResourceManager.getInstance().resources('character_03Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character03Img');
       const effectImgX = this.x - (effectImg.width / 2);
@@ -182,20 +185,47 @@ export class Drone extends ObjDrone {
     // context.arc(this.position.x, imgY, 30, 0, 2 * Math.PI);
     context.fill();
     context.beginPath();
-    this.beforePoint = this.get();
+
+    if ('other' === this.host) {
+    context.translate(this.x, this.y);
+    context.scale(0.35, 0.35);
+    // this.score.x = this.x;
+    // this.score.y = this.y;
+    this.score.x = -this.img.width;
+    this.score.y = this.img.height + 20;
+    this.score.onDraw(context);
+    }
   }
 
   onStart(data?: any) {
     // this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
+    console.log('drone start id ' + this.id)
+    this.score = new Score(this.stage, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
+    this.score.id = this.id;
+    this.score.onCreate();
+    this.score.onStart();
+
     this.finishCnt = 3;
     this.x  = RandomUtil.random(this.stage.width);
     this.y = this.stage.height;
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
 
+    this.concentrationSubscription = this.stage.eventObservable(DroneStage.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
+        //console.log('---' + concentration.uuid + ' -> ' + concentration.headsetConcentration);
+        this.beforeConcentration = this.concentration;
+        this.concentration = concentration.headsetConcentration || 0;
+        const history = concentration.headsetConcentrationHistory || new Array<number>();
+        history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 3);
+    });
+
   }
 
-  onStop() {}
+  onStop() {
+    if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
+    this.score.onStop();
+    this.score.onDestroy();
+  }
   onCreate(data?: any) {}
   onDestroy(data?: any) {}
   onPause(data?: any) {}
@@ -210,13 +240,14 @@ export class Drone extends ObjDrone {
     this._initX = value;
   }
 
-  public setConcentration(concentration: number): void {
-    this.beforeConcentration = this.concentration;
-    this.concentration = concentration;
-    if (this.beforeConcentration >= 9 && this.concentration >= 9 ) {
-      this.finishCnt--;
-    }else {
-      this.finishCnt = 3;
-    }
-  }
+  // /** @deprecated */
+  // public setConcentration(concentration: number): void {
+  //   this.beforeConcentration = this.concentration;
+  //   this.concentration = concentration;
+  //   if (this.beforeConcentration >= 9 && this.concentration >= 9 ) {
+  //     this.finishCnt--;
+  //   }else {
+  //     this.finishCnt = 3;
+  //   }
+  // }
 }

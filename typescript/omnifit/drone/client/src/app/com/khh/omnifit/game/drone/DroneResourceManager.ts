@@ -50,6 +50,9 @@ export class DroneResourceManager implements LifeCycle {
     const gage_10_3Img = new Image(); gage_10_3Img.src = 'assets/image/gage_10_3.png';
     const gage_10_4Img = new Image(); gage_10_4Img.src = 'assets/image/gage_10_4.png';
     const gage_10_5Img = new Image(); gage_10_5Img.src = 'assets/image/gage_10_5.png';
+    const intro_02Img = new Image(); intro_02Img.src = 'assets/image/intro_02.png';
+    const intro_text_01Img = new Image(); intro_text_01Img.src = 'assets/image/intro_text_01.png';
+    const intro_text_02Img = new Image(); intro_text_02Img.src = 'assets/image/intro_text_02.png';
 
     this._resources = new Map<string, HTMLImageElement>();
     this._resources.set('cloudImg', cloudImg);
@@ -83,6 +86,9 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('gage_10_3Img', gage_10_3Img);
     this._resources.set('gage_10_4Img', gage_10_4Img);
     this._resources.set('gage_10_5Img', gage_10_5Img);
+    this._resources.set('intro_02Img', intro_02Img);
+    this._resources.set('intro_text_01Img', intro_text_01Img);
+    this._resources.set('intro_text_02Img', intro_text_02Img);
 
     // this._resources.forEach((v, k) => {
     //   Observable.fromEvent(v, 'load').subscribe( (it: Event) => {

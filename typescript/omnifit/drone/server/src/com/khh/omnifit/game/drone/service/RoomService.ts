@@ -13,7 +13,7 @@ export class RoomService {
 
     constructor() {
         this.rooms.set(RoomService.ROOM_WAITING, []);
-        interval(1000).subscribe((it) => {
+        interval(500).subscribe((it) => {
             this.rooms.forEach((v, k) => {
                 v.forEach((user) => {
                     user.send(ConvertUtil.toJson(new Telegram('rooms', 'detail', this.getRoom(k, user))));

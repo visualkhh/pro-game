@@ -77,12 +77,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     //resource
     this.resourceManager = DroneResourceManager.getInstance();
 
-    let i = 0;
     const background = new BackGround(this.manager, 0, 0, 0);
-    background.index = i;
+    background.index = 0;
     this.manager.pushObj(background);
-    let g = i + 20;
-    for (i; i < g ; i++) {
+
+    for (let i = 20; i < 40 ; i++) {
       const star = new Star(this.manager, 0, 0, 0);
       star.index = i;
       this.manager.pushObj(star);
@@ -90,20 +89,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.resourceManager.setImageResources('game_bg_moonImg', 'assets/image/game_bg_moon.png', (event: Event) => {
       const at = new Moon(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
-      at.index = (i++);
+      at.index = 41;
       this.manager.addObjCreateStart(at);
     });
     this.resourceManager.setImageResources('game_bg_cloud_04Img', 'assets/image/game_bg_cloud_04.png', (event: Event) => {
-      g = i + 3;
-      for (i; i < g ; i++) {
+      for (let i = 50; i < 55 ; i++) {
         const at = new Cloud(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
         at.index = i;
         this.manager.addObjCreateStart(at);
       }
     });
     this.resourceManager.setImageResources('game_bg_cloud_05Img', 'assets/image/game_bg_cloud_05.png', (event: Event) => {
-      g = i + 3;
-      for (i; i < g ; i++) {
+      for (let i = 55; i < 60 ; i++) {
         const at = new Cloud(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
         at.index = i;
         this.manager.addObjCreateStart(at);
@@ -111,18 +108,21 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.resourceManager.setImageResources('game_bg_mountainImg', 'assets/image/game_bg_mountain.png', (event: Event) => {
       const at = new Mountain(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
-      at.index = (i++);
+      at.index = 61;
       this.manager.addObjCreateStart(at);
     });
 
-    this.resourceManager.setImageResources('effect_character04_4Img', 'assets/image/effect_character04_4.png', (event: Event) => {
-      const at = new Intro(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
-      at.index = (i++);
-      droneStageIntro.addObjCreateStart(at);
-    });
+    // this.resourceManager.setImageResources('effect_character04_4Img', 'assets/image/effect_character04_4.png', (event: Event) => {
+    //   const at = new Intro(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
+    //   at.index = (i++);
+    //   droneStageIntro.addObjCreateStart(at);
+    // });
 
     //stage Intro
     const droneStageIntro = new DroneStageIntro(this.canvas);
+    const intro = new Intro(droneStageIntro, 0, 0, 0);
+    intro.index = 65;
+    droneStageIntro.pushObj(intro);
 
     //Stage Game
     const droneStageGame = new DroneStageGame(this.canvas);
@@ -142,6 +142,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     // const readyBtn = new ReadyButton(droneStageGame, 0, 0, 400, readyGreenImg, readyYellowImg);
 
     const score = new Score(droneStageGame, 0, 0, 500, DroneResourceManager.getInstance().resources('gage_00Img'));
+    score.id = 'local';
+    score.index = 1000;
     // const wind = new Wind(droneStageGame, 0, 0, 500);
     droneStageGame.pushObj([score]);
 

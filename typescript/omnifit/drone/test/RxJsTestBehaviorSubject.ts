@@ -49,8 +49,9 @@ var subscription3 = subject.filter( (it) => it > 50).subscribe(
 // => Next: 42
 
 subscription3.unsubscribe();
-subject.next(56);
+subject.next(516);
 // => Next: 56
 
 subject.complete();
 // => Completed
+subject.next(546);

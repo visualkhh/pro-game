@@ -7,8 +7,8 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/skip';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {interval} from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
 import {Telegram} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
@@ -25,20 +25,18 @@ import {DroneStage} from './DroneStage';
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
 export class DroneStageGame extends DroneStage {
 
-  public static readonly EVENT_WIND = 'WIND';
-  public static readonly EVENT_CONCENTRATION = 'CONCENTRATION';
-
   private resizeSubscription: Subscription;
+  private keySubscription: Subscription;
   private eventSubscribes: Map<string, Observable<any>>;
   private clockSubscription: Subscription;
-  private wind = new PointVector();
-  private windIntervalSubscription: Subscription;
   private concentrationSubscription: Subscription;
 
   private drones: Map<string, Drone> = new Map<string, Drone>();
   private websocketSubscription: Subscription;
-
-  private hostDrone: Drone;
+  private hostDroneId: string;
+  private concentrationSubject: BehaviorSubject<any>;
+  private headsetConcentrationHistory: number[];
+  private headsetConcentration: number;
 
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
@@ -65,19 +63,34 @@ export class DroneStageGame extends DroneStage {
   }
   onStart(data?: any): void {
 
-    const windObservable = interval(50).map( (n) => this.wind);
+    this.concentrationSubject = new BehaviorSubject({});
     this.eventSubscribes = new Map<string, Observable<any>>();
-    this.eventSubscribes.set(DroneStageGame.EVENT_WIND, windObservable);
+    this.eventSubscribes.set(DroneStageGame.EVENT_CONCENTRATION, this.concentrationSubject);
+    this.headsetConcentrationHistory = new Array<number>();
 
     this.objs.forEach((it) => it.onStart());
     this.onDraw();
-    this.windIntervalSubscription = interval(50).subscribe( (n) => this.wind = this.createRandomWind());
     this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.resizeSubscription = this.canvasEventSubscribe('resize', (event: Event) => this.onDraw());
+    this.keySubscription = DeviceManager.getInstance().fromeEvent('keydown', (e: KeyboardEvent) => {
+      let at = (this.headsetConcentration || 0);
+      if ('ArrowUp' === e.key) {
+        at++;
+      }else if ('ArrowDown' === e.key) {
+        at--;
+      }
+      at = Math.min(9, at);
+      at = Math.max(0, at);
+      // this.concentrationSubject.next({uuid: 'local', headsetConcentration: this.headsetConcentration});
+      DeviceManager.getInstance().dispatchCustomEvent(new CustomEvent(DeviceManager.EVENT_OMNIFIT_HEADSET_CONCENTRATION, {detail: at}));
+    });
+
     this.concentrationSubscription = DeviceManager.getInstance().headsetConcentrationSubscribe((concentration) => {
-      this.hostDrone.setConcentration(concentration);
+      this.headsetConcentration = concentration;
+      this.headsetConcentrationHistory.push(concentration);
+      this.concentrationSubject.next({uuid: 'local', headsetConcentration: concentration, headsetConcentrationHistory: this.headsetConcentrationHistory});
       if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
-        DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {headsetConcentration: concentration}));
+        DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {headsetConcentration: concentration, headsetConcentrationUpdate: new Date().getTime(), headsetConcentrationHistory: this.headsetConcentrationHistory}));
       }
     });
 
@@ -96,34 +109,36 @@ export class DroneStageGame extends DroneStage {
             drone = this.addDroneOnCreateStart(it.uuid, it.host);
           }
           if ('host' === it.host) {
-            this.hostDrone = drone;
+            this.hostDroneId = it.uuid;
           }else if ('other' === it.host) {
-            drone.setConcentration(it.headsetConcentration || 0);
           }
           wjump += wjumpSize;
           drone.initX = wjump;
+          this.concentrationSubject.next(it);
         });
       });
     }else {
-      this.hostDrone = this.addDroneOnCreateStart('local', 'host');
+      this.hostDroneId = 'local';
+      this.addDroneOnCreateStart(this.hostDroneId, 'host');
     }
   }
 
   onStop(data?: any): void {
     this.objs.forEach((it) => it.onStop(data));
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
-    if (!ValidUtil.isNullOrUndefined(this.windIntervalSubscription)) { this.windIntervalSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.websocketSubscription)) {this.websocketSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.keySubscription)) {this.keySubscription.unsubscribe(); }
   }
 
   private createRandomWind(): PointVector {
     return new PointVector(Math.floor(RandomUtil.random((this.width / 3) * -1, this.width / 3)));
   }
 
-  eventSubscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
-    return this.eventSubscribes.get(eventName).subscribe(next, error, complete);
+  eventObservable(eventName: string): Observable<any> {
+    // return this.eventSubscribes.get(eventName).subscribe(next, error, complete);
+    return this.eventSubscribes.get(eventName);
   }
 
   addDroneOnCreateStart(id: string, host?: string): Drone {
@@ -132,13 +147,14 @@ export class DroneStageGame extends DroneStage {
       this.removeObjOnStopDestory(drone);
     }
 
-    let droneImg = DroneResourceManager.getInstance().resources('character_01Img');
-    if ('host' === host) {
-      droneImg = DroneResourceManager.getInstance().resources('character_01Img');
-    }
+    const droneImg = DroneResourceManager.getInstance().resources('character_01Img');
+    // if ('host' === host) {
+    //   droneImg = DroneResourceManager.getInstance().resources('character_01Img');
+    // }
     drone = new Drone(this, 0, 0, 0, droneImg);
     drone.index = this.objs.length + 500;
     drone.id = id;
+    drone.host = host;
     drone.onCreate();
     drone.onStart();
     this.drones.set(id, drone);
