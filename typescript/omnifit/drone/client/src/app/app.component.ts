@@ -55,10 +55,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
     // const context = new AudioContext();
-    // const audio = new Audio('assets/audio/CSC018.mp3') ;
+    // const audio = new Audio('assets/audio/videoplayback.mp3') ;
     // audio.currentTime = 0;// - This will rewind the audio to the beginning.
-    // audio.loop = true;// - This will make the audio track loop.
-    // audio.muted = true;// - This will mute the track
+    // audio.loop = true;  // - This will make the audio track loop.
+    // audio.muted = true; // - This will mute the track
     // audio.play();
 
   }
