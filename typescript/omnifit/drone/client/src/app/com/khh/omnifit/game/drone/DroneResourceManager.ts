@@ -53,6 +53,10 @@ export class DroneResourceManager implements LifeCycle {
     const intro_02Img = new Image(); intro_02Img.src = 'assets/image/intro_02.png';
     const intro_text_01Img = new Image(); intro_text_01Img.src = 'assets/image/intro_text_01.png';
     const intro_text_02Img = new Image(); intro_text_02Img.src = 'assets/image/intro_text_02.png';
+    const game_bg_moonImg = new Image(); game_bg_moonImg.src = 'assets/image/game_bg_moon.png';
+    const game_bg_cloud_04Img = new Image(); game_bg_cloud_04Img.src = 'assets/image/game_bg_cloud_04.png';
+    const game_bg_cloud_05Img = new Image(); game_bg_cloud_05Img.src = 'assets/image/game_bg_cloud_05.png';
+    const game_bg_mountainImg = new Image(); game_bg_mountainImg.src = 'assets/image/game_bg_mountain.png';
 
     this._resources = new Map<string, HTMLImageElement>();
     this._resources.set('cloudImg', cloudImg);
@@ -89,6 +93,10 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('intro_02Img', intro_02Img);
     this._resources.set('intro_text_01Img', intro_text_01Img);
     this._resources.set('intro_text_02Img', intro_text_02Img);
+    this._resources.set('game_bg_moonImg', game_bg_moonImg);
+    this._resources.set('game_bg_cloud_04Img', game_bg_cloud_04Img);
+    this._resources.set('game_bg_cloud_05Img', game_bg_cloud_05Img);
+    this._resources.set('game_bg_mountainImg', game_bg_mountainImg);
 
     // this._resources.forEach((v, k) => {
     //   Observable.fromEvent(v, 'load').subscribe( (it: Event) => {

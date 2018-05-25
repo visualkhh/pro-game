@@ -5,18 +5,21 @@ import {CollectionUtil} from '../../../../../../../../lib-typescript/com/khh/col
 import {ConvertUtil} from '../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 import {RandomUtil} from '../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {ServerTelegram} from '../dto/ServerTelegram';
 import {SessionManager} from '../session/SessionManager';
 
 export class RoomService {
     static readonly ROOM_WAITING = 'waiting-room';
     private rooms = new Map<string, WebSocket[]>();
+    private roomsStatus = new Map<string, Map<string, any>>();
 
     constructor() {
         this.rooms.set(RoomService.ROOM_WAITING, []);
+        this.roomsStatus.set(RoomService.ROOM_WAITING, new Map<string, any>());
         interval(500).subscribe((it) => {
             this.rooms.forEach((v, k) => {
                 v.forEach((user) => {
-                    user.send(ConvertUtil.toJson(new Telegram('rooms', 'detail', this.getRoom(k, user))));
+                    user.send(ConvertUtil.toJson(new Telegram('rooms', 'detail', {room: this.roomsStatus.get(k), users: this.getRoom(k, user)})));
                 });
             });
         });
@@ -61,6 +64,17 @@ export class RoomService {
         });
         return users;
     }
+    public getRoomKey(user: WebSocket): string {
+        let name;
+        this.rooms.forEach((v, k) => {
+            v.forEach( (it) => {
+                if (it === user) {
+                    name = k;
+                }
+            });
+        });
+        return name;
+    }
     public sendRoom(name: string, send: Telegram<any> | string): number {
         let i = 0;
         this.getRoomWebSocket(name).forEach( (it) => {
@@ -78,9 +92,19 @@ export class RoomService {
     }
     joinRoom(name: string, ws: WebSocket) {
         this.exitRoom(ws);
-        if (this.rooms.get(name)) {
-            this.rooms.get(name)!.push(ws);
+        const wss = this.rooms.get(name);
+        if (wss) {
+            wss.push(ws);
         }
 
+    }
+
+    putRoom(request: ServerTelegram<any>): void {
+        const key = this.getRoomKey(request.ws);
+        if (key) {
+            const roomStatus = this.roomsStatus.get(key) || new Map<string, any>();
+            ConvertUtil.objToMap(request.body).forEach((v, k) => roomStatus.set(k, v));
+            this.roomsStatus.set(key, roomStatus);
+        }
     }
 }

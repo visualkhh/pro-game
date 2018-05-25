@@ -107,7 +107,6 @@ export class DroneStageManager extends DroneStage {
     return this.stages[this.position];
   }
 
-
   eventObservable(eventName: string): Observable<any> {
     return undefined;
   }

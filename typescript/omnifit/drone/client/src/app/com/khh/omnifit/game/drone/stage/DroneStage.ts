@@ -4,12 +4,8 @@ import {Subscription} from 'rxjs/Subscription';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
-import {Obj} from '../../../../../../../../../lib-typescript/com/khh/obj/Obj';
 import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {DroneResourceManager} from '../DroneResourceManager';
-import {DroneStageManager} from '../DroneStageManager';
-import {Drone} from '../obj/drone/Drone';
 import {ObjDrone} from '../obj/ObjDrone';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {

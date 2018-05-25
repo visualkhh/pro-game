@@ -1,7 +1,4 @@
-import {Subscription} from 'rxjs/Subscription';
 import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/MathUtil';
-import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
-import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DroneResourceManager} from '../../DroneResourceManager';
 import {DroneStage} from '../../stage/DroneStage';
 import {ObjDrone} from '../ObjDrone';
@@ -10,7 +7,6 @@ export class Intro extends ObjDrone {
 
   private intro_02Img = DroneResourceManager.getInstance().resources('intro_02Img');
   private intro_text_01Img = DroneResourceManager.getInstance().resources('intro_text_01Img');
-  private intro_text_02Img = DroneResourceManager.getInstance().resources('intro_text_02Img');
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
@@ -18,7 +14,7 @@ export class Intro extends ObjDrone {
 
   onDraw(context: CanvasRenderingContext2D): void {
     //context.setTransform(1, 0, 0, 1, 0, 0);
-    context.drawImage(this.intro_text_01Img, (this.stage.width / 2) - this.intro_text_01Img.width / 2, 20);
+    context.drawImage(this.intro_text_01Img, (this.stage.width / 2) - this.intro_text_01Img.width / 2, 40);
     context.drawImage(this.intro_02Img, (this.stage.width / 2) - this.intro_02Img.width / 2, (this.stage.height / 2) - this.intro_02Img.height / 2);
 
     context.beginPath();
@@ -36,8 +32,6 @@ export class Intro extends ObjDrone {
 
     context.fillStyle = grd;
     context.fill();
-
-    context.drawImage(this.intro_text_02Img, (this.stage.width / 2) - this.intro_text_02Img.width / 2, this.stage.height - (this.intro_text_02Img.height) - 50);
   }
 
   onCreate(data?: any) {}

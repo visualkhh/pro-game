@@ -1,9 +1,9 @@
+import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
 import {DroneStage} from './DroneStage';
-import {Observable} from 'rxjs/Observable';
 
 export class DroneStageEnd extends DroneStage {
 
@@ -32,7 +32,7 @@ export class DroneStageEnd extends DroneStage {
   onStart(data?: any): void {
     this.previousStageData = data;
     this.onDraw();
-    this.resizeSubscription = this.canvasEventSubscribe('resize', _ => this.onDraw());
+    this.resizeSubscription = this.canvasEventSubscribe('resize', (_) => this.onDraw());
     this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => {
       console.log({x: event.layerX, y: event.layerY});
       console.log('click END: ' + event.offsetX + '/' + event.offsetY);

@@ -62,14 +62,13 @@ export class DroneStageGame extends DroneStage {
     this.objs.forEach((it) => it.onCreate(data));
   }
   onStart(data?: any): void {
-
+    console.log('game start');
     this.concentrationSubject = new BehaviorSubject({});
     this.eventSubscribes = new Map<string, Observable<any>>();
     this.eventSubscribes.set(DroneStageGame.EVENT_CONCENTRATION, this.concentrationSubject);
     this.headsetConcentrationHistory = new Array<number>();
-
     this.objs.forEach((it) => it.onStart());
-    this.onDraw();
+
     this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.resizeSubscription = this.canvasEventSubscribe('resize', (event: Event) => this.onDraw());
     this.keySubscription = DeviceManager.getInstance().fromeEvent('keydown', (e: KeyboardEvent) => {
@@ -96,9 +95,10 @@ export class DroneStageGame extends DroneStage {
 
     //online offline
     if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
+      DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {status: 'join'}));
       this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
         console.log('telegram game ' + telegram);
-        const users = telegram.body as any[];
+        const users = telegram.body.users as any[];
         const wjumpSize = this.width / (users.length + 1);
         let wjump = 0;
         //유저 정리
@@ -121,9 +121,12 @@ export class DroneStageGame extends DroneStage {
       this.hostDroneId = 'local';
       this.addDroneOnCreateStart(this.hostDroneId, 'host');
     }
+
+    this.onDraw();
   }
 
   onStop(data?: any): void {
+    console.log('game stop');
     this.objs.forEach((it) => it.onStop(data));
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }

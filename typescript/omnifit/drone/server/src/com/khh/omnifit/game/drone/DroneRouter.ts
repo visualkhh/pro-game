@@ -23,6 +23,8 @@ export class DroneRouter {
             response.body = this.roomService.joinRoom(request.body, request.ws);
         }else if (request.action === 'rooms' && 'POST' === request.method.toUpperCase()) {//방만들기
             response.body = this.roomService.makeRoom(request.ws);
+        }else if (request.action === 'rooms' && 'PUT' === request.method.toUpperCase()) {//방 수정하기
+            response.body = this.roomService.putRoom(request);
         }else if (request.action === 'rooms' && 'DELETE' === request.method.toUpperCase()) {//방나가기 닫기
             response.body = this.roomService.exitRoom(request.ws);
         }else if (request.action === 'profile' && 'GET' === request.method.toUpperCase()) {//프로필 보기

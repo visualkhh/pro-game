@@ -12,7 +12,6 @@ export class BackGround extends ObjDrone {
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-    //context.setTransform(1, 0, 0, 1, 0, 0);
     context.beginPath();
     context.rect(0, 0, this.stage.width, this.stage.height);
     const grd = context.createLinearGradient(this.stage.width / 2, 0, this.stage.width / 2, this.stage.height);

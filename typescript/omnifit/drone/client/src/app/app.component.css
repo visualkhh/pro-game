@@ -1,1 +1,12 @@
+/*@import url('~roboto-fontface/css/roboto/roboto-fontface.css');*/
+/*@font-face {*/
+  /*font-family: 'Multicolore';*/
+  /*src: url('~assert/fonts/multicolore/Multicolore.otf');*/
+/*}*/
+/*h1 { font-family: 'Roboto-Thin'; }*/
+@font-face {
+  font-family: 'Multicolore';
+  src: url('../assets/fonts/Multicolore.otf');
+}
+
 canvas { border: 1px solid #000; }
