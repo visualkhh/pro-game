@@ -88,7 +88,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
        it.onDestroy();
      });
   }
-  addObjCreateStart(obj: ObjDrone): ObjDrone {
+  pushObjCreateStart(obj: ObjDrone): ObjDrone {
     obj.onCreate();
     obj.onStart();
     this.pushObj(obj);

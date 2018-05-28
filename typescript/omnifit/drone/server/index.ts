@@ -1,17 +1,15 @@
 import * as express from 'express';
-import {IncomingMessage, Server} from 'http';
 import * as http from 'http';
+import {IncomingMessage, Server} from 'http';
 import {AddressInfo} from 'net';
 import * as WebSocket from 'ws';
 import {StatusCode} from '../common/com/khh/omnifit/game/drone/code/StatusCode';
 import {Telegram} from '../common/com/khh/omnifit/game/drone/domain/Telegram';
-import {Clock} from '../lib-typescript/com/khh/clock/Clock';
 import {ConvertUtil} from '../lib-typescript/com/khh/convert/ConvertUtil';
 import {RandomUtil} from '../lib-typescript/com/khh/random/RandomUtil';
 import {DroneRouter} from './src/com/khh/omnifit/game/drone/DroneRouter';
-import {RoomService} from './src/com/khh/omnifit/game/drone/service/RoomService';
-import {SessionManager} from './src/com/khh/omnifit/game/drone/session/SessionManager';
 import {ServerTelegram} from './src/com/khh/omnifit/game/drone/dto/ServerTelegram';
+import {SessionManager} from './src/com/khh/omnifit/game/drone/session/SessionManager';
 //https://medium.com/factory-mind/websocket-node-js-express-step-by-step-using-typescript-725114ad5fe4
 const app = express();
 //initialize a simple http server
@@ -39,7 +37,7 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
         ws.send(ConvertUtil.toJson(response));
     });
 
-    router.request(new ServerTelegram(ws, 'rooms/join', 'put', RoomService.ROOM_WAITING));
+    //router.request(new ServerTelegram(ws, 'rooms/join', 'PUT'));
 
     const init = new Telegram<Map<string, any>>('welcome', req.method, session, StatusCode.OK);
     ws.send(ConvertUtil.toJson(init));
@@ -65,4 +63,3 @@ server.listen(process.env.PORT || 8999, () => {
 //        console.log('sit ' + sit);
 //     });
 // });
-

@@ -12,14 +12,17 @@ import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {Telegram} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
+import {ConvertUtil} from '../../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DeviceManager} from '../../../drive/DeviceManager';
 import {DroneResourceManager} from '../DroneResourceManager';
 import {DroneStageManager} from '../DroneStageManager';
+import {ReadyButton} from '../obj/button/ReadyButton';
 import {Drone} from '../obj/drone/Drone';
 import {DroneStage} from './DroneStage';
+import {ServerTelegram} from '../../../../../../../../../server/src/com/khh/omnifit/game/drone/dto/ServerTelegram';
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
@@ -37,7 +40,7 @@ export class DroneStageGame extends DroneStage {
   private concentrationSubject: BehaviorSubject<any>;
   private headsetConcentrationHistory: number[];
   private headsetConcentration: number;
-
+  private roomUUID = 'local';
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
     const x = this.width / 2;
@@ -95,7 +98,7 @@ export class DroneStageGame extends DroneStage {
 
     //online offline
     if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
-      DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {status: 'join'}));
+      DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('rooms/join', 'put'));
       this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
         console.log('telegram game ' + telegram);
         const users = telegram.body.users as any[];
@@ -106,7 +109,7 @@ export class DroneStageGame extends DroneStage {
         users.forEach((it) => {
           let drone  = this.drones.get(it.uuid);
           if (ValidUtil.isNullOrUndefined(drone)) {
-            drone = this.addDroneOnCreateStart(it.uuid, it.host);
+            drone = this.pushDroneOnCreateStart(it.uuid, it.host);
           }
           if ('host' === it.host) {
             this.hostDroneId = it.uuid;
@@ -119,10 +122,18 @@ export class DroneStageGame extends DroneStage {
       });
     }else {
       this.hostDroneId = 'local';
-      this.addDroneOnCreateStart(this.hostDroneId, 'host');
+      this.pushDroneOnCreateStart(this.hostDroneId, 'host');
     }
 
-    this.onDraw();
+    //첫번째 드론이 내꺼 이면은 시작하기 버튼 나와라
+    // const s = ConvertUtil.iteratorToArray(this.drones.values());
+    // console.log('drones  ' + s[0].host)
+    // if ('host' === s[0].host) {
+    //   const readyButton = new ReadyButton(this, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_mountainImg'));
+    //   readyButton.index = 600;
+    //   this.pushObjCreateStart(readyButton);
+    // }
+
   }
 
   onStop(data?: any): void {
@@ -144,7 +155,7 @@ export class DroneStageGame extends DroneStage {
     return this.eventSubscribes.get(eventName);
   }
 
-  addDroneOnCreateStart(id: string, host?: string): Drone {
+  pushDroneOnCreateStart(id: string, host?: string): Drone {
     let drone = this.drones.get(id);
     if (!ValidUtil.isNullOrUndefined(drone)) {
       this.removeObjOnStopDestory(drone);

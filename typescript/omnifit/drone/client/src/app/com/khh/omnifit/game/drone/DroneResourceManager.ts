@@ -57,6 +57,8 @@ export class DroneResourceManager implements LifeCycle {
     const game_bg_cloud_04Img = new Image(); game_bg_cloud_04Img.src = 'assets/image/game_bg_cloud_04.png';
     const game_bg_cloud_05Img = new Image(); game_bg_cloud_05Img.src = 'assets/image/game_bg_cloud_05.png';
     const game_bg_mountainImg = new Image(); game_bg_mountainImg.src = 'assets/image/game_bg_mountain.png';
+    const intro_popupImg = new Image(); intro_popupImg.src = 'assets/image/intro_popup.png';
+    const ranking_shape_02_arrowImg = new Image(); ranking_shape_02_arrowImg.src = 'assets/image/ranking_shape_02_arrow.png';
 
     this._resources = new Map<string, HTMLImageElement>();
     this._resources.set('cloudImg', cloudImg);
@@ -97,6 +99,8 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('game_bg_cloud_04Img', game_bg_cloud_04Img);
     this._resources.set('game_bg_cloud_05Img', game_bg_cloud_05Img);
     this._resources.set('game_bg_mountainImg', game_bg_mountainImg);
+    this._resources.set('intro_popupImg', intro_popupImg);
+    this._resources.set('ranking_shape_02_arrowImg', ranking_shape_02_arrowImg);
 
     // this._resources.forEach((v, k) => {
     //   Observable.fromEvent(v, 'load').subscribe( (it: Event) => {

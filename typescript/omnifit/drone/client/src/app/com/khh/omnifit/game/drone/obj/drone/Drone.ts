@@ -194,12 +194,15 @@ export class Drone extends ObjDrone {
     this.score.x = -this.img.width;
     this.score.y = this.img.height + 20;
     this.score.onDraw(context);
+    }else if ('host' === this.host) {
+      const arrowImg = DroneResourceManager.getInstance().resources('ranking_shape_02_arrowImg');
+      context.drawImage(arrowImg, this.x - (arrowImg.width / 2), imgY - (arrowImg.height));
     }
   }
 
   onStart(data?: any) {
     // this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
-    console.log('drone start id ' + this.id)
+    console.log('drone start id ' + this.id);
     this.score = new Score(this.stage, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
     this.score.id = this.id;
     this.score.onCreate();

@@ -153,7 +153,16 @@ export class DroneStageManager extends DroneStage {
     const r =  this.objs.map((it) => {
       it.stage = stage;
       return it;
-    }).concat(stage.objs).sort((n1, n2) => (n1.index > n2.index ? 1 : -1));
+    }).concat(stage.objs).sort((n1, n2) => {
+      //(n1.index > n2.index ? 1 : -1)
+      if (n1.index > n2.index) {
+        return 1;
+      }
+      if (n1.index < n2.index) {
+        return -1;
+      }
+      return 0;
+    });
     // console.log(r);
     return r;
     // return this.objs.map((it) => {

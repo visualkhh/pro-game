@@ -12,12 +12,13 @@ import {BackGround} from './com/khh/omnifit/game/drone/obj/background/BackGround
 import {Moon} from './com/khh/omnifit/game/drone/obj/background/Moon';
 import {Mountain} from './com/khh/omnifit/game/drone/obj/background/Mountain';
 import {ReadyButton} from './com/khh/omnifit/game/drone/obj/button/ReadyButton';
-import {TouchScreen} from './com/khh/omnifit/game/drone/obj/button/TouchScreen';
 import {Cloud} from './com/khh/omnifit/game/drone/obj/cloud/Cloud';
 import {MoveImg} from './com/khh/omnifit/game/drone/obj/comm/MoveImg';
 import {Drone} from './com/khh/omnifit/game/drone/obj/drone/Drone';
 import {Ground} from './com/khh/omnifit/game/drone/obj/ground/Ground';
-import {Intro} from './com/khh/omnifit/game/drone/obj/intro/Intro';
+import {IntroIcon} from './com/khh/omnifit/game/drone/obj/intro/IntroIcon';
+import {IntroPopup} from './com/khh/omnifit/game/drone/obj/intro/IntroPopup';
+import {IntroTitle} from './com/khh/omnifit/game/drone/obj/intro/IntroTitle';
 import {Score} from './com/khh/omnifit/game/drone/obj/score/Score';
 import {Star} from './com/khh/omnifit/game/drone/obj/star/Star';
 import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
@@ -81,16 +82,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     // this.resourceManager.setImageResources('effect_character04_4Img', 'assets/image/effect_character04_4.png', (event: Event) => {
     //   const at = new Intro(this.manager, 0, 0, 0, event.srcElement as HTMLImageElement);
     //   at.index = (i++);
-    //   droneStageIntro.addObjCreateStart(at);
+    //   droneStageIntro.pushObjCreateStart(at);
     // });
 
     //stage Intro
     const droneStageIntro = new DroneStageIntro(this.canvas);
-    const intro = new Intro(droneStageIntro, 0, 0, 0);
-    intro.index = 65;
-    const touchScreen = new TouchScreen(droneStageIntro, 0, 0, 0, DroneResourceManager.getInstance().resources('intro_text_02Img'));
-    touchScreen.index = 66;
-    droneStageIntro.pushObj(intro);
+    const introTitle = new IntroTitle(droneStageIntro, 0, 0, 0, DroneResourceManager.getInstance().resources('intro_text_01Img'));
+    introTitle.index = 65;
+    const introIcon = new IntroIcon(droneStageIntro, 0, 0, 0, DroneResourceManager.getInstance().resources('intro_02Img'));
+    introIcon.index = 66;
+    const touchScreen = new IntroPopup(droneStageIntro, 0, 0, 0, DroneResourceManager.getInstance().resources('intro_text_02Img'));
+    touchScreen.index = 67;
+    droneStageIntro.pushObj(introTitle);
+    droneStageIntro.pushObj(introIcon);
     droneStageIntro.pushObj(touchScreen);
     const background = new BackGround(this.manager, 0, 0, 0);
     background.index = 0;
@@ -131,10 +135,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     droneStageGame.pushObj(mountain);
     droneStageIntro.pushObj(mountain);
 
-    //ready Btn
-    const readyButton = new ReadyButton(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_mountainImg'));
-    readyButton.index = 600;
-    droneStageGame.pushObj(readyButton);
+
 
     const score = new Score(droneStageGame, 0, 0, 500, DroneResourceManager.getInstance().resources('gage_00Img'));
     score.id = 'local';
