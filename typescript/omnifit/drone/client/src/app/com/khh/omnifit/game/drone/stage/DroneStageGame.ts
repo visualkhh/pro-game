@@ -129,7 +129,11 @@ export class DroneStageGame extends DroneStage {
       DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('rooms/join', 'put'));
       this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
         console.log('telegram game ' + telegram);
-        this.roomDetailSubject.next(this.room = telegram.body);
+        this.room = telegram.body;
+        if (this.room.startCnt <= 0 && this.room.endCnt >= 60) {
+            this.headsetConcentrationHistory = new Array<number>();
+        }
+        this.roomDetailSubject.next(this.room);
         const users = telegram.body.users as any[];
         const wjumpSize = this.width / (users.length + 1);
         let wjump = 0;

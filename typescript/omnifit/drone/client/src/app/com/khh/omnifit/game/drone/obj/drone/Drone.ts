@@ -186,7 +186,7 @@ export class Drone extends ObjDrone {
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillStyle = 'blue';
-    context.fillText(this.id, this.x, imgY);
+    //context.fillText(this.id, this.x, imgY);
     // context.arc(this.position.x, imgY, 30, 0, 2 * Math.PI);
     context.fill();
     context.beginPath();
