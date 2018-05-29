@@ -12,28 +12,11 @@ export abstract class MoveImg extends ObjDrone {
   private acceleration: PointVector;
   private accelerationStep: PointVector;
 
-  private _imgAlign = 'right';
-  private _imgBaseline = 'hanging';
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
   }
 
-  get imgAlign(): string {
-    return this._imgAlign;
-  }
-
-  set imgAlign(value: string) {
-    this._imgAlign = value;
-  }
-
-  get imgBaseline(): string {
-    return this._imgBaseline;
-  }
-
-  set imgBaseline(value: string) {
-    this._imgBaseline = value;
-  }
 
   onDraw(context: CanvasRenderingContext2D): void {
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -67,15 +50,15 @@ export abstract class MoveImg extends ObjDrone {
     let x = this.x;
     let y = this.y;
     //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_canvas_textalign
-    if (this._imgAlign === 'center') {
+    if (this.imgAlign === 'center') {
       x = this.x - (this.img.width / 2);
     }
     //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_canvas_textbaseline
-    if (this._imgBaseline === 'middle') {
+    if (this.imgBaseline === 'middle') {
       y = this.y - (this.img.height / 2);
-    }else if (this._imgBaseline === 'hanging') {
+    }else if (this.imgBaseline === 'hanging') {
       y = this.y;
-    }else if (this._imgBaseline === 'bottom') {
+    }else if (this.imgBaseline === 'bottom') {
       y = this.y - (this.img.height);
     }
     context.drawImage(this.img, x, y);

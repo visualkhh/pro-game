@@ -11,10 +11,10 @@ import 'rxjs/add/operator/distinctUntilChanged';
 
 export class DeviceManager {
 
-  private static instance: DeviceManager;
-  private headsetConcentrationObservable: Observable<number>;
-
   static readonly EVENT_OMNIFIT_HEADSET_CONCENTRATION = 'omnifit-headset-concentration';
+  private static instance: DeviceManager;
+  private _headsetConcentrationObservable: Observable<number>;
+
   //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
   static getInstance() {
@@ -25,7 +25,7 @@ export class DeviceManager {
   }
 
   private constructor() {
-    this.headsetConcentrationObservable = Observable.fromEvent(window, DeviceManager.EVENT_OMNIFIT_HEADSET_CONCENTRATION).map((event: CustomEvent) => Number(event.detail) );
+    this._headsetConcentrationObservable = Observable.fromEvent(window, DeviceManager.EVENT_OMNIFIT_HEADSET_CONCENTRATION).map((event: CustomEvent) => Number(event.detail) );
   }
 
   public fromeEvent(eventName: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription  {
@@ -36,7 +36,11 @@ export class DeviceManager {
     return window.dispatchEvent(event);
   }
 
+  get headsetConcentrationObservable(): Observable<number> {
+    return this._headsetConcentrationObservable;
+  }
+
   public headsetConcentrationSubscribe(next?: (value: number) => void, error?: (error: any) => void, complete?: () => void): Subscription {
-    return this.headsetConcentrationObservable.subscribe(next, error, complete);
+    return this._headsetConcentrationObservable.subscribe(next, error, complete);
   }
 }

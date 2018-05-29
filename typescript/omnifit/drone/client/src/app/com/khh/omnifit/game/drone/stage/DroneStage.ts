@@ -7,11 +7,9 @@ import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/g
 import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {ObjDrone} from '../obj/ObjDrone';
+import {ConvertUtil} from '../../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
-
-  public static readonly EVENT_CLOCK = 'CLOCK';
-  public static readonly EVENT_CONCENTRATION = 'CONCENTRATION';
 
   private _objs: ObjDrone[];
   private clock: Observable<number>;
@@ -83,7 +81,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
   //   this.flushCanvas(canvas);
   // }
   removeObjOnStopDestory(obj: ObjDrone): void {
-     CollectionUtil.deleteArrayItem(this._objs, obj, (it) => {
+     CollectionUtil.removeArrayItem(this._objs, obj, (it) => {
        it.onStop();
        it.onDestroy();
      });
@@ -116,4 +114,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
   abstract onStart(data?: any);
   abstract onStop(data?: any);
 
+  removeObj(param: ObjDrone) {
+    CollectionUtil.removeArrayItem(this.objs, param);
+  }
 }

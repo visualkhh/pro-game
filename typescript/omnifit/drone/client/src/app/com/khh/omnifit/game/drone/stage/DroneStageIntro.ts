@@ -12,6 +12,7 @@ export class DroneStageIntro extends DroneStage {
   private mouseDownSubscription: Subscription;
   private clockSubscription: Subscription;
   private websocketSubscription: Subscription;
+  private audio: HTMLAudioElement;
 
   constructor(canvas: HTMLCanvasElement, objs?: ObjDrone[]) {
     super(canvas, objs);
@@ -70,6 +71,8 @@ export class DroneStageIntro extends DroneStage {
 
   onStart(data?: any): void {
     console.log('intro onStart');
+    this.audio = new Audio('assets/audio/videoplayback.mp3') ;
+    this.audio.play();
     this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'welcome').subscribe((telegram) => {
       console.log('telegram Intro ' + telegram);
     });
@@ -82,6 +85,7 @@ export class DroneStageIntro extends DroneStage {
 
   onStop(data?: any): void {
     console.log('intro onStop');
+    this.audio.pause();
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) { this.resizeSubscription.unsubscribe(); }
     //if (!ValidUtil.isNullOrUndefined(this.mouseDownSubscription)) { this.mouseDownSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }

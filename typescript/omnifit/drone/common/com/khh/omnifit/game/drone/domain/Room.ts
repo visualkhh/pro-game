@@ -1,5 +1,5 @@
-import WebSocket = require('ws');
-import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {ValidUtil} from '../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+
 export class Room<T> {
     static START_CNT = 10;
     static END_CNT = 60;

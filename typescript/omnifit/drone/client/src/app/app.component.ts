@@ -25,6 +25,9 @@ import {Wind} from './com/khh/omnifit/game/drone/obj/wind/Wind';
 import {DroneStageEnd} from './com/khh/omnifit/game/drone/stage/DroneStageEnd';
 import {DroneStageGame} from './com/khh/omnifit/game/drone/stage/DroneStageGame';
 import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntro';
+import {Timer} from './com/khh/omnifit/game/drone/obj/timer/Timer';
+import {ResultPopup} from './com/khh/omnifit/game/drone/obj/game/ResultPopup';
+import {Alarm} from './com/khh/omnifit/game/drone/obj/alarm/Alarm';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 // typescript observable subscribe example
@@ -107,12 +110,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     for (let i = 20; i < 40 ; i++) {
       const star = new Star(this.manager, 0, 0, 0);
       star.index = i;
-      droneStageGame.pushObj(star);
-      droneStageIntro.pushObj(star);
+      this.manager.pushObj(star);
     }
 
     //moon
-    const moon = new Moon(this.manager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_moonImg'));
+    const moon = new Moon(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_moonImg'));
     moon.index = 41;
     droneStageGame.pushObj(moon);
     // droneStageIntro.pushObj(moon);
@@ -120,28 +122,32 @@ export class AppComponent implements OnInit, AfterViewInit {
     for (let i = 50; i < 55 ; i++) {
       const cloud = new Cloud(this.manager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_cloud_04Img'));
       cloud.index = i;
-      droneStageGame.pushObj(cloud);
-      droneStageIntro.pushObj(cloud);
+      this.manager.pushObj(cloud);
     }
     for (let i = 55; i < 60 ; i++) {
       const cloud = new Cloud(this.manager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_cloud_05Img'));
       cloud.index = i;
-      droneStageGame.pushObj(cloud);
-      droneStageIntro.pushObj(cloud);
+      this.manager.pushObj(cloud);
     }
     //mountain
     const mountain = new Mountain(this.manager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_mountainImg'));
     mountain.index = 61;
-    droneStageGame.pushObj(mountain);
-    droneStageIntro.pushObj(mountain);
+    this.manager.pushObj(mountain);
 
-
-
-    const score = new Score(droneStageGame, 0, 0, 500, DroneResourceManager.getInstance().resources('gage_00Img'));
+    const score = new Score(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
     score.id = 'local';
     score.index = 1000;
+    const alarm = new Alarm(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('alarm_iconImg'));
+    alarm.index = 1001;
+    const timer = new Timer(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
+    timer.index = 1002;
+    const resultPopup = new ResultPopup(droneStageGame, 0, 0, 0);
+    resultPopup.index = 1101;
     // const wind = new Wind(droneStageGame, 0, 0, 500);
     droneStageGame.pushObj(score);
+    droneStageGame.pushObj(alarm);
+    droneStageGame.pushObj(timer);
+    droneStageGame.pushObj(resultPopup);
 
     //Stage End
     const droneStageEnd = new DroneStageEnd(this.canvas);

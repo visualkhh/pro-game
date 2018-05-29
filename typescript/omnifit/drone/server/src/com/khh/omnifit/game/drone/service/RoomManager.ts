@@ -9,7 +9,7 @@ import {RandomUtil} from '../../../../../../../../lib-typescript/com/khh/random/
 import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {ServerTelegram} from '../dto/ServerTelegram';
 import {SessionManager} from '../session/SessionManager';
-import {Room} from './Room';
+import {Room} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 
 export class RoomManager {
 
@@ -31,16 +31,29 @@ export class RoomManager {
         });
         interval(1000).subscribe((it) => {
             this.rooms.forEach((v, k) => {
-                console.log(v.users.length + ' ' + v.startCnt + ' ' + v.endCnt)
+                //console.log(v.users.length + ' ' + v.startCnt + ' ' + v.endCnt)
                 if (v.users.length > 0 && v.startCnt > 0) {
                     v.startCnt = (--v.startCnt);
                     v.status = 'wait';
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt > 0) {
                     v.endCnt = (--v.endCnt);
                     v.status = 'run';
+                    for (const user of v.users) {
+                        SessionManager.getInstance().get(user).set('headsetConcentrationHistory', Array<number>());
+                    }
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt <= 0) {
                     v.status = 'end';
-                    v.users.forEach( (uit) => this.exitRoom(uit));
+                    //v.users.forEach( (uit) => this.exitRoom(uit));
+                }
+
+                for (const user of v.users) {
+                    let finishCnt = 3;
+                    (SessionManager.getInstance().get(user).get('headsetConcentrationHistory') || Array<number>()).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 3);
+                    //console.log('-- ' + finishCnt);
+                    if (v.status === 'run' && finishCnt <= 0) {
+                        v.status = 'end';
+                        break;
+                    }
                 }
             });
         });
@@ -58,7 +71,7 @@ export class RoomManager {
 
     public exitRoom(ws: WebSocket) {
         this.rooms.forEach((v: Room<WebSocket>, k: string, map: Map<string, Room<WebSocket>>) => {
-            CollectionUtil.deleteArrayItem(v.users, ws);
+            CollectionUtil.removeArrayItem(v.users, ws);
             if (v.users.length <= 0 ) {
                 map.delete(k);
             }

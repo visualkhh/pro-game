@@ -1,15 +1,14 @@
 import {Subscription} from 'rxjs/Subscription';
+import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DroneResourceManager} from '../../DroneResourceManager';
 import {DroneStage} from '../../stage/DroneStage';
-import {ObjDrone} from '../ObjDrone';
 import {DroneStageGame} from '../../stage/DroneStageGame';
+import {DroneStageEvent} from '../../stage/DronStageEvent';
+import {ObjDrone} from '../ObjDrone';
 
 export class Score extends ObjDrone {
 
-  // private pointSubscription: Subscription;
-  // private point: number;
-  private timeSecond: number;
   private resizeSubscription: Subscription;
   private concentrationSubscription: Subscription;
   private beforeHeadsetConcentration = 0;
@@ -21,16 +20,6 @@ export class Score extends ObjDrone {
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-   // context.setTransform(1, 0, 0, 1, 0, 0);
-   //  context.beginPath();
-   //  context.fillStyle = '#FF0000';
-   //  context.font = '10pt Calibri';
-   //  context.textAlign = 'left';
-   //  context.fillText('con:' + this.headsetConcentration + ' [' + (this.headsetConcentration - this.beforeHeadsetConcentration) + ']', 50, 50);
-    // context.setTransform(1, 0, 0, 1, 0, 0);
-    // context.beginPath();
-    // context.fillText('time(' + this.timeSecond + ') point(' + this.point + ')', 50, 60);
-
     if (this.finishCnt > 0 && this.headsetConcentration <= 0) {
       this.img = DroneResourceManager.getInstance().resources('gage_00Img');
     }else if (this.finishCnt > 0 && this.headsetConcentration === 1) {
@@ -60,32 +49,24 @@ export class Score extends ObjDrone {
         DroneResourceManager.getInstance().resources('gage_10_5Img')][new Date().getSeconds() % 5];
     }
     context.drawImage(this.img, this.x, this.y);
+
   }
 
   onStart(data?: any) {
-    // this.point = 0;
     this.x = 20;
     this.y = 20;
-    this.timeSecond = 60;
     this.finishCnt = 3;
-    // this.pointSubscription = interval(1000).subscribe((it) => {
-    //   this.timeSecond--;
-    //   console.log('timeSecond' + this.timeSecond);
-    //   if (this.timeSecond <= 0) {
-    //    // DroneStageManager.getInstance().nextStage(this.point);
-    //   }
-    // });
     //집중도
-    console.log('--score id- ' + this.id)
-    this.concentrationSubscription = this.stage.eventObservable(DroneStageGame.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
+    console.log('--score id- ' + this.id);
+    this.concentrationSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
 
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration.headsetConcentration || 0;
       const history = concentration.headsetConcentrationHistory || new Array<number>();
       history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 3);
-      // this.point += Number(concentration.headsetConcentration);
+      // this.score += Number(concentration.headsetConcentration);
       // if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
-      //   DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {score: this.point}));
+      //   DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {score: this.score}));
       // }
     });
 

@@ -4,10 +4,11 @@ import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid
 import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
 import {DroneStage} from './DroneStage';
+import {Room} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 
 export class DroneStageEnd extends DroneStage {
 
-  private previousStageData: any | undefined;
+  private previousStageData: Room<any>;
   private resizeSubscription: Subscription;
   private mouseDownSubscription: Subscription;
   constructor(canvas: HTMLCanvasElement, objs: ObjDrone[] = new Array<ObjDrone>()) {
@@ -32,11 +33,10 @@ export class DroneStageEnd extends DroneStage {
   onStart(data?: any): void {
     this.previousStageData = data;
     this.onDraw();
-    this.resizeSubscription = this.canvasEventSubscribe('resize', (_) => this.onDraw());
     this.mouseDownSubscription = this.canvasEventSubscribe('mousedown', (event: MouseEvent) => {
       console.log({x: event.layerX, y: event.layerY});
       console.log('click END: ' + event.offsetX + '/' + event.offsetY);
-      DroneStageManager.getInstance().previousStage();
+      DroneStageManager.getInstance().goStage(0);
     });
   }
 

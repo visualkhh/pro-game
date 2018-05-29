@@ -5,6 +5,7 @@
     ],
     "jsRules": {},
     "rules": {
+        "interface-name": [true, "never-prefix"],
         "arrow-return-shorthand": true,
         "callable-types": true,
         "class-name": true,

@@ -4,6 +4,7 @@ import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/r
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DroneResourceManager} from '../../DroneResourceManager';
 import {DroneStage} from '../../stage/DroneStage';
+import {DroneStageEvent} from '../../stage/DronStageEvent';
 import {ObjDrone} from '../ObjDrone';
 import {Score} from '../score/Score';
 
@@ -42,7 +43,7 @@ export class Drone extends ObjDrone {
 
     //targetPosition
     // const targetPosition = new PointVector(this._initX || (this.stage.width / 2), (this.stage.height - this.img.height / 2) - conStepVal);
-    const targetPosition = new PointVector(this._initX || (this.stage.width / 2), (minHeight) - conStepVal);
+    const targetPosition = new PointVector(this._initX || (this.stage.width / 2), minHeight - conStepVal);
     // targetPosition.add(this.wind);
 
     //////update
@@ -124,7 +125,11 @@ export class Drone extends ObjDrone {
       const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
     }else if (this.finishCnt >= 3 && targetPosition.y > this.y) {//내려가기
-      this.img = DroneResourceManager.getInstance().resources('character_03Img');
+      if (Math.floor(new Date().getMilliseconds() / 500)) {
+        this.img = DroneResourceManager.getInstance().resources('character_03Img');
+      }else {
+        this.img = DroneResourceManager.getInstance().resources('character_03_1Img');
+      }
       const effectImg = DroneResourceManager.getInstance().resources('effect_character03Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height);
@@ -208,13 +213,21 @@ export class Drone extends ObjDrone {
     this.score.onCreate();
     this.score.onStart();
 
+    //const targetPosition = new PointVector(this._initX || (this.stage.width / 2), (minHeight) - conStepVal);
     this.finishCnt = 3;
-    this.x  = RandomUtil.random(this.stage.width);
-    this.y = this.stage.height;
+    // this.x  = RandomUtil.random(this.stage.width);
+    // this.y = this.stage.height;
+    //height
+    const minHeight = this.stage.height - 200;
+    const stepVal = (minHeight - 200) / 10;
+    const conStepVal = (stepVal * this.concentration);
+
+    this.x  = this._initX || (this.stage.width / 2);
+    this.y = minHeight - conStepVal;
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
 
-    this.concentrationSubscription = this.stage.eventObservable(DroneStage.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
+    this.concentrationSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
         //console.log('---' + concentration.uuid + ' -> ' + concentration.headsetConcentration);
         this.beforeConcentration = this.concentration;
         this.concentration = concentration.headsetConcentration || 0;

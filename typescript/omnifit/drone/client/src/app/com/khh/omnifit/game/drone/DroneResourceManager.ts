@@ -29,6 +29,7 @@ export class DroneResourceManager implements LifeCycle {
     const character_01Img = new Image(); character_01Img.src = 'assets/image/character_01.png';
     const character_02Img = new Image(); character_02Img.src = 'assets/image/character_02.png';
     const character_03Img = new Image(); character_03Img.src = 'assets/image/character_03.png';
+    const character_03_1Img = new Image(); character_03_1Img.src = 'assets/image/character_03_1.png';
     const character_04Img = new Image(); character_04Img.src = 'assets/image/character_04.png';
     const effect_character02Img = new Image(); effect_character02Img.src = 'assets/image/effect_character02.png';
     const effect_character03Img = new Image(); effect_character03Img.src = 'assets/image/effect_character03.png';
@@ -58,7 +59,15 @@ export class DroneResourceManager implements LifeCycle {
     const game_bg_cloud_05Img = new Image(); game_bg_cloud_05Img.src = 'assets/image/game_bg_cloud_05.png';
     const game_bg_mountainImg = new Image(); game_bg_mountainImg.src = 'assets/image/game_bg_mountain.png';
     const intro_popupImg = new Image(); intro_popupImg.src = 'assets/image/intro_popup.png';
+    const result_popup_bgImg = new Image(); result_popup_bgImg.src = 'assets/image/result_popup_bg.png';
+    const result_characterImg = new Image(); result_characterImg.src = 'assets/image/result_character.png';
+    const ranking_character_01Img = new Image(); ranking_character_01Img.src = 'assets/image/ranking_character_01.png';
+    const ranking_shape_01Img = new Image(); ranking_shape_01Img.src = 'assets/image/ranking_shape_01.png';
+    const ranking_icon_01Img = new Image(); ranking_icon_01Img.src = 'assets/image/ranking_icon_01.png';
+    const ranking_icon_02Img = new Image(); ranking_icon_02Img.src = 'assets/image/ranking_icon_02.png';
+    const ranking_icon_03Img = new Image(); ranking_icon_03Img.src = 'assets/image/ranking_icon_03.png';
     const ranking_shape_02_arrowImg = new Image(); ranking_shape_02_arrowImg.src = 'assets/image/ranking_shape_02_arrow.png';
+    const alarm_iconImg = new Image(); alarm_iconImg.src = 'assets/image/alarm_icon.png';
 
     this._resources = new Map<string, HTMLImageElement>();
     this._resources.set('cloudImg', cloudImg);
@@ -71,6 +80,7 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('character_01Img', character_01Img);
     this._resources.set('character_02Img', character_02Img);
     this._resources.set('character_03Img', character_03Img);
+    this._resources.set('character_03_1Img', character_03_1Img);
     this._resources.set('character_04Img', character_04Img);
     this._resources.set('effect_character02Img', effect_character02Img);
     this._resources.set('effect_character03Img', effect_character03Img);
@@ -100,7 +110,15 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('game_bg_cloud_05Img', game_bg_cloud_05Img);
     this._resources.set('game_bg_mountainImg', game_bg_mountainImg);
     this._resources.set('intro_popupImg', intro_popupImg);
+    this._resources.set('result_popup_bgImg', result_popup_bgImg);
+    this._resources.set('result_characterImg', result_characterImg);
+    this._resources.set('ranking_character_01Img', ranking_character_01Img);
+    this._resources.set('ranking_shape_01Img', ranking_shape_01Img);
+    this._resources.set('ranking_icon_01Img', ranking_icon_01Img);
+    this._resources.set('ranking_icon_02Img', ranking_icon_02Img);
+    this._resources.set('ranking_icon_03Img', ranking_icon_03Img);
     this._resources.set('ranking_shape_02_arrowImg', ranking_shape_02_arrowImg);
+    this._resources.set('alarm_iconImg', alarm_iconImg);
 
     // this._resources.forEach((v, k) => {
     //   Observable.fromEvent(v, 'load').subscribe( (it: Event) => {
