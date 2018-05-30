@@ -1,4 +1,5 @@
 import {Subscription} from 'rxjs/Subscription';
+import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
@@ -20,6 +21,8 @@ export class Drone extends ObjDrone {
   private score: Score;
 
   private concentrationSubscription: Subscription;
+  private roomDetailSubscription: Subscription;
+  private status: string;
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
@@ -39,7 +42,8 @@ export class Drone extends ObjDrone {
     //height
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
-    const conStepVal = (stepVal * this.concentration);
+    const conStepVal = (stepVal * (this.status === 'run' || this.status === 'end' ? this.concentration : 0));
+    const finishCnt = (this.status === 'run' || this.status === 'end' ? this.finishCnt : 2);
 
     //targetPosition
     const targetPosition = new PointVector(this._initX || (this.stage.width / 2), minHeight - conStepVal);
@@ -108,13 +112,13 @@ export class Drone extends ObjDrone {
 
     //img
     //올라가기
-    if (this.finishCnt >= 2 && targetPosition.y < this.y) {
+    if (finishCnt >= 2 && targetPosition.y < this.y) {
       this.img = DroneResourceManager.getInstance().resources('character_02Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character02Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (this.finishCnt >= 2 && targetPosition.y > this.y) {//내려가기
+    }else if (finishCnt >= 2 && targetPosition.y > this.y) {//내려가기
       if (Math.floor(new Date().getMilliseconds() / 500)) {
         this.img = DroneResourceManager.getInstance().resources('character_03Img');
       }else {
@@ -124,20 +128,20 @@ export class Drone extends ObjDrone {
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (this.finishCnt >= 2) {
+    }else if (finishCnt >= 2) {
       //일반모습
       if (this.concentration === 8) {
         this.img = DroneResourceManager.getInstance().resources('character_04Img');
       }else {
         this.img = DroneResourceManager.getInstance().resources('character_01Img');
       }
-    }else if (this.finishCnt === 1) {
+    }else if (finishCnt === 1) {
       const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
       this.img = DroneResourceManager.getInstance().resources('character_04Img');
-    }else if (this.finishCnt <= 0) {
+    }else if (finishCnt <= 0) {
       this.img = DroneResourceManager.getInstance().resources('character_04Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
       const effectImgX = this.x - (effectImg.width / 2);
@@ -202,17 +206,20 @@ export class Drone extends ObjDrone {
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
 
+    this.roomDetailSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_ROOM_DETAIL).subscribe( (room: Room<any>) => {
+      this.status = room.status;
+    });
     this.concentrationSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
         this.beforeConcentration = this.concentration;
         this.concentration = concentration.headsetConcentration || 0;
         const history = concentration.headsetConcentrationHistory || new Array<number>();
         history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 2);
-        console.log('- -' + this.finishCnt);
     });
 
   }
 
   onStop() {
+    if (!ValidUtil.isNullOrUndefined(this.roomDetailSubscription)) {this.roomDetailSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
     this.score.onStop();
     this.score.onDestroy();

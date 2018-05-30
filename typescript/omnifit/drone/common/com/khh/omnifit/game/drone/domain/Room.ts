@@ -3,10 +3,10 @@ import {ValidUtil} from '../../../../../../../lib-typescript/com/khh/valid/Valid
 export class Room<T> {
     static START_CNT = 10;
     static END_CNT = 60;
-    public uuid;
-    public status;
-    public startCnt;
-    public endCnt;
+    public uuid: string;
+    public status: string;
+    public startCnt: number;
+    public endCnt: number;
     public users: T[] = new Array<T>();
 
     constructor(uuid = '', status = 'wait', startCnt = Room.START_CNT, endCnt = Room.END_CNT, users = new Array<T>()) {

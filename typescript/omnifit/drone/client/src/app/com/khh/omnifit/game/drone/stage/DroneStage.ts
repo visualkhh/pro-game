@@ -2,18 +2,18 @@ import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
+import {ConvertUtil} from '../../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event/life/LifeCycle';
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
 import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {ObjDrone} from '../obj/ObjDrone';
-import {ConvertUtil} from '../../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 
 export abstract class DroneStage extends Stage implements LifeCycle, ViewInterface {
 
   private _objs: ObjDrone[];
   private clock: Observable<number>;
-  protected clockInterval = 30;
+  protected clockInterval = 10;
   private _canvas: HTMLCanvasElement;
   private _bufferCanvas: HTMLCanvasElement;
   private reSizeSubscription: Subscription;

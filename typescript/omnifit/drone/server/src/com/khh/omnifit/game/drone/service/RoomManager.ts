@@ -37,11 +37,11 @@ export class RoomManager {
                     v.status = 'wait';
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt > 0) {
                     console.log(v.endCnt);
-                    // if (v.endCnt >= 60) {
-                    //     for (const user of v.users) {
-                    //         SessionManager.getInstance().get(user).set('headsetConcentrationHistory', Array<number>());
-                    //     }
-                    // }
+                    if (v.endCnt >= 60) {
+                        for (const user of v.users) {
+                            SessionManager.getInstance().get(user).set('headsetConcentrationHistory', Array<number>());
+                        }
+                    }
                     v.endCnt = (--v.endCnt);
                     v.status = 'run';
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt <= 0) {

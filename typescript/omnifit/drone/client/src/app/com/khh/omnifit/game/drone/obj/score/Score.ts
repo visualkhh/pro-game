@@ -14,33 +14,36 @@ export class Score extends ObjDrone {
   private beforeHeadsetConcentration = 0;
   private headsetConcentration = 0;
   private finishCnt = 2;
+  private roomDetailSubscription: Subscription;
+  private status: string;
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img: HTMLImageElement) {
     super(stage, x, y, z, img);
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-    if (this.finishCnt > 0 && this.headsetConcentration <= 0) {
+    const headsetConcentration = this.status === 'run' || this.status === 'end' ? this.headsetConcentration : 0;
+    if (this.finishCnt > 0 && headsetConcentration <= 0) {
       this.img = DroneResourceManager.getInstance().resources('gage_00Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 1) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 1) {
       this.img = DroneResourceManager.getInstance().resources('gage_01Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 2) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 2) {
       this.img = DroneResourceManager.getInstance().resources('gage_02Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 3) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 3) {
       this.img = DroneResourceManager.getInstance().resources('gage_03Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 4) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 4) {
       this.img = DroneResourceManager.getInstance().resources('gage_04Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 5) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 5) {
       this.img = DroneResourceManager.getInstance().resources('gage_05Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 6) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 6) {
       this.img = DroneResourceManager.getInstance().resources('gage_06Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 7) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 7) {
       this.img = DroneResourceManager.getInstance().resources('gage_07Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration === 8) {
+    }else if (this.finishCnt > 0 && headsetConcentration === 8) {
       this.img = DroneResourceManager.getInstance().resources('gage_08Img');
-    }else if (this.finishCnt > 0 && this.headsetConcentration >= 9) {
+    }else if (this.finishCnt > 0 && headsetConcentration >= 9) {
       this.img = DroneResourceManager.getInstance().resources('gage_09Img');
-    }else if (this.finishCnt <= 0 && this.headsetConcentration >= 9) {
+    }else if (this.finishCnt <= 0 && headsetConcentration >= 9) {
       this.img = [
         DroneResourceManager.getInstance().resources('gage_10_1Img'),
         DroneResourceManager.getInstance().resources('gage_10_2Img'),
@@ -58,8 +61,10 @@ export class Score extends ObjDrone {
     this.finishCnt = 2;
     //집중도
     console.log('--score id- ' + this.id);
+    this.roomDetailSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_ROOM_DETAIL).subscribe( (room: Room<any>) => {
+      this.status = room.status;
+    });
     this.concentrationSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
-
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration.headsetConcentration || 0;
       const history = concentration.headsetConcentrationHistory || new Array<number>();
@@ -74,6 +79,7 @@ export class Score extends ObjDrone {
 
   onStop(data?: any) {
     // if (!ValidUtil.isNullOrUndefined(this.pointSubscription)) {this.pointSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.roomDetailSubscription)) {this.roomDetailSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
   }

@@ -27,6 +27,9 @@ export class Alarm extends ObjDrone {
       context.textBaseline = 'middle';
       context.fillStyle = '#020f1c';
       context.lineWidth = 0;
+      if (this.endCnt < 10) {
+        context.translate((this.endCnt % 2) * 5, 0);
+      }
       context.drawImage(this.img, this.stage.width - this.img.width - 10 , this.y + (this.img.height) + 10);
       context.fillText(String(this.endCnt), this.stage.width - (this.img.width / 2) - 10, this.y + (this.img.height) + (this.img.height / 2) + 12);
       context.restore();
