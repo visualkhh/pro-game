@@ -42,21 +42,11 @@ export class Drone extends ObjDrone {
     const conStepVal = (stepVal * this.concentration);
 
     //targetPosition
-    // const targetPosition = new PointVector(this._initX || (this.stage.width / 2), (this.stage.height - this.img.height / 2) - conStepVal);
     const targetPosition = new PointVector(this._initX || (this.stage.width / 2), minHeight - conStepVal);
-    // targetPosition.add(this.wind);
 
     //////update
     //방향
     const dir = PointVector.sub(targetPosition, this);
-    // console.log('------ ' + dir.mag())
-    // if (dir.mag() > 0) {
-    //   this.img = DroneResourceManager.getInstance().resources('character_01Img');
-    // }else if (dir.mag() < 0) {
-    //   this.img = DroneResourceManager.getInstance().resources('character_01Img');
-    // }else {
-    //   this.img = DroneResourceManager.getInstance().resources('character_02Img');
-    // }
     dir.normalize();
     dir.mult(0.5);
     this.acceleration = dir;
@@ -165,17 +155,6 @@ export class Drone extends ObjDrone {
     context.fillStyle = 'rgba(0, 0, 0, 0.2)';
     context.fill();
     context.restore();
-    // context.translate(this.position.x, this.position.y);
-    // if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x > 0) {
-    //   context.rotate(-0.01);
-    // }else if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x < 0) {
-    //   context.rotate(0.01);
-    // }
-    // if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x > 0) {
-    //   context.rotate(-0.01);
-    // }else if (!ValidUtil.isNullOrUndefined(this.beforePoint) && this.beforePoint.x - this.position.x < 0) {
-    //   context.rotate(0.01);
-    // }
 
     // context.scale(0.5, 0.5);
     const imgX = this.x - (this.img.width / 2);
@@ -186,16 +165,12 @@ export class Drone extends ObjDrone {
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillStyle = 'blue';
-    //context.fillText(this.id, this.x, imgY);
-    // context.arc(this.position.x, imgY, 30, 0, 2 * Math.PI);
     context.fill();
     context.beginPath();
 
     if ('other' === this.host) {
     context.translate(this.x, this.y);
     context.scale(0.35, 0.35);
-    // this.score.x = this.x;
-    // this.score.y = this.y;
     this.score.x = -this.img.width;
     this.score.y = this.img.height + 20;
     this.score.onDraw(context);
@@ -206,29 +181,26 @@ export class Drone extends ObjDrone {
   }
 
   onStart(data?: any) {
-    // this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
     console.log('drone start id ' + this.id);
     this.score = new Score(this.stage, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
     this.score.id = this.id;
     this.score.onCreate();
     this.score.onStart();
 
-    //const targetPosition = new PointVector(this._initX || (this.stage.width / 2), (minHeight) - conStepVal);
     this.finishCnt = 3;
-    // this.x  = RandomUtil.random(this.stage.width);
-    // this.y = this.stage.height;
     //height
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
     const conStepVal = (stepVal * this.concentration);
 
-    this.x  = this._initX || (this.stage.width / 2);
-    this.y = minHeight - conStepVal;
+    // this.x  = this._initX || (this.stage.width / 2);
+    // this.y = minHeight - conStepVal;
+    this.x  = RandomUtil.random(this.stage.width);
+    this.y = this.stage.height;
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
 
     this.concentrationSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
-        //console.log('---' + concentration.uuid + ' -> ' + concentration.headsetConcentration);
         this.beforeConcentration = this.concentration;
         this.concentration = concentration.headsetConcentration || 0;
         const history = concentration.headsetConcentrationHistory || new Array<number>();

@@ -198,7 +198,7 @@ export class ResultPopup extends ObjDrone {
   }
 
   startPosition(): PointVector {
-    return new PointVector(RandomUtil.random(this.stage.width), this.stage.height);
+    return new PointVector(this.stage.width, this.stage.height / 2);
   }
   onStop() {
     console.log('resultpopup stop')

@@ -1,4 +1,5 @@
-import WebSocket = require('ws');
+// import WebSocket = require('ws');
+import * as WebSocket from 'ws';
 import {StatusCode} from '../../../../../../../../common/com/khh/omnifit/game/drone/code/StatusCode';
 import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 

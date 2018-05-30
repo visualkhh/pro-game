@@ -30,7 +30,8 @@ export class DroneStageManager extends DroneStage {
     super(canvas, objs);
     // this.clockInterval = 10;
     this.stages = new Array<DroneStage>();
-    this._webSocket = new WebSocket('ws://192.168.13.58:8999');
+    // this._webSocket = new WebSocket('ws://192.168.13.58:8999');
+    this._webSocket = new WebSocket('ws://119.206.205.171:8999');
     const observable = Observable.create((obs: Observer<MessageEvent>) => {
         this._webSocket.onmessage = obs.next.bind(obs);
         this._webSocket.onerror = obs.error.bind(obs);

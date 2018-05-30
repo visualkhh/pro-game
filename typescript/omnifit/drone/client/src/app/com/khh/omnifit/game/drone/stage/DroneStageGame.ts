@@ -14,15 +14,12 @@ import {Subscription} from 'rxjs/Subscription';
 import {Room} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 import {Telegram} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
-import {ConvertUtil} from '../../../../../../../../../lib-typescript/com/khh/convert/ConvertUtil';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {ServerTelegram} from '../../../../../../../../../server/src/com/khh/omnifit/game/drone/dto/ServerTelegram';
 import {DeviceManager} from '../../../drive/DeviceManager';
 import {DroneResourceManager} from '../DroneResourceManager';
 import {DroneStageManager} from '../DroneStageManager';
-import {ReadyButton} from '../obj/button/ReadyButton';
 import {Drone} from '../obj/drone/Drone';
 import {DroneStage} from './DroneStage';
 import {DroneStageEvent} from './DronStageEvent';
@@ -42,7 +39,6 @@ export class DroneStageGame extends DroneStage {
   private hostDroneId: string;
   private concentrationSubject: BehaviorSubject<any>;
   private roomDetailSubject: BehaviorSubject<Room<any>>;
-  // private roomDetailSubScription: Subscription;
   private localRoomIntervalSubScription: Subscription;
   private headsetConcentrationHistory: number[];
   private headsetConcentration: number;
@@ -82,25 +78,6 @@ export class DroneStageGame extends DroneStage {
     this.headsetConcentrationHistory = new Array<number>();
     this.room = new Room<any>();
     this.objs.forEach((it) => it.onStart());
-
-    // this.roomDetailSubScription = this.roomDetailSubject.subscribe( (it: Room<any>) => {
-    //   if (it.status === 'end') {
-    //     DroneStageManager.getInstance().nextStage(it);
-    //   }
-    //
-    //   for (const user of it.users) {
-    //     let finishCnt = 3;
-    //     (user.headsetConcentrationHistory as number[]).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 3);
-    //     console.log('-- ' + finishCnt);
-    //     if (finishCnt <= 0) {
-    //       DroneStageManager.getInstance().nextStage(it);
-    //       break;
-    //     }
-    //   }
-    //   // const history = concentration.headsetConcentrationHistory || new Array<number>();
-    //   // history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 3);
-    // });
-
     this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.resizeSubscription = this.canvasEventSubscribe('resize', (event: Event) => this.onDraw());
     this.keySubscription = DeviceManager.getInstance().fromeEvent('keydown', (e: KeyboardEvent) => {
@@ -181,16 +158,6 @@ export class DroneStageGame extends DroneStage {
         this.roomDetailSubject.next(this.room);
       });
     }
-
-    //첫번째 드론이 내꺼 이면은 시작하기 버튼 나와라
-    // const s = ConvertUtil.iteratorToArray(this.drones.values());
-    // console.log('drones  ' + s[0].host)
-    // if ('host' === s[0].host) {
-    //   const readyButton = new ReadyButton(this, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_mountainImg'));
-    //   readyButton.index = 600;
-    //   this.pushObjCreateStart(readyButton);
-    // }
-
   }
 
   onStop(data?: any): void {
@@ -206,7 +173,6 @@ export class DroneStageGame extends DroneStage {
     if (!ValidUtil.isNullOrUndefined(this.websocketSubscription)) {this.websocketSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.keySubscription)) {this.keySubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.localRoomIntervalSubScription)) {this.localRoomIntervalSubScription.unsubscribe(); }
-    // if (!ValidUtil.isNullOrUndefined(this.roomDetailSubScription)) {this.roomDetailSubScription.unsubscribe(); }
   }
 
   private createRandomWind(): PointVector {
@@ -225,9 +191,6 @@ export class DroneStageGame extends DroneStage {
     }
 
     const droneImg = DroneResourceManager.getInstance().resources('character_01Img');
-    // if ('host' === host) {
-    //   droneImg = DroneResourceManager.getInstance().resources('character_01Img');
-    // }
     drone = new Drone(this, 0, 0, 0, droneImg);
     drone.index = this.objs.length + 500;
     drone.id = id;
