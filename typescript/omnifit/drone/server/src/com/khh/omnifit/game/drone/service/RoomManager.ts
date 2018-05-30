@@ -36,12 +36,12 @@ export class RoomManager {
                     v.startCnt = (--v.startCnt);
                     v.status = 'wait';
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt > 0) {
-                    console.log(v.endCnt)
-                    if (v.endCnt >= 60) {
-                        for (const user of v.users) {
-                            SessionManager.getInstance().get(user).set('headsetConcentrationHistory', Array<number>());
-                        }
-                    }
+                    console.log(v.endCnt);
+                    // if (v.endCnt >= 60) {
+                    //     for (const user of v.users) {
+                    //         SessionManager.getInstance().get(user).set('headsetConcentrationHistory', Array<number>());
+                    //     }
+                    // }
                     v.endCnt = (--v.endCnt);
                     v.status = 'run';
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt <= 0) {
@@ -50,8 +50,8 @@ export class RoomManager {
                 }
 
                 for (const user of v.users) {
-                    let finishCnt = 3;
-                    (SessionManager.getInstance().get(user).get('headsetConcentrationHistory') || Array<number>()).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 3);
+                    let finishCnt = 2;
+                    (SessionManager.getInstance().get(user).get('headsetConcentrationHistory') || Array<number>()).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 2);
                     //console.log('-- ' + finishCnt);
                     if (v.status === 'run' && finishCnt <= 0) {
                         v.status = 'end';

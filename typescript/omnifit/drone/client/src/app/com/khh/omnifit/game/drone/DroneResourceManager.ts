@@ -67,6 +67,7 @@ export class DroneResourceManager implements LifeCycle {
     const ranking_icon_02Img = new Image(); ranking_icon_02Img.src = 'assets/image/ranking_icon_02.png';
     const ranking_icon_03Img = new Image(); ranking_icon_03Img.src = 'assets/image/ranking_icon_03.png';
     const ranking_shape_02_arrowImg = new Image(); ranking_shape_02_arrowImg.src = 'assets/image/ranking_shape_02_arrow.png';
+    const ranking_shape_02Img = new Image(); ranking_shape_02Img.src = 'assets/image/ranking_shape_02.png';
     const alarm_iconImg = new Image(); alarm_iconImg.src = 'assets/image/alarm_icon.png';
 
     this._resources = new Map<string, HTMLImageElement>();
@@ -118,6 +119,7 @@ export class DroneResourceManager implements LifeCycle {
     this._resources.set('ranking_icon_02Img', ranking_icon_02Img);
     this._resources.set('ranking_icon_03Img', ranking_icon_03Img);
     this._resources.set('ranking_shape_02_arrowImg', ranking_shape_02_arrowImg);
+    this._resources.set('ranking_shape_02Img', ranking_shape_02Img);
     this._resources.set('alarm_iconImg', alarm_iconImg);
 
     // this._resources.forEach((v, k) => {

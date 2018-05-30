@@ -150,8 +150,8 @@ export class DroneStageGame extends DroneStage {
         }
         this.room.users[0].headsetConcentrationHistory = this.headsetConcentrationHistory;
         this.room.users[0].headsetConcentration = this.headsetConcentration;
-        let finishCnt = 3;
-        (this.room.users[0].headsetConcentrationHistory as number[]).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 3);
+        let finishCnt = 2;
+        (this.room.users[0].headsetConcentrationHistory as number[]).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 2);
         if (this.room.status === 'run' && finishCnt <= 0) {
           this.room.status = 'end';
         }

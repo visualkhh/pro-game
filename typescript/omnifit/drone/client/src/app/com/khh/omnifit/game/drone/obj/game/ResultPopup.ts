@@ -31,6 +31,8 @@ export class ResultPopup extends ObjDrone {
   private ranking_icon_02Img = DroneResourceManager.getInstance().resources('ranking_icon_02Img');
   private ranking_icon_03Img = DroneResourceManager.getInstance().resources('ranking_icon_03Img');
   private ranking_shape_01Img = DroneResourceManager.getInstance().resources('ranking_shape_01Img');
+  private ranking_shape_02Img = DroneResourceManager.getInstance().resources('ranking_shape_02Img');
+  private ranking_shape_02_arrowImg = DroneResourceManager.getInstance().resources('ranking_shape_02_arrowImg');
   private roomDetailSubscription: Subscription;
   private targetPosition: PointVector;
   private hostResult: UserResult;
@@ -124,9 +126,16 @@ export class ResultPopup extends ObjDrone {
         // const hostRank_y = this.y - (hostRankImg.height / 2) - 2;
         wjump += wjumpSize;
         //console.log(wjump);
-        context.drawImage(this.ranking_shape_01Img, popup_x + wjump, popup_y + 322);
-        context.drawImage(this.ranking_character_01Img, popup_x + wjump  + 20, popup_y + 322 + 3);
-        context.drawImage(this.getRankImg(it.rank), popup_x + wjump - 3, popup_y + 322 - 3);
+        if (it.host === 'host') {
+          context.drawImage(this.ranking_shape_02Img, popup_x + wjump, popup_y + 325);
+        }else {
+          context.drawImage(this.ranking_shape_01Img, popup_x + wjump, popup_y + 325);
+        }
+        context.drawImage(this.ranking_character_01Img, popup_x + wjump  + 20, popup_y + 325 + 3);
+        context.drawImage(this.getRankImg(it.rank), popup_x + wjump - 3, popup_y + 325 - 3);
+        if (it.host === 'host') {
+          context.drawImage(this.ranking_shape_02_arrowImg, popup_x + wjump + 25, popup_y + 325 - 5);
+        }
 
         context.save();
         // context.strokeStyle = '#392B25';
@@ -139,7 +148,7 @@ export class ResultPopup extends ObjDrone {
         context.textBaseline = 'middle';
         context.fillStyle = '#FFFFFF';
         // context.lineWidth = 1;
-        context.fillText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 51);
+        context.fillText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 53);
         // context.strokeText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 51);
         context.restore();
       });
@@ -181,7 +190,13 @@ export class ResultPopup extends ObjDrone {
       //console.log('resultPopup');
       const userResults = new Array<UserResult>();
       for (const user of room.users) {
-        const result = {uuid: user.uuid, host: user.host, score: CollectionUtil.sumArray(user.headsetConcentrationHistory || [0])} as UserResult;
+        const headsetConcentrationHistory = user.headsetConcentrationHistory || [0];
+        let finishCnt = 2;
+        headsetConcentrationHistory.forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 2);
+        if (finishCnt <= 0) {
+          headsetConcentrationHistory.push(500);
+        }
+        const result = {uuid: user.uuid, host: user.host, score: CollectionUtil.sumArray(headsetConcentrationHistory)} as UserResult;
         result.score = result.score || 0;
         userResults.push(result);
         if (user.host === 'host') {

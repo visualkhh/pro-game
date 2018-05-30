@@ -13,7 +13,7 @@ export class Score extends ObjDrone {
   private concentrationSubscription: Subscription;
   private beforeHeadsetConcentration = 0;
   private headsetConcentration = 0;
-  private finishCnt = 3;
+  private finishCnt = 2;
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img: HTMLImageElement) {
     super(stage, x, y, z, img);
@@ -55,7 +55,7 @@ export class Score extends ObjDrone {
   onStart(data?: any) {
     this.x = 20;
     this.y = 20;
-    this.finishCnt = 3;
+    this.finishCnt = 2;
     //집중도
     console.log('--score id- ' + this.id);
     this.concentrationSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
@@ -63,7 +63,7 @@ export class Score extends ObjDrone {
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration.headsetConcentration || 0;
       const history = concentration.headsetConcentrationHistory || new Array<number>();
-      history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 3);
+      history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 2);
       // this.score += Number(concentration.headsetConcentration);
       // if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
       //   DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {score: this.score}));

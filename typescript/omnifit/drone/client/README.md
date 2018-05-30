@@ -1,7 +1,8 @@
 # Drone
 1. npm install
 2. npm install @angular-devkit/core
-3. ng server -o --host ip --port port
+3. npm install -g ng-cli
+4. ng server -o --host ip --port port
 
 #ng build
 1. ng build  --base-href "."  or ng build --prod --env=prod --output-path=dist-prod/

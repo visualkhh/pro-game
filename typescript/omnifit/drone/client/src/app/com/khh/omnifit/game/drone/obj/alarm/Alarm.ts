@@ -28,7 +28,7 @@ export class Alarm extends ObjDrone {
       context.fillStyle = '#020f1c';
       context.lineWidth = 0;
       context.drawImage(this.img, this.stage.width - this.img.width - 10 , this.y + (this.img.height) + 10);
-      context.fillText(String(this.endCnt), this.stage.width - (this.img.width / 2) - 10, this.y + (this.img.height) + (this.img.height / 2) + 10);
+      context.fillText(String(this.endCnt), this.stage.width - (this.img.width / 2) - 10, this.y + (this.img.height) + (this.img.height / 2) + 12);
       context.restore();
     }
   }

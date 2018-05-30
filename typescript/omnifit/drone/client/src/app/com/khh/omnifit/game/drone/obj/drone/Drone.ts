@@ -16,7 +16,7 @@ export class Drone extends ObjDrone {
   private _host: string;
   private beforeConcentration = 0;
   private concentration = 0;
-  private finishCnt = 3;
+  private finishCnt = 2;
   private score: Score;
 
   private concentrationSubscription: Subscription;
@@ -108,13 +108,13 @@ export class Drone extends ObjDrone {
 
     //img
     //올라가기
-    if (this.finishCnt >= 3 && targetPosition.y < this.y) {
+    if (this.finishCnt >= 2 && targetPosition.y < this.y) {
       this.img = DroneResourceManager.getInstance().resources('character_02Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character02Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (this.finishCnt >= 3 && targetPosition.y > this.y) {//내려가기
+    }else if (this.finishCnt >= 2 && targetPosition.y > this.y) {//내려가기
       if (Math.floor(new Date().getMilliseconds() / 500)) {
         this.img = DroneResourceManager.getInstance().resources('character_03Img');
       }else {
@@ -124,23 +124,25 @@ export class Drone extends ObjDrone {
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (this.finishCnt >= 3) {
-      this.img = DroneResourceManager.getInstance().resources('character_01Img');
-    }else if (this.finishCnt === 2) {
-      this.img = DroneResourceManager.getInstance().resources('character_04Img');
+    }else if (this.finishCnt >= 2) {
+      //일반모습
+      if (this.concentration === 8) {
+        this.img = DroneResourceManager.getInstance().resources('character_04Img');
+      }else {
+        this.img = DroneResourceManager.getInstance().resources('character_01Img');
+      }
     }else if (this.finishCnt === 1) {
-      this.img = DroneResourceManager.getInstance().resources('character_04Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
+      this.img = DroneResourceManager.getInstance().resources('character_04Img');
     }else if (this.finishCnt <= 0) {
       this.img = DroneResourceManager.getInstance().resources('character_04Img');
       const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
-
       const effect2Img = DroneResourceManager.getInstance().resources('effect_character04_4Img');
       const effect2ImgX = this.x - (effect2Img.width / 2);
       const effect2ImgY = this.y - (effect2Img.height + this.img.height / 2);
@@ -176,7 +178,7 @@ export class Drone extends ObjDrone {
     this.score.onDraw(context);
     }else if ('host' === this.host) {
       const arrowImg = DroneResourceManager.getInstance().resources('ranking_shape_02_arrowImg');
-      context.drawImage(arrowImg, this.x - (arrowImg.width / 2), imgY - (arrowImg.height));
+      context.drawImage(arrowImg, this.x - (arrowImg.width / 2), imgY - 4);
     }
   }
 
@@ -187,7 +189,7 @@ export class Drone extends ObjDrone {
     this.score.onCreate();
     this.score.onStart();
 
-    this.finishCnt = 3;
+    this.finishCnt = 2;
     //height
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
@@ -204,7 +206,8 @@ export class Drone extends ObjDrone {
         this.beforeConcentration = this.concentration;
         this.concentration = concentration.headsetConcentration || 0;
         const history = concentration.headsetConcentrationHistory || new Array<number>();
-        history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 3);
+        history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 2);
+        console.log('- -' + this.finishCnt);
     });
 
   }
