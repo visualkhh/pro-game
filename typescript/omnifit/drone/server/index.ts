@@ -3,7 +3,7 @@ import * as http from 'http';
 import {IncomingMessage, Server} from 'http';
 import {AddressInfo} from 'net';
 import * as WebSocket from 'ws';
-import {StatusCode} from '../common/com/khh/omnifit/game/drone/code/StatusCode';
+import {TelegramStatusCode} from '../common/com/khh/omnifit/game/drone/code/TelegramStatusCode';
 import {Telegram} from '../common/com/khh/omnifit/game/drone/domain/Telegram';
 import {ConvertUtil} from '../lib-typescript/com/khh/convert/ConvertUtil';
 import {RandomUtil} from '../lib-typescript/com/khh/random/RandomUtil';
@@ -24,7 +24,7 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     const session = new Map<string, any>();
     const uuid = RandomUtil.uuid();
     session.set('uuid', uuid);
-    session.set('name', uuid);
+    //session.set('name', uuid);
     SessionManager.getInstance().sessions.set(ws, session);
 
     ws.on('message', (message: string) => {
@@ -39,7 +39,7 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
 
     //router.request(new ServerTelegram(ws, 'rooms/join', 'PUT'));
 
-    const init = new Telegram<Map<string, any>>('welcome', req.method, session, StatusCode.OK);
+    const init = new Telegram<Map<string, any>>('welcome', req.method, session, TelegramStatusCode.OK);
     ws.send(ConvertUtil.toJson(init));
 
     ws.on('close', (closeCode: number) => {

@@ -11,8 +11,10 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
+import {RoomStatusCode} from '../../../../../../../../../common/com/khh/omnifit/game/drone/code/RoomStatusCode';
 import {Room} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 import {Telegram} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
+import {Info} from '../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
@@ -23,6 +25,8 @@ import {DroneStageManager} from '../DroneStageManager';
 import {Drone} from '../obj/drone/Drone';
 import {DroneStage} from './DroneStage';
 import {DroneStageEvent} from './DronStageEvent';
+import {UserHostCode} from '../../../../../../../../../common/com/khh/omnifit/game/drone/code/UserHostCode';
+import {Character} from '../../../../../../../../../common/com/khh/omnifit/game/drone/info/Character';
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
@@ -68,13 +72,14 @@ export class DroneStageGame extends DroneStage {
   }
   onStart(data?: any): void {
     console.log('game start');
-    this.audio = new Audio('assets/audio/CSC018.mp3') ;
+    this.audio = DroneResourceManager.getInstance().resources('CSC018Sound');
     this.audio.play();
     this.concentrationSubject = new BehaviorSubject({});
     this.eventSubscribes = new Map<string, Observable<any>>();
     this.eventSubscribes.set(DroneStageEvent.EVENT_CONCENTRATION, this.concentrationSubject);
     this.roomDetailSubject = new BehaviorSubject(new Room<any>());
     this.eventSubscribes.set(DroneStageEvent.EVENT_ROOM_DETAIL, this.roomDetailSubject);
+    this.headsetConcentration = 0;
     this.headsetConcentrationHistory = new Array<number>();
     this.room = new Room<any>();
     this.objs.forEach((it) => it.onStart());
@@ -107,6 +112,7 @@ export class DroneStageGame extends DroneStage {
       this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
         console.log('telegram game ' + telegram);
         this.room = telegram.body;
+        this.room.users = (this.room.users as any[]).filter( (it) => UserHostCode.HOST === it.host || UserHostCode.OTHER === it.host);
         if (this.room.startCnt <= 0 && this.room.endCnt >= 60) {
             this.headsetConcentrationHistory = new Array<number>();
         }
@@ -119,11 +125,11 @@ export class DroneStageGame extends DroneStage {
         users.forEach((it) => {
           let drone  = this.drones.get(it.uuid);
           if (ValidUtil.isNullOrUndefined(drone)) {
-            drone = this.pushDroneOnCreateStart(it.uuid, it.host);
+            drone = this.pushDroneOnCreateStart(it.uuid, it.host, it.name);
           }
-          if ('host' === it.host) {
+          if (UserHostCode.HOST === it.host) {
             this.hostDroneId = it.uuid;
-          }else if ('other' === it.host) {
+          }else if (UserHostCode.OTHER === it.host) {
           }
           wjump += wjumpSize;
           drone.initX = wjump;
@@ -132,28 +138,28 @@ export class DroneStageGame extends DroneStage {
       });
     }else {
       this.hostDroneId = 'local';
-      this.pushDroneOnCreateStart(this.hostDroneId, 'host');
-      this.room.users = [{uuid: this.hostDroneId, host: 'host', headsetConcentrationHistory: this.headsetConcentrationHistory, headsetConcentration: this.headsetConcentration}];
+      this.pushDroneOnCreateStart(this.hostDroneId, UserHostCode.HOST, Character.DO);
+      this.room.users = [{uuid: this.hostDroneId, name: Character.DO, host: UserHostCode.HOST, headsetConcentrationHistory: this.headsetConcentrationHistory, headsetConcentration: this.headsetConcentration}];
       this.localRoomIntervalSubScription = interval(1000).subscribe( (it) => {
-        console.log(this.room.users.length + ' ' + this.room.startCnt + ' ' + this.room.endCnt)
+        console.log(this.room.users.length + ' ' + this.room.startCnt + ' ' + this.room.endCnt);
         if (this.room.startCnt > 0) {
           this.room.startCnt = (--this.room.startCnt);
-          this.room.status = 'wait';
+          this.room.status = RoomStatusCode.WAIT;
         }else if (this.room.startCnt <= 0 && this.room.endCnt > 0) {
           if (this.room.endCnt >= 60) {
             this.headsetConcentrationHistory = new Array<number>();
           }
           this.room.endCnt = (--this.room.endCnt);
-          this.room.status = 'run';
+          this.room.status = RoomStatusCode.RUN;
         }else if (this.room.startCnt <= 0 && this.room.endCnt <= 0) {
-          this.room.status = 'end';
+          this.room.status = RoomStatusCode.END;
         }
         this.room.users[0].headsetConcentrationHistory = this.headsetConcentrationHistory;
         this.room.users[0].headsetConcentration = this.headsetConcentration;
-        let finishCnt = 2;
-        (this.room.users[0].headsetConcentrationHistory as number[]).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 2);
-        if (this.room.status === 'run' && finishCnt <= 0) {
-          this.room.status = 'end';
+        let finishCnt = Info.finishCnt;
+        (this.room.users[0].headsetConcentrationHistory as number[]).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
+        if (this.room.status === RoomStatusCode.RUN && finishCnt <= 0) {
+          this.room.status = RoomStatusCode.END;
         }
         this.roomDetailSubject.next(this.room);
       });
@@ -168,7 +174,7 @@ export class DroneStageGame extends DroneStage {
     this.drones.clear();
 
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
-    if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) {this.clockSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.concentrationSubscription)) {this.concentrationSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.websocketSubscription)) {this.websocketSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.keySubscription)) {this.keySubscription.unsubscribe(); }
@@ -184,7 +190,7 @@ export class DroneStageGame extends DroneStage {
     return this.eventSubscribes.get(eventName);
   }
 
-  pushDroneOnCreateStart(id: string, host?: string): Drone {
+  pushDroneOnCreateStart(id: string, host?: string, name?: string): Drone {
     let drone = this.drones.get(id);
     if (!ValidUtil.isNullOrUndefined(drone)) {
       this.removeObjOnStopDestory(drone);
@@ -195,6 +201,7 @@ export class DroneStageGame extends DroneStage {
     drone.index = this.objs.length + 500;
     drone.id = id;
     drone.host = host;
+    drone.name = name;
     drone.onCreate();
     drone.onStart();
     this.drones.set(id, drone);

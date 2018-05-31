@@ -1,5 +1,5 @@
 // import WebSocket = require('ws');
-import {StatusCode} from '../code/StatusCode';
+import {TelegramStatusCode} from '../code/TelegramStatusCode';
 
 export class Telegram<T> {
     public action = '';
@@ -7,7 +7,7 @@ export class Telegram<T> {
     public status: number;
     public body: T;
 
-    constructor(action: string = '', method: string = '', body: T = new Object() as T, status: number = StatusCode.OK) {
+    constructor(action: string = '', method: string = '', body: T = new Object() as T, status: number = TelegramStatusCode.OK) {
         this.action = action;
         this.method = method;
         this.status = status;

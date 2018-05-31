@@ -6,6 +6,7 @@ import {DroneStage} from '../../stage/DroneStage';
 import {DroneStageGame} from '../../stage/DroneStageGame';
 import {DroneStageEvent} from '../../stage/DronStageEvent';
 import {ObjDrone} from '../ObjDrone';
+import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 
 export class Score extends ObjDrone {
 
@@ -13,7 +14,7 @@ export class Score extends ObjDrone {
   private concentrationSubscription: Subscription;
   private beforeHeadsetConcentration = 0;
   private headsetConcentration = 0;
-  private finishCnt = 2;
+  private finishCnt = Info.finishCnt;
   private roomDetailSubscription: Subscription;
   private status: string;
 
@@ -58,7 +59,9 @@ export class Score extends ObjDrone {
   onStart(data?: any) {
     this.x = 20;
     this.y = 20;
-    this.finishCnt = 2;
+    this.finishCnt = Info.finishCnt;
+    this.beforeHeadsetConcentration = 0;
+    this.headsetConcentration = 0;
     //집중도
     console.log('--score id- ' + this.id);
     this.roomDetailSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_ROOM_DETAIL).subscribe( (room: Room<any>) => {
@@ -68,7 +71,7 @@ export class Score extends ObjDrone {
       this.beforeHeadsetConcentration = this.headsetConcentration;
       this.headsetConcentration = concentration.headsetConcentration || 0;
       const history = concentration.headsetConcentrationHistory || new Array<number>();
-      history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 2);
+      history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = Info.finishCnt);
       // this.score += Number(concentration.headsetConcentration);
       // if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
       //   DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('profile', 'put', {score: this.score}));

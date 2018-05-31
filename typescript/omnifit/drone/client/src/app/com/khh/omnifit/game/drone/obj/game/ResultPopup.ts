@@ -1,5 +1,6 @@
 import {Subscription} from 'rxjs/Subscription';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
+import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 import {CollectionUtil} from '../../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {Rect} from '../../../../../../../../../../lib-typescript/com/khh/graphics/Rect';
 import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/MathUtil';
@@ -11,9 +12,12 @@ import {DroneStageManager} from '../../DroneStageManager';
 import {DroneStage} from '../../stage/DroneStage';
 import {DroneStageEvent} from '../../stage/DronStageEvent';
 import {ObjDrone} from '../ObjDrone';
+import {UserHostCode} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/code/UserHostCode';
+import {RoomStatusCode} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/code/RoomStatusCode';
 
 export interface UserResult {
   uuid: string;
+  name: string;
   host: string;
   rank: number;
   score: number;
@@ -25,8 +29,6 @@ export class ResultPopup extends ObjDrone {
   private acceleration: PointVector;
   private accelerationStep: PointVector;
   private result_popup_bgImg = DroneResourceManager.getInstance().resources('result_popup_bgImg');
-  private result_characterImg = DroneResourceManager.getInstance().resources('result_characterImg');
-  private ranking_character_01Img = DroneResourceManager.getInstance().resources('ranking_character_01Img');
   private ranking_icon_01Img = DroneResourceManager.getInstance().resources('ranking_icon_01Img');
   private ranking_icon_02Img = DroneResourceManager.getInstance().resources('ranking_icon_02Img');
   private ranking_icon_03Img = DroneResourceManager.getInstance().resources('ranking_icon_03Img');
@@ -75,16 +77,11 @@ export class ResultPopup extends ObjDrone {
       this.velocity.y = 0;
     }
 
-    // context.textAlign = 'center';
-    // context.textBaseline = 'middle';
-
+    //draw popup background
     const popup_x = this.x - (this.result_popup_bgImg.width / 2);
     const popup_y = this.y - (this.result_popup_bgImg.height / 2);
-    const character_x = this.x - (this.result_characterImg.width / 2);
-    const character_y = this.y - (this.result_characterImg.height / 2) - 125;
     context.drawImage(this.result_popup_bgImg, popup_x, popup_y);
     this.hitArea = new Rect(popup_x, popup_y, popup_x + this.result_popup_bgImg.width, popup_y + this.result_popup_bgImg.height);
-    context.drawImage(this.result_characterImg, character_x, character_y);
 
     if (!ValidUtil.isNullOrUndefined(this.hostResult)) {
       context.save();
@@ -110,10 +107,10 @@ export class ResultPopup extends ObjDrone {
       // context.fillText('내등수 : ' + this.hostResult.rank.toLocaleString() + '등', this.x, this.y + 13);
       // context.strokeText('내등수 : ' + this.hostResult.rank.toLocaleString() + '등', this.x, this.y + 13);
       context.restore();
-      const hostRankImg = this.getRankImg(this.hostResult.rank);
-      const hostRank_x = this.x - (hostRankImg.width / 2) - 75;
-      const hostRank_y = this.y - (hostRankImg.height / 2) - 2;
-      context.drawImage(hostRankImg, hostRank_x, hostRank_y);
+      // const hostRankImg = this.getRankImg(this.hostResult.rank);
+      // const hostRank_x = this.x - (hostRankImg.width / 2) - 75;
+      // const hostRank_y = this.y - (hostRankImg.height / 2) - 2;
+      // context.drawImage(hostRankImg, hostRank_x, hostRank_y);
 
       const userResults = this.userResults || new Array<UserResult>() ;
       //console.log(userResults);
@@ -127,11 +124,16 @@ export class ResultPopup extends ObjDrone {
         wjump += wjumpSize;
         //console.log(wjump);
         if (it.host === 'host') {
+          //result characte
+          const result_characterImg = this.resultCharacte(it.name);
+          const character_x = this.x - (result_characterImg.width / 2);
+          const character_y = this.y - (result_characterImg.height / 2) - 125;
+          context.drawImage(result_characterImg, character_x, character_y);
           context.drawImage(this.ranking_shape_02Img, popup_x + wjump, popup_y + 325);
         }else {
           context.drawImage(this.ranking_shape_01Img, popup_x + wjump, popup_y + 325);
         }
-        context.drawImage(this.ranking_character_01Img, popup_x + wjump  + 20, popup_y + 325 + 3);
+        context.drawImage(this.summaryCharacte(it.name), popup_x + wjump  + 20, popup_y + 325 + 3);
         context.drawImage(this.getRankImg(it.rank), popup_x + wjump - 3, popup_y + 325 - 3);
         if (it.host === 'host') {
           context.drawImage(this.ranking_shape_02_arrowImg, popup_x + wjump + 25, popup_y + 325 - 5);
@@ -182,7 +184,7 @@ export class ResultPopup extends ObjDrone {
         DroneStageManager.getInstance().goStage(1);
       }
     });
-    this.roomDetailSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_ROOM_DETAIL).filter( (it: Room<any>) => it.status === 'end').subscribe( (room) => {
+    this.roomDetailSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_ROOM_DETAIL).filter( (it: Room<any>) => it.status === RoomStatusCode.END).subscribe( (room) => {
       if (!ValidUtil.isNullOrUndefined(this.hostResult)) {
         return;
       }
@@ -191,17 +193,19 @@ export class ResultPopup extends ObjDrone {
       const userResults = new Array<UserResult>();
       for (const user of room.users) {
         const headsetConcentrationHistory = user.headsetConcentrationHistory || [0];
-        let finishCnt = 2;
-        headsetConcentrationHistory.forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = 2);
+        let finishCnt = Info.finishCnt;
+        headsetConcentrationHistory.forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
         if (finishCnt <= 0) {
           headsetConcentrationHistory.push(500);
         }
-        const result = {uuid: user.uuid, host: user.host, score: CollectionUtil.sumArray(headsetConcentrationHistory)} as UserResult;
+        //user Result Setting
+        const result = {uuid: user.uuid, name: user.name, host: user.host, score: CollectionUtil.sumArray(headsetConcentrationHistory)} as UserResult;
         result.score = result.score || 0;
         userResults.push(result);
-        if (user.host === 'host') {
+        if (user.host === UserHostCode.HOST) {
           this.hostResult = result;
         }
+        //user ranking Setting
         userResults.sort((n1, n2) => (n1.score < n2.score ? 1 : -1));
         for (let i = 0; i < userResults.length; i++) {
           userResults[i].rank = (i + 1);
@@ -215,8 +219,28 @@ export class ResultPopup extends ObjDrone {
   startPosition(): PointVector {
     return new PointVector(this.stage.width, this.stage.height / 2);
   }
+  resultCharacte(name: string): HTMLImageElement {
+    let img = DroneResourceManager.getInstance().resources('character_2_01Img');
+    switch (name) {
+      case 'do': img = DroneResourceManager.getInstance().resources('result_characterImg'); break;
+      case 'so': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+    }
+    return img;
+  }
+  summaryCharacte(name: string): HTMLImageElement {
+    let img = DroneResourceManager.getInstance().resources('ranking_character_02Img');
+    switch (name) {
+      case 'do': img = DroneResourceManager.getInstance().resources('ranking_character_01Img'); break;
+      case 'so': img = DroneResourceManager.getInstance().resources('ranking_character_02Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('ranking_character_02Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('ranking_character_02Img'); break;
+    }
+    return img;
+  }
   onStop() {
-    console.log('resultpopup stop')
+    console.log('resultpopup stop');
     if (!ValidUtil.isNullOrUndefined(this.roomDetailSubscription)) {this.roomDetailSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.mousedownSubscription)) {this.mousedownSubscription.unsubscribe(); }
   }

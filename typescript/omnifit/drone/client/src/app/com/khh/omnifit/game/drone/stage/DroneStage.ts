@@ -13,7 +13,7 @@ export abstract class DroneStage extends Stage implements LifeCycle, ViewInterfa
 
   private _objs: ObjDrone[];
   private clock: Observable<number>;
-  protected clockInterval = 10;
+  protected clockInterval = 30;
   private _canvas: HTMLCanvasElement;
   private _bufferCanvas: HTMLCanvasElement;
   private reSizeSubscription: Subscription;

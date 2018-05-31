@@ -3,6 +3,7 @@ import {ValidUtil} from '../../../../../../../lib-typescript/com/khh/valid/Valid
 export class Room<T> {
     static START_CNT = 10;
     static END_CNT = 60;
+
     public uuid: string;
     public status: string;
     public startCnt: number;

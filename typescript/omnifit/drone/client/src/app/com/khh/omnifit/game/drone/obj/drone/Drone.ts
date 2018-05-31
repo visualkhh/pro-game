@@ -1,5 +1,6 @@
 import {Subscription} from 'rxjs/Subscription';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
+import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
@@ -10,6 +11,7 @@ import {ObjDrone} from '../ObjDrone';
 import {Score} from '../score/Score';
 
 export class Drone extends ObjDrone {
+  private _name: string;
   private _initX: number;
   // private position: PointVector;
   private velocity: PointVector;
@@ -17,7 +19,7 @@ export class Drone extends ObjDrone {
   private _host: string;
   private beforeConcentration = 0;
   private concentration = 0;
-  private finishCnt = 2;
+  private finishCnt = Info.finishCnt;
   private score: Score;
 
   private concentrationSubscription: Subscription;
@@ -26,6 +28,14 @@ export class Drone extends ObjDrone {
 
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
+  }
+
+  get name(): string {
+    return this._name;
+  }
+
+  set name(value: string) {
+    this._name = value;
   }
 
   get host(): string {
@@ -43,7 +53,7 @@ export class Drone extends ObjDrone {
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
     const conStepVal = (stepVal * (this.status === 'run' || this.status === 'end' ? this.concentration : 0));
-    const finishCnt = (this.status === 'run' || this.status === 'end' ? this.finishCnt : 2);
+    const finishCnt = (this.status === 'run' || this.status === 'end' ? this.finishCnt : Info.finishCnt);
 
     //targetPosition
     const targetPosition = new PointVector(this._initX || (this.stage.width / 2), minHeight - conStepVal);
@@ -112,37 +122,32 @@ export class Drone extends ObjDrone {
 
     //img
     //올라가기
-    if (finishCnt >= 2 && targetPosition.y < this.y) {
-      this.img = DroneResourceManager.getInstance().resources('character_02Img');
+    if (finishCnt >= Info.finishCnt && targetPosition.y < this.y) {
       const effectImg = DroneResourceManager.getInstance().resources('effect_character02Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
+      this.img = this.upCharacte(this.name);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (finishCnt >= 2 && targetPosition.y > this.y) {//내려가기
-      if (Math.floor(new Date().getMilliseconds() / 500)) {
-        this.img = DroneResourceManager.getInstance().resources('character_03Img');
-      }else {
-        this.img = DroneResourceManager.getInstance().resources('character_03_1Img');
-      }
+    }else if (finishCnt >= Info.finishCnt && targetPosition.y > this.y) {//내려가기
       const effectImg = DroneResourceManager.getInstance().resources('effect_character03Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (finishCnt >= 2) {
+      this.img = this.downCharacte(this.name);
+    }else if (finishCnt >= Info.finishCnt) {
       //일반모습
       if (this.concentration === 8) {
-        this.img = DroneResourceManager.getInstance().resources('character_04Img');
+        this.img = this.wingCharacte(this.name);
       }else {
-        this.img = DroneResourceManager.getInstance().resources('character_01Img');
+        this.img = this.normalCharacte(this.name);
       }
-    }else if (finishCnt === 1) {
+    }else if (finishCnt === 1) { //날개 후광
       const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2);
       context.drawImage(effectImg, effectImgX, effectImgY);
-      this.img = DroneResourceManager.getInstance().resources('character_04Img');
-    }else if (finishCnt <= 0) {
-      this.img = DroneResourceManager.getInstance().resources('character_04Img');
+      this.img = this.wingCharacte(this.name);
+    }else if (finishCnt <= 0) { //날개 후광 득도
       const effectImg = DroneResourceManager.getInstance().resources('effect_character04_3Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2);
@@ -151,6 +156,7 @@ export class Drone extends ObjDrone {
       const effect2ImgX = this.x - (effect2Img.width / 2);
       const effect2ImgY = this.y - (effect2Img.height + this.img.height / 2);
       context.drawImage(effect2Img, effect2ImgX, effect2ImgY);
+      this.img = this.wingCharacte(this.name);
     }
 
     //display
@@ -171,6 +177,8 @@ export class Drone extends ObjDrone {
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillStyle = 'blue';
+    // context.fillText(this.name + ' -**********- ', this.x, imgY);
+    // context.fillText(this.id, this.x, imgY);
     context.fill();
     context.beginPath();
 
@@ -188,12 +196,15 @@ export class Drone extends ObjDrone {
 
   onStart(data?: any) {
     console.log('drone start id ' + this.id);
+    this.beforeConcentration = 0;
+    this.concentration = 0;
+    this.status = undefined;
     this.score = new Score(this.stage, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
     this.score.id = this.id;
     this.score.onCreate();
     this.score.onStart();
 
-    this.finishCnt = 2;
+    this.finishCnt = Info.finishCnt;
     //height
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
@@ -213,7 +224,7 @@ export class Drone extends ObjDrone {
         this.beforeConcentration = this.concentration;
         this.concentration = concentration.headsetConcentration || 0;
         const history = concentration.headsetConcentrationHistory || new Array<number>();
-        history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = 2);
+        history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = Info.finishCnt);
     });
 
   }
@@ -238,6 +249,47 @@ export class Drone extends ObjDrone {
     this._initX = value;
   }
 
+  normalCharacte(name: string): HTMLImageElement {
+    let img = DroneResourceManager.getInstance().resources('character_2_01Img');
+    switch (name) {
+      case 'do': img = DroneResourceManager.getInstance().resources('character_01Img'); break;
+      case 'so': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+    }
+    return img;
+  }
+  downCharacte(name: string): HTMLImageElement {
+    const type = Math.floor(new Date().getMilliseconds() / 500);
+    let img =  type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img');
+    switch (name) {
+      case 'do': img = type ? DroneResourceManager.getInstance().resources('character_03Img') : DroneResourceManager.getInstance().resources('character_03_1Img'); break;
+      case 'so': img = type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img'); break;
+      case 'bs': img = type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img'); break;
+      default: img = type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img'); break;
+    }
+    return img;
+  }
+  upCharacte(name: string): HTMLImageElement {
+    let img = DroneResourceManager.getInstance().resources('character_2_02Img');
+    switch (name) {
+      case 'do': img = DroneResourceManager.getInstance().resources('character_02Img'); break;
+      case 'so': img = DroneResourceManager.getInstance().resources('character_2_02Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_02Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('character_2_02Img'); break;
+    }
+    return img;
+  }
+  wingCharacte(name: string): HTMLImageElement {
+    let img = DroneResourceManager.getInstance().resources('character_2_04Img');
+    switch (name) {
+      case 'do': img = DroneResourceManager.getInstance().resources('character_04Img'); break;
+      case 'so': img = DroneResourceManager.getInstance().resources('character_2_04Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_04Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('character_2_04Img'); break;
+    }
+    return img;
+  }
   // /** @deprecated */
   // public setConcentration(concentration: number): void {
   //   this.beforeConcentration = this.concentration;

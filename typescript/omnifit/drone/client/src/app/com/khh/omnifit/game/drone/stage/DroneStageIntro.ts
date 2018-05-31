@@ -1,6 +1,8 @@
 import {Observable} from 'rxjs/Observable';
+import {timer} from 'rxjs/observable/timer';
 import {Subscription} from 'rxjs/Subscription';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DroneResourceManager} from '../DroneResourceManager';
 import {DroneStageManager} from '../DroneStageManager';
 import {ObjDrone} from '../obj/ObjDrone';
 import {DroneStage} from './DroneStage';
@@ -16,7 +18,6 @@ export class DroneStageIntro extends DroneStage {
 
   constructor(canvas: HTMLCanvasElement, objs?: ObjDrone[]) {
     super(canvas, objs);
-    this.clockInterval = 10;
   }
 
   onDraw(): void {
@@ -71,8 +72,40 @@ export class DroneStageIntro extends DroneStage {
 
   onStart(data?: any): void {
     console.log('intro onStart');
-    this.audio = new Audio('assets/audio/videoplayback.mp3') ;
+
+    // timer(10000).subscribe( (it) => {
+    //   document.getElementById('audio').play();
+    // })
+    this.audio = DroneResourceManager.getInstance().resources('videoplaybackSound');
+    // this.audio = new Audio();
+    // this.audio.src = 'assets/audio/videoplayback.mp3'
+    // this.audio.controls = true;
+    // this.audio.autoplay = true;
     this.audio.play();
+    // this.audio.load();
+    // document.getElementById('audio').oncanplaythrough = () => {
+    //   this.objs[0].onDraw = (a) => {};
+    //   document.getElementById('audio').play() ;
+    //   DroneResourceManager.getInstance().resources('videoplaybackSound').play();
+    // };
+
+    // this.audio.onended = () => {
+    //   this.objs[0].onDraw = (a) => {};
+    // };
+    // this.audio.addEventListener('ended', () => {
+    //   this.audio.play();
+    //   this.objs[0].onDraw = (a) => {};
+    // }, false);
+    //this.audio.play();
+    // });
+    // this.audio.oncanplaythrough = () => {
+    //   this.audio.play();
+    //   this.objs[0].onDraw = (a) => {};
+    // }
+    // this.audio.ended = () => {
+    //   this.audio.play();
+    //   this.objs[0].onDraw = (a) => {};
+    // }
     this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'welcome').subscribe((telegram) => {
       console.log('telegram Intro ' + telegram);
     });
@@ -85,7 +118,7 @@ export class DroneStageIntro extends DroneStage {
 
   onStop(data?: any): void {
     console.log('intro onStop');
-    this.audio.pause();
+    // this.audio.pause();
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) { this.resizeSubscription.unsubscribe(); }
     //if (!ValidUtil.isNullOrUndefined(this.mouseDownSubscription)) { this.mouseDownSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }

@@ -20,6 +20,7 @@ const arr = [1, 2, 3, 4, 5, 6, 7, 8];
 
 // console.log( from(map).filter( (it) => it > 2).toArray().subscribe( (it) => console.log(it)) );
 console.log( from(arr).filter( (it) => it > 2).toArray().subscribe( (it) => console.log(it)) );
+console.log( from(Array.from(new Set([1, 2, 3, 4]).values())).filter( (it) => it > 2).toArray().subscribe( (it) => console.log(it)) );
 
 // Observable.from(targetAuths)
 //     .filter(auth=>auth.menuLvl==1)
