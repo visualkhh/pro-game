@@ -144,7 +144,7 @@ export class ResultPopup extends ObjDrone {
         context.textBaseline = 'middle';
         context.fillStyle = '#FFFFFF';
         // context.lineWidth = 1;
-        context.fillText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 53);
+        context.fillText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 55);
         // context.strokeText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 51);
         context.restore();
       });
@@ -182,8 +182,8 @@ export class ResultPopup extends ObjDrone {
     const userResults = new Array<UserResult>();
     for (const user of room.users) {
       const headsetConcentrationHistory = user.headsetConcentrationHistory || [0];
-      let finishCnt = Info.finishCnt;
-      headsetConcentrationHistory.forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
+      let finishCnt = Info.FINISH_CNT;
+      headsetConcentrationHistory.forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.FINISH_CNT);
       if (finishCnt <= 0) {
         headsetConcentrationHistory.push(500);
       }

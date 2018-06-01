@@ -6,6 +6,7 @@ import {DroneStage} from '../../stage/DroneStage';
 import {DroneStageGame} from '../../stage/DroneStageGame';
 import {DroneStageEvent} from '../../stage/DronStageEvent';
 import {ObjDrone} from '../ObjDrone';
+import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 
 export class Alarm extends ObjDrone {
 
@@ -18,7 +19,7 @@ export class Alarm extends ObjDrone {
 
   onDraw(context: CanvasRenderingContext2D): void {
 
-    if (this.endCnt <= 60) {
+    if (this.endCnt <= Info.END_CNT) {
       const fontPT = 20;
       context.save();
       const width = context.measureText('show me the money 123,456').width;
@@ -37,7 +38,7 @@ export class Alarm extends ObjDrone {
   }
 
   onStart(data?: any) {
-    this.endCnt = 60;
+    this.endCnt = Info.END_CNT;
     this.x = 20;
     this.y = 20;
     //집중도

@@ -1,8 +1,7 @@
 import {ValidUtil} from '../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {Info} from '../info/Info';
 
 export class Room<T> {
-    static START_CNT = 10;
-    static END_CNT = 60;
 
     public uuid: string;
     public status: string;
@@ -10,7 +9,7 @@ export class Room<T> {
     public endCnt: number;
     public users: T[] = new Array<T>();
 
-    constructor(uuid = '', status = 'wait', startCnt = Room.START_CNT, endCnt = Room.END_CNT, users = new Array<T>()) {
+    constructor(uuid = '', status = 'wait', startCnt = Info.START_CNT, endCnt = Info.END_CNT, users = new Array<T>()) {
         this.uuid = uuid;
         this.status = status;
         this.startCnt = startCnt;
@@ -29,7 +28,7 @@ export class Room<T> {
     }
 
     public resetCnt() {
-        this.startCnt = Room.START_CNT;
-        this.endCnt = Room.END_CNT;
+        this.startCnt = Info.START_CNT;
+        this.endCnt = Info.END_CNT;
     }
 }

@@ -53,8 +53,8 @@ export class RoomManager {
                 }
 
                 for (const user of v.users) {
-                    let finishCnt = Info.finishCnt;
-                    (SessionManager.getInstance().get(user).get('headsetConcentrationHistory') || Array<number>()).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
+                    let finishCnt = Info.FINISH_CNT;
+                    (SessionManager.getInstance().get(user).get('headsetConcentrationHistory') || Array<number>()).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.FINISH_CNT);
                     if (v.status === RoomStatusCode.RUN && finishCnt <= 0) {
                         v.status = RoomStatusCode.END;
                         // this.sendRoomsDetail();

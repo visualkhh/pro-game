@@ -118,7 +118,7 @@ export class DroneStageIntro extends DroneStage {
 
   onStop(data?: any): void {
     console.log('intro onStop');
-    // this.audio.pause();
+    this.audio.pause();
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) { this.resizeSubscription.unsubscribe(); }
     //if (!ValidUtil.isNullOrUndefined(this.mouseDownSubscription)) { this.mouseDownSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }

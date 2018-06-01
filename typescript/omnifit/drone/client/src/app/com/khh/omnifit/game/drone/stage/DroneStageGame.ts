@@ -121,7 +121,7 @@ export class DroneStageGame extends DroneStage {
           console.log('telegram game ' + roomTelegram);
           this.room = roomTelegram.body;
           this.room.users = (this.room.users as any[]).filter( (it) => UserHostCode.HOST === it.host || UserHostCode.OTHER === it.host);
-          if (this.room.startCnt <= 0 && this.room.endCnt >= 60) {
+          if (this.room.startCnt <= 0 && this.room.endCnt >= Info.END_CNT) {
             this.headsetConcentrationHistory = new Array<number>();
           }
           this.roomDetailSubject.next(this.room);
@@ -156,7 +156,7 @@ export class DroneStageGame extends DroneStage {
           this.room.startCnt = (--this.room.startCnt);
           this.room.status = RoomStatusCode.WAIT;
         }else if (this.room.startCnt <= 0 && this.room.endCnt > 0) {
-          if (this.room.endCnt >= 60) {
+          if (this.room.endCnt >= Info.END_CNT) {
             this.headsetConcentrationHistory = new Array<number>();
           }
           this.room.endCnt = (--this.room.endCnt);
@@ -166,8 +166,8 @@ export class DroneStageGame extends DroneStage {
         }
         this.room.users[0].headsetConcentrationHistory = this.headsetConcentrationHistory;
         this.room.users[0].headsetConcentration = this.headsetConcentration;
-        let finishCnt = Info.finishCnt;
-        (this.room.users[0].headsetConcentrationHistory as number[]).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
+        let finishCnt = Info.FINISH_CNT;
+        (this.room.users[0].headsetConcentrationHistory as number[]).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.FINISH_CNT);
         if (this.room.status === RoomStatusCode.RUN && finishCnt <= 0) {
           this.room.status = RoomStatusCode.END;
         }

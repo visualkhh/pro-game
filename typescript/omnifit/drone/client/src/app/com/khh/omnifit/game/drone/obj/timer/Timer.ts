@@ -9,6 +9,7 @@ import {DroneStage} from '../../stage/DroneStage';
 import {DroneStageEvent} from '../../stage/DronStageEvent';
 import {ObjDrone} from '../ObjDrone';
 import {Score} from '../score/Score';
+import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 
 export class Timer extends ObjDrone {
   // private position: PointVector;
@@ -71,7 +72,7 @@ export class Timer extends ObjDrone {
       //console.log(room.startCnt + '  ' + room.endCnt);
       this.btnText = room.startCnt;
       this.sizejump = 100;
-      if (room.endCnt < 60) {
+      if (room.endCnt < Info.END_CNT) {
         this.btnText = '';
       }
     });

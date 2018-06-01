@@ -19,7 +19,7 @@ export class Drone extends ObjDrone {
   private _host: string;
   private beforeConcentration = 0;
   private concentration = 0;
-  private finishCnt = Info.finishCnt;
+  private finishCnt = Info.FINISH_CNT;
   private score: Score;
 
   private concentrationSubscription: Subscription;
@@ -54,7 +54,7 @@ export class Drone extends ObjDrone {
     const stepVal = (minHeight - 200) / 10;
     const concentration = this.concentration;
     const conStepVal = (stepVal * (this.status === 'run' || this.status === 'end' ? concentration : 0));
-    const finishCnt = (this.status === 'run' || this.status === 'end' ? this.finishCnt : Info.finishCnt);
+    const finishCnt = (this.status === 'run' || this.status === 'end' ? this.finishCnt : Info.FINISH_CNT);
 
     //targetPosition
     const targetPosition = new PointVector(this._initX || (this.stage.width / 2), minHeight - conStepVal);
@@ -123,19 +123,19 @@ export class Drone extends ObjDrone {
 
     //img
     //올라가기
-    if (finishCnt >= Info.finishCnt && targetPosition.y < this.y) {
+    if (finishCnt >= Info.FINISH_CNT && targetPosition.y < this.y) {
       const effectImg = DroneResourceManager.getInstance().resources('effect_character02Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
       this.img = this.upCharacte(this.name);
       context.drawImage(effectImg, effectImgX, effectImgY);
-    }else if (finishCnt >= Info.finishCnt && targetPosition.y > this.y) {//내려가기
+    }else if (finishCnt >= Info.FINISH_CNT && targetPosition.y > this.y) {//내려가기
       const effectImg = DroneResourceManager.getInstance().resources('effect_character03Img');
       const effectImgX = this.x - (effectImg.width / 2);
       const effectImgY = this.y - (effectImg.height);
       context.drawImage(effectImg, effectImgX, effectImgY);
       this.img = this.downCharacte(this.name);
-    }else if (finishCnt >= Info.finishCnt) {
+    }else if (finishCnt >= Info.FINISH_CNT) {
       //일반모습
       if (concentration === 8) {
         this.img = this.wingCharacte(this.name);
@@ -205,7 +205,7 @@ export class Drone extends ObjDrone {
     this.score.onCreate();
     this.score.onStart();
 
-    this.finishCnt = Info.finishCnt;
+    this.finishCnt = Info.FINISH_CNT;
     //height
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
@@ -225,8 +225,8 @@ export class Drone extends ObjDrone {
       this.beforeConcentration = this.concentration;
       this.concentration = concentration.headsetConcentration || 0;
       const history = concentration.headsetConcentrationHistory || new Array<number>();
-      this.finishCnt = Info.finishCnt;
-      history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = Info.finishCnt);
+      this.finishCnt = Info.FINISH_CNT;
+      history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = Info.FINISH_CNT);
     });
 
   }
@@ -297,9 +297,9 @@ export class Drone extends ObjDrone {
   //   this.beforeConcentration = this.concentration;
   //   this.concentration = concentration;
   //   if (this.beforeConcentration >= 9 && this.concentration >= 9 ) {
-  //     this.finishCnt--;
+  //     this.FINISH_CNT--;
   //   }else {
-  //     this.finishCnt = 3;
+  //     this.FINISH_CNT = 3;
   //   }
   // }
 }
