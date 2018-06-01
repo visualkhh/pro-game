@@ -52,7 +52,8 @@ export class Drone extends ObjDrone {
     //height
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
-    const conStepVal = (stepVal * (this.status === 'run' || this.status === 'end' ? this.concentration : 0));
+    const concentration = this.concentration;
+    const conStepVal = (stepVal * (this.status === 'run' || this.status === 'end' ? concentration : 0));
     const finishCnt = (this.status === 'run' || this.status === 'end' ? this.finishCnt : Info.finishCnt);
 
     //targetPosition
@@ -136,7 +137,7 @@ export class Drone extends ObjDrone {
       this.img = this.downCharacte(this.name);
     }else if (finishCnt >= Info.finishCnt) {
       //일반모습
-      if (this.concentration === 8) {
+      if (concentration === 8) {
         this.img = this.wingCharacte(this.name);
       }else {
         this.img = this.normalCharacte(this.name);
@@ -221,10 +222,11 @@ export class Drone extends ObjDrone {
       this.status = room.status;
     });
     this.concentrationSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_CONCENTRATION).filter( (it) => this.id === it.uuid).subscribe( (concentration) => {
-        this.beforeConcentration = this.concentration;
-        this.concentration = concentration.headsetConcentration || 0;
-        const history = concentration.headsetConcentrationHistory || new Array<number>();
-        history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = Info.finishCnt);
+      this.beforeConcentration = this.concentration;
+      this.concentration = concentration.headsetConcentration || 0;
+      const history = concentration.headsetConcentrationHistory || new Array<number>();
+      this.finishCnt = Info.finishCnt;
+      history.forEach( (it) => it >= 9 ? this.finishCnt-- : this.finishCnt = Info.finishCnt);
     });
 
   }
@@ -250,43 +252,43 @@ export class Drone extends ObjDrone {
   }
 
   normalCharacte(name: string): HTMLImageElement {
-    let img = DroneResourceManager.getInstance().resources('character_2_01Img');
+    let img = DroneResourceManager.getInstance().resources('character_3_01Img');
     switch (name) {
       case 'do': img = DroneResourceManager.getInstance().resources('character_01Img'); break;
       case 'so': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
-      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
-      default: img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('character_3_01Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('character_3_01Img'); break;
     }
     return img;
   }
   downCharacte(name: string): HTMLImageElement {
     const type = Math.floor(new Date().getMilliseconds() / 500);
-    let img =  type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img');
+    let img =  type ? DroneResourceManager.getInstance().resources('character_3_03_1Img') : DroneResourceManager.getInstance().resources('character_3_03_2Img');
     switch (name) {
       case 'do': img = type ? DroneResourceManager.getInstance().resources('character_03Img') : DroneResourceManager.getInstance().resources('character_03_1Img'); break;
       case 'so': img = type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img'); break;
-      case 'bs': img = type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img'); break;
-      default: img = type ? DroneResourceManager.getInstance().resources('character_2_03_1Img') : DroneResourceManager.getInstance().resources('character_2_03_2Img'); break;
+      case 'bs': img = type ? DroneResourceManager.getInstance().resources('character_3_03_1Img') : DroneResourceManager.getInstance().resources('character_3_03_2Img'); break;
+      default: img = type ? DroneResourceManager.getInstance().resources('character_3_03_1Img') : DroneResourceManager.getInstance().resources('character_3_03_2Img'); break;
     }
     return img;
   }
   upCharacte(name: string): HTMLImageElement {
-    let img = DroneResourceManager.getInstance().resources('character_2_02Img');
+    let img = DroneResourceManager.getInstance().resources('character_3_02Img');
     switch (name) {
       case 'do': img = DroneResourceManager.getInstance().resources('character_02Img'); break;
       case 'so': img = DroneResourceManager.getInstance().resources('character_2_02Img'); break;
-      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_02Img'); break;
-      default: img = DroneResourceManager.getInstance().resources('character_2_02Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('character_3_02Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('character_3_02Img'); break;
     }
     return img;
   }
   wingCharacte(name: string): HTMLImageElement {
-    let img = DroneResourceManager.getInstance().resources('character_2_04Img');
+    let img = DroneResourceManager.getInstance().resources('character_3_04Img');
     switch (name) {
       case 'do': img = DroneResourceManager.getInstance().resources('character_04Img'); break;
       case 'so': img = DroneResourceManager.getInstance().resources('character_2_04Img'); break;
-      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_04Img'); break;
-      default: img = DroneResourceManager.getInstance().resources('character_2_04Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('character_3_04Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('character_3_04Img'); break;
     }
     return img;
   }

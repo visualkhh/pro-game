@@ -34,7 +34,9 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
         request.ws = ws;
         const response = router.request(request);
         delete response['ws'];
-        ws.send(ConvertUtil.toJson(response));
+        const responseStr = ConvertUtil.toJson(response);
+        console.log('response: %s', responseStr);
+        ws.send(responseStr);
     });
 
     //router.request(new ServerTelegram(ws, 'rooms/join', 'PUT'));

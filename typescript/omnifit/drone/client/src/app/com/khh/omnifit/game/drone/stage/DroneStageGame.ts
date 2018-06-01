@@ -1,4 +1,5 @@
 import 'rxjs/add/observable/bindCallback';
+import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/observable/range';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/observable/zip';
@@ -12,8 +13,10 @@ import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
 import {RoomStatusCode} from '../../../../../../../../../common/com/khh/omnifit/game/drone/code/RoomStatusCode';
+import {UserHostCode} from '../../../../../../../../../common/com/khh/omnifit/game/drone/code/UserHostCode';
 import {Room} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 import {Telegram} from '../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
+import {Character} from '../../../../../../../../../common/com/khh/omnifit/game/drone/info/Character';
 import {Info} from '../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
@@ -23,10 +26,9 @@ import {DeviceManager} from '../../../drive/DeviceManager';
 import {DroneResourceManager} from '../DroneResourceManager';
 import {DroneStageManager} from '../DroneStageManager';
 import {Drone} from '../obj/drone/Drone';
+import {ResultPopup} from '../obj/game/ResultPopup';
 import {DroneStage} from './DroneStage';
 import {DroneStageEvent} from './DronStageEvent';
-import {UserHostCode} from '../../../../../../../../../common/com/khh/omnifit/game/drone/code/UserHostCode';
-import {Character} from '../../../../../../../../../common/com/khh/omnifit/game/drone/info/Character';
 
 //공기 및 유체 저항
 //https://ko.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-forces/a/air-and-fluid-resistance
@@ -43,11 +45,13 @@ export class DroneStageGame extends DroneStage {
   private hostDroneId: string;
   private concentrationSubject: BehaviorSubject<any>;
   private roomDetailSubject: BehaviorSubject<Room<any>>;
+  private roomDetailSubScription: Subscription;
   private localRoomIntervalSubScription: Subscription;
   private headsetConcentrationHistory: number[];
   private headsetConcentration: number;
   private room = new Room<any>();
   private audio: HTMLAudioElement;
+  private resultPopup: ResultPopup;
   onDraw(): void {
     const context: CanvasRenderingContext2D = this.bufferCanvas.getContext('2d');
     const x = this.width / 2;
@@ -79,6 +83,7 @@ export class DroneStageGame extends DroneStage {
     this.eventSubscribes.set(DroneStageEvent.EVENT_CONCENTRATION, this.concentrationSubject);
     this.roomDetailSubject = new BehaviorSubject(new Room<any>());
     this.eventSubscribes.set(DroneStageEvent.EVENT_ROOM_DETAIL, this.roomDetailSubject);
+    this.resultPopup = undefined;
     this.headsetConcentration = 0;
     this.headsetConcentrationHistory = new Array<number>();
     this.room = new Room<any>();
@@ -108,34 +113,39 @@ export class DroneStageGame extends DroneStage {
 
     //online offline
     if (DroneStageManager.getInstance().webSocket.readyState === WebSocket.OPEN) {
-      DroneStageManager.getInstance().webSocketSubject.next(new Telegram<any>('rooms/join', 'put'));
-      this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((telegram) => {
-        console.log('telegram game ' + telegram);
-        this.room = telegram.body;
-        this.room.users = (this.room.users as any[]).filter( (it) => UserHostCode.HOST === it.host || UserHostCode.OTHER === it.host);
-        if (this.room.startCnt <= 0 && this.room.endCnt >= 60) {
+      const joinTelegram = new Telegram<any>('rooms/join', 'put');
+      DroneStageManager.getInstance().webSocketSubject.next(joinTelegram);
+      DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms/join' && telegram.method === 'put' && joinTelegram.uuid === telegram.uuid).subscribe( (joindTelegram: Telegram<any>) => {
+        console.log('join' + joindTelegram.uuid);
+        this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((roomTelegram: Telegram<any>) => {
+          console.log('telegram game ' + roomTelegram);
+          this.room = roomTelegram.body;
+          this.room.users = (this.room.users as any[]).filter( (it) => UserHostCode.HOST === it.host || UserHostCode.OTHER === it.host);
+          if (this.room.startCnt <= 0 && this.room.endCnt >= 60) {
             this.headsetConcentrationHistory = new Array<number>();
-        }
-        this.roomDetailSubject.next(this.room);
-        const users = telegram.body.users as any[];
-        const wjumpSize = this.width / (users.length + 1);
-        let wjump = 0;
-        //유저 정리
-        CollectionUtil.ignoreMapItem(this.drones, new Set(users.map((it) => it.uuid)), (it) => this.removeObjOnStopDestory(it));
-        users.forEach((it) => {
-          let drone  = this.drones.get(it.uuid);
-          if (ValidUtil.isNullOrUndefined(drone)) {
-            drone = this.pushDroneOnCreateStart(it.uuid, it.host, it.name);
           }
-          if (UserHostCode.HOST === it.host) {
-            this.hostDroneId = it.uuid;
-          }else if (UserHostCode.OTHER === it.host) {
-          }
-          wjump += wjumpSize;
-          drone.initX = wjump;
-          this.concentrationSubject.next(it);
+          this.roomDetailSubject.next(this.room);
+          const users = roomTelegram.body.users as any[];
+          const wjumpSize = this.width / (users.length + 1);
+          let wjump = 0;
+          //유저 정리
+          CollectionUtil.ignoreMapItem(this.drones, new Set(users.map((it) => it.uuid)), (it) => this.removeObjOnStopDestory(it));
+          users.forEach((it) => {
+            let drone  = this.drones.get(it.uuid);
+            if (ValidUtil.isNullOrUndefined(drone)) {
+              drone = this.pushDroneOnCreateStart(it.uuid, it.host, it.name);
+            }
+            if (UserHostCode.HOST === it.host) {
+              this.hostDroneId = it.uuid;
+            }else if (UserHostCode.OTHER === it.host) {
+            }
+            wjump += wjumpSize;
+            drone.initX = wjump;
+            this.concentrationSubject.next(it);
+          });
         });
       });
+
     }else {
       this.hostDroneId = 'local';
       this.pushDroneOnCreateStart(this.hostDroneId, UserHostCode.HOST, Character.DO);
@@ -164,14 +174,26 @@ export class DroneStageGame extends DroneStage {
         this.roomDetailSubject.next(this.room);
       });
     }
+
+    this.roomDetailSubScription = this.roomDetailSubject.filter( (it) => !ValidUtil.isNullOrUndefined(it.users) && it.users.length > 0 ).subscribe( (room: Room<any>) => {
+      this.room = room;
+      if (RoomStatusCode.END === room.status && ValidUtil.isNullOrUndefined(this.resultPopup)) {
+        this.resultPopup = this.pushResultPopupOnCreateStart(this.room);
+      }
+    });
   }
 
   onStop(data?: any): void {
     console.log('game stop');
     this.audio.pause();
     this.objs.forEach((it) => it.onStop(data));
-    Array.from(this.drones.values()).forEach( (it) => CollectionUtil.removeArrayItem(this.objs, it));
+    Array.from(this.drones.values()).forEach( (it) => {
+      CollectionUtil.removeArrayItem(this.objs, it);
+    });
     this.drones.clear();
+    if (this.resultPopup) {
+      CollectionUtil.removeArrayItem(this.objs, this.resultPopup);
+    }
 
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) {this.resizeSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) {this.clockSubscription.unsubscribe(); }
@@ -179,6 +201,7 @@ export class DroneStageGame extends DroneStage {
     if (!ValidUtil.isNullOrUndefined(this.websocketSubscription)) {this.websocketSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.keySubscription)) {this.keySubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.localRoomIntervalSubScription)) {this.localRoomIntervalSubScription.unsubscribe(); }
+    if (!ValidUtil.isNullOrUndefined(this.roomDetailSubScription)) {this.roomDetailSubScription.unsubscribe(); }
   }
 
   private createRandomWind(): PointVector {
@@ -188,6 +211,14 @@ export class DroneStageGame extends DroneStage {
   eventObservable(eventName: string): Observable<any> {
     // return this.eventSubscribes.get(eventName).subscribe(next, error, complete);
     return this.eventSubscribes.get(eventName);
+  }
+  pushResultPopupOnCreateStart(room: Room<any>): ResultPopup {
+    const resultPopup = new ResultPopup(this, 0, 0, 0);
+    resultPopup.index = 1101;
+    resultPopup.onCreate(room);
+    resultPopup.onStart(room);
+    this.pushObj(resultPopup);
+    return resultPopup;
   }
 
   pushDroneOnCreateStart(id: string, host?: string, name?: string): Drone {

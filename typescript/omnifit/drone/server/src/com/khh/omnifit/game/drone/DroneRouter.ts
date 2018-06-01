@@ -10,7 +10,7 @@ export class DroneRouter {
     private profileService: ProfileService = new ProfileService();
 
     request(request: ServerTelegram<any>): Telegram<any> {
-        const response = new Telegram<any>(request.action, request.method);
+        const response = new Telegram<any>(request.action, request.method, undefined, TelegramStatusCode.OK, request.uuid);
 
         if ('rooms' === request.action && 'GET' === request.method.toUpperCase()) {//방목록
             response.body = this.roomService.getRoomsUserDetail();

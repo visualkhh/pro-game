@@ -1,17 +1,25 @@
 // import WebSocket = require('ws');
+import {RandomUtil} from '../../../../../../../lib-typescript/com/khh/random/RandomUtil';
+import {ValidUtil} from '../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {TelegramStatusCode} from '../code/TelegramStatusCode';
 
 export class Telegram<T> {
-    public action = '';
-    public method = '';
+    public uuid;
+    public action;
+    public method;
     public status: number;
     public body: T;
 
-    constructor(action: string = '', method: string = '', body: T = new Object() as T, status: number = TelegramStatusCode.OK) {
+    constructor(action = '', method = '', body: T = new Object() as T, status = TelegramStatusCode.OK, uuid?: string) {
         this.action = action;
         this.method = method;
         this.status = status;
         this.body = body;
+        if (ValidUtil.isNullOrUndefined(uuid)) {
+            this.uuid = RandomUtil.uuid();
+        } else {
+            this.uuid = uuid;
+        }
     }
 
     // lift<R>(operator: Operator<T, R>): Observable<R> {

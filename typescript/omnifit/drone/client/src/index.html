@@ -13,12 +13,13 @@
       height: 100%;
       margin: 0px;
       overflow:hidden;
+      background-color: #2b2b2b;
     }
   </style>
 
 </head>
 <body>
-  <app-root>loading...</app-root>
+  <app-root></app-root>
 </body>
 <script type="text/javascript">
   function callJS(data) {
@@ -28,7 +29,7 @@
     // var event = new CustomEvent('omnifit-concentration', {'detail': {'name':'omnifit', 'data': Number(data)} });
     var event = new CustomEvent('omnifit-headset-concentration', {'detail': Number(data)});
     // Dispatch/Trigger/Fire the event
-    var a = window.dispatchEvent(event)
+    var a = window.dispatchEvent(event);
     console.log("callJS "+data+"-=--"+a);
   }
 
@@ -49,7 +50,7 @@
       var min = 0;
       var data = Math.floor(Math.random() * (max - min)) + min;
       var event = new CustomEvent('omnifit-headset-concentration', {'detail': Number(data)});
-      var a = window.dispatchEvent(event)
+      var a = window.dispatchEvent(event);
       console.log("dummy "+data+"  "+a);
     },interval);
   }
@@ -57,6 +58,17 @@
     if(dummyInterval){
       clearInterval(dummyInterval);
     }
+  }
+  function wsSend(obj) {
+    var event = new CustomEvent('omnifit-webSocket-send', {'detail': obj});
+    var a = window.dispatchEvent(event);
+    console.log("wsSend "+obj+"  "+a);
+  }
+  function wsObserver() {
+    var obj = {action: 'profile', method: 'put', body: {host: 'observer'}};
+    var event = new CustomEvent('omnifit-webSocket-send', {'detail': obj});
+    var a = window.dispatchEvent(event);
+    console.log("wsObserver "+obj+"  "+a);
   }
 </script>
 

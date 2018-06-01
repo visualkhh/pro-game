@@ -47,14 +47,8 @@ export class ResultPopup extends ObjDrone {
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-    if (ValidUtil.isNullOrUndefined(this.targetPosition)) {
-      return;
-    }
-    if (ValidUtil.isNullOrUndefined(this.hostResult)) {
-      return;
-    }
-
     //////update
+    this.targetPosition = new PointVector(this.stage.width / 2 , this.stage.height / 2);
     //방향
     const dir = PointVector.sub(this.targetPosition, this);
     const mag = dir.mag();
@@ -123,7 +117,7 @@ export class ResultPopup extends ObjDrone {
         // const hostRank_y = this.y - (hostRankImg.height / 2) - 2;
         wjump += wjumpSize;
         //console.log(wjump);
-        if (it.host === 'host') {
+        if (it.uuid === this.hostResult.uuid) {
           //result characte
           const result_characterImg = this.resultCharacte(it.name);
           const character_x = this.x - (result_characterImg.width / 2);
@@ -171,7 +165,7 @@ export class ResultPopup extends ObjDrone {
     return hostRankImg;
   }
 
-  onStart(data?: any) {
+  onStart(room: Room<any>) {
     this.set(this.startPosition());
     this.accelerationStep = new PointVector(0.2, 0.2, 0);
     this.acceleration = new PointVector(0, 0);
@@ -184,58 +178,57 @@ export class ResultPopup extends ObjDrone {
         DroneStageManager.getInstance().goStage(1);
       }
     });
-    this.roomDetailSubscription = this.stage.eventObservable(DroneStageEvent.EVENT_ROOM_DETAIL).filter( (it: Room<any>) => it.status === RoomStatusCode.END).subscribe( (room) => {
-      if (!ValidUtil.isNullOrUndefined(this.hostResult)) {
-        return;
+    //console.log('resultPopup');
+    const userResults = new Array<UserResult>();
+    for (const user of room.users) {
+      const headsetConcentrationHistory = user.headsetConcentrationHistory || [0];
+      let finishCnt = Info.finishCnt;
+      headsetConcentrationHistory.forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
+      if (finishCnt <= 0) {
+        headsetConcentrationHistory.push(500);
       }
-      this.targetPosition = new PointVector(this.stage.width / 2 , this.stage.height / 2);
-      //console.log('resultPopup');
-      const userResults = new Array<UserResult>();
-      for (const user of room.users) {
-        const headsetConcentrationHistory = user.headsetConcentrationHistory || [0];
-        let finishCnt = Info.finishCnt;
-        headsetConcentrationHistory.forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
-        if (finishCnt <= 0) {
-          headsetConcentrationHistory.push(500);
-        }
-        //user Result Setting
-        const result = {uuid: user.uuid, name: user.name, host: user.host, score: CollectionUtil.sumArray(headsetConcentrationHistory)} as UserResult;
-        result.score = result.score || 0;
-        userResults.push(result);
-        if (user.host === UserHostCode.HOST) {
-          this.hostResult = result;
-        }
-        //user ranking Setting
-        userResults.sort((n1, n2) => (n1.score < n2.score ? 1 : -1));
-        for (let i = 0; i < userResults.length; i++) {
-          userResults[i].rank = (i + 1);
-        }
-        //CollectionUtil.removeArrayItem(userResults, this.hostResult)
-        this.userResults = userResults;
+      //user Result Setting
+      const result = {uuid: user.uuid, name: user.name, host: user.host, score: CollectionUtil.sumArray(headsetConcentrationHistory)} as UserResult;
+      result.score = result.score || 0;
+      userResults.push(result);
+      if (user.host === UserHostCode.HOST) {
+        this.hostResult = result;
       }
-    });
+      //user ranking Setting
+      userResults.sort((n1, n2) => (n1.score < n2.score ? 1 : -1));
+      for (let i = 0; i < userResults.length; i++) {
+        userResults[i].rank = (i + 1);
+      }
+    }
+
+    // console.log('>>>>>> ' + userResults);
+    if (ValidUtil.isNullOrUndefined(this.hostResult)) {
+      this.hostResult = userResults[0];
+    }
+    //CollectionUtil.removeArrayItem(userResults, this.hostResult)
+    this.userResults = userResults;
   }
 
   startPosition(): PointVector {
     return new PointVector(this.stage.width, this.stage.height / 2);
   }
   resultCharacte(name: string): HTMLImageElement {
-    let img = DroneResourceManager.getInstance().resources('character_2_01Img');
+    let img = DroneResourceManager.getInstance().resources('result_character_03Img');
     switch (name) {
-      case 'do': img = DroneResourceManager.getInstance().resources('result_characterImg'); break;
-      case 'so': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
-      case 'bs': img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
-      default: img = DroneResourceManager.getInstance().resources('character_2_01Img'); break;
+      case 'do': img = DroneResourceManager.getInstance().resources('result_character_01Img'); break;
+      case 'so': img = DroneResourceManager.getInstance().resources('result_character_02Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('result_character_03Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('result_character_03Img'); break;
     }
     return img;
   }
   summaryCharacte(name: string): HTMLImageElement {
-    let img = DroneResourceManager.getInstance().resources('ranking_character_02Img');
+    let img = DroneResourceManager.getInstance().resources('ranking_character_03Img');
     switch (name) {
       case 'do': img = DroneResourceManager.getInstance().resources('ranking_character_01Img'); break;
       case 'so': img = DroneResourceManager.getInstance().resources('ranking_character_02Img'); break;
-      case 'bs': img = DroneResourceManager.getInstance().resources('ranking_character_02Img'); break;
-      default: img = DroneResourceManager.getInstance().resources('ranking_character_02Img'); break;
+      case 'bs': img = DroneResourceManager.getInstance().resources('ranking_character_03Img'); break;
+      default: img = DroneResourceManager.getInstance().resources('ranking_character_03Img'); break;
     }
     return img;
   }

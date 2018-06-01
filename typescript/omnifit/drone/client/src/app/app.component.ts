@@ -28,6 +28,7 @@ import {DroneStageIntro} from './com/khh/omnifit/game/drone/stage/DroneStageIntr
 import {Timer} from './com/khh/omnifit/game/drone/obj/timer/Timer';
 import {ResultPopup} from './com/khh/omnifit/game/drone/obj/game/ResultPopup';
 import {Alarm} from './com/khh/omnifit/game/drone/obj/alarm/Alarm';
+import {DeviceManager} from './com/khh/omnifit/drive/DeviceManager';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 // typescript observable subscribe example
@@ -47,10 +48,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   private title = 'app';
 
   private canvas: HTMLCanvasElement;
-  private manager: DroneStageManager;
+  private droneManager: DroneStageManager;
   private context: CanvasRenderingContext2D | null;
   @ViewChild('canvas') public canvasElementRef: ElementRef;
   private resourceManager: DroneResourceManager;
+  private deviceManager: DeviceManager;
   constructor(private hostElement: ElementRef, private renderer: Renderer2) {
   }
 
@@ -78,7 +80,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     //game initialize
-    this.manager = DroneStageManager.getInstance(this.canvas);
+    this.droneManager = DroneStageManager.getInstance(this.canvas);
+    this.deviceManager = DeviceManager.getInstance();
     //resource
     this.resourceManager = DroneResourceManager.getInstance();
 
@@ -99,7 +102,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     droneStageIntro.pushObj(introTitle);
     droneStageIntro.pushObj(introIcon);
     droneStageIntro.pushObj(touchScreen);
-    const background = new BackGround(this.manager, 0, 0, 0);
+    const background = new BackGround(this.droneManager, 0, 0, 0);
     background.index = 0;
     droneStageIntro.pushObj(background);
     //Stage Game
@@ -108,10 +111,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     droneStageGame.pushObj(background);
 
     for (let i = 20; i < 40 ; i++) {
-      const star = new Star(this.manager, 0, 0, 0);
+      const star = new Star(this.droneManager, 0, 0, 0);
       star.index = i;
-      this.manager.pushObj(star);
+      this.droneManager.pushObj(star);
     }
+
 
     //moon
     const moon = new Moon(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_moonImg'));
@@ -120,19 +124,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     // droneStageIntro.pushObj(moon);
     //cloud
     for (let i = 50; i < 55 ; i++) {
-      const cloud = new Cloud(this.manager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_cloud_04Img'));
+      const cloud = new Cloud(this.droneManager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_cloud_04Img'));
       cloud.index = i;
-      this.manager.pushObj(cloud);
+      this.droneManager.pushObj(cloud);
     }
     for (let i = 55; i < 60 ; i++) {
-      const cloud = new Cloud(this.manager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_cloud_05Img'));
+      const cloud = new Cloud(this.droneManager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_cloud_05Img'));
       cloud.index = i;
-      this.manager.pushObj(cloud);
+      this.droneManager.pushObj(cloud);
     }
     //mountain
-    const mountain = new Mountain(this.manager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_mountainImg'));
+    const mountain = new Mountain(this.droneManager, 0, 0, 0, DroneResourceManager.getInstance().resources('game_bg_mountainImg'));
     mountain.index = 61;
-    this.manager.pushObj(mountain);
+    this.droneManager.pushObj(mountain);
 
     const score = new Score(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
     score.id = 'local';
@@ -141,22 +145,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     alarm.index = 1001;
     const timer = new Timer(droneStageGame, 0, 0, 0, DroneResourceManager.getInstance().resources('gage_00Img'));
     timer.index = 1002;
-    const resultPopup = new ResultPopup(droneStageGame, 0, 0, 0);
-    resultPopup.index = 1101;
+    // const resultPopup = new ResultPopup(droneStageGame, 0, 0, 0);
+    // resultPopup.index = 1101;
     // const wind = new Wind(droneStageGame, 0, 0, 500);
     droneStageGame.pushObj(score);
     droneStageGame.pushObj(alarm);
     droneStageGame.pushObj(timer);
-    droneStageGame.pushObj(resultPopup);
+    // droneStageGame.pushObj(resultPopup);
 
     //Stage End
     const droneStageEnd = new DroneStageEnd(this.canvas);
 
-    this.manager.pushStage(droneStageIntro);
-    this.manager.pushStage(droneStageGame);
-    this.manager.pushStage(droneStageEnd);
-    this.manager.onCreate(this.canvas);
-    this.manager.onStart();
+    this.droneManager.pushStage(droneStageIntro);
+    this.droneManager.pushStage(droneStageGame);
+    this.droneManager.pushStage(droneStageEnd);
+    this.droneManager.onCreate(this.canvas);
+    this.droneManager.onStart();
 
     //customEvent
     // Observable.fromEvent(this.canvas, 'load').subscribe((event) => {

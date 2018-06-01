@@ -39,14 +39,17 @@ export class RoomManager {
                     v.startCnt = (--v.startCnt);
                     v.status = RoomStatusCode.WAIT;
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt > 0) {
-                    console.log(v.endCnt);
-                    if (v.endCnt >= 60) {
-                        this.userHeadsetClear(v.users);
-                    }
+                    console.log(v.uuid + ' : ' + v.endCnt);
+                    // if (v.endCnt >= 60) {
+                    //     this.sendRoomsDetail()
+                    //     this.userHeadsetClear(v.users);
+                    // }
                     v.endCnt = (--v.endCnt);
                     v.status = RoomStatusCode.RUN;
                 }else if (v.users.length > 0 && v.startCnt <= 0 && v.endCnt <= 0) {
                     v.status = RoomStatusCode.END;
+                    // this.sendRoomsDetail();
+                    // this.userHeadsetClear(v.users);
                 }
 
                 for (const user of v.users) {
@@ -54,6 +57,8 @@ export class RoomManager {
                     (SessionManager.getInstance().get(user).get('headsetConcentrationHistory') || Array<number>()).forEach((cit) => cit >= 9 ? finishCnt-- : finishCnt = Info.finishCnt);
                     if (v.status === RoomStatusCode.RUN && finishCnt <= 0) {
                         v.status = RoomStatusCode.END;
+                        // this.sendRoomsDetail();
+                        // this.userHeadsetClear(v.users);
                         break;
                     }
                 }
@@ -65,6 +70,11 @@ export class RoomManager {
         for (const user of new Array<WebSocket>().concat(users)) {
             SessionManager.getInstance().get(user).delete('headsetConcentrationHistory');
             SessionManager.getInstance().get(user).delete('headsetConcentration');
+        }
+    }
+    public userInfoClear(users: WebSocket[] | WebSocket) {
+        for (const user of new Array<WebSocket>().concat(users)) {
+            SessionManager.getInstance().get(user).delete('name');
         }
     }
     public sendRoomsDetail() {
@@ -167,7 +177,7 @@ export class RoomManager {
         //this.exitRoom(ws);
         const uuid = RandomUtil.uuid();
         const room = new Room<WebSocket>(uuid);
-        room.status = 'wait';
+        room.status = RoomStatusCode.WAIT;
         this.rooms.set(uuid, room);
         // console.log(ConvertUtil.iteratorToArray(this.rooms.keys()));
         return room;
@@ -183,51 +193,62 @@ export class RoomManager {
         return list;
     }
 
-    joinOrMakeWaiteRoom(ws: WebSocket) {
-        this.userHeadsetClear(ws);
+    joinOrMakeWaiteRoom(ws: WebSocket): Room<Map<string, any>> {
         this.exitRoom(ws);
+        this.userHeadsetClear(ws);
+        this.userInfoClear(ws);
         const rooms = this.getStatusRoom(RoomStatusCode.WAIT);
         let selectedRoom;
         //this.rooms.keys();
         if (rooms && rooms[0]) {
-            rooms[0].resetCnt();
-            rooms[0].pushUser(ws);
             selectedRoom = rooms[0];
         }else {
             const room = this.makeWaiteRoom();
-            room.resetCnt();
-            room.pushUser(ws);
             selectedRoom = room;
         }
+        selectedRoom.resetCnt();
+        selectedRoom.pushUser(ws);
+        this.setNameInRoom(selectedRoom);
+        return this.getRoomUsersDetail(selectedRoom.uuid, ws);
+    }
+    // joinFirstStatusRoom(status: string, ws: WebSocket) {
+    //     this.exitRoom(ws);
+    //     this.userHeadsetClear(ws);
+    //     const rooms = this.getStatusRoom(name);
+    //     if (rooms && rooms[0]) {
+    //         rooms[0].resetCnt();
+    //         rooms[0].pushUser(ws);
+    //     }
+    // }
+
+    joinOnResetRoom(uuid: string | Room<WebSocket>, ws: WebSocket): Room<WebSocket> | undefined {
+        this.exitRoom(ws);
+        this.userHeadsetClear(ws);
+        this.userInfoClear(ws);
+        const room = uuid instanceof Room ? uuid : this.rooms.get(uuid);
+        if (room) {
+            room.resetCnt();
+            room.pushUser(ws);
+            this.setNameInRoom(room);
+        }
+        return room;
+    }
+    setNameInRoom(room: Room<WebSocket>) {
         //이름지정
         const useNicks = new Set<string>();
-        this.getRoomUsersDetail(selectedRoom.uuid).users.forEach( (it) => {
-            if (!ValidUtil.isNullOrUndefined(it.get('name'))) {
+        this.getRoomUsersDetail(room.uuid).users.forEach((it) => {
+            if (!ValidUtil.isNullOrUndefined(it.get('name')) && UserHostCode.OBSERVER !== it.get('host')) {
                 useNicks.add(it.get('name'));
             }
         });
         const availableNick = Array.from(CollectionUtil.ignoreItem(Array.from(Character.NAMES).reverse(), useNicks));
         console.log(Array.from(useNicks) + ' ' + availableNick);
-        selectedRoom.users.forEach( (it) => {
+        room.users.forEach( (it) => {
             const userSession = SessionManager.getInstance().get(it);
-            if (ValidUtil.isNullOrUndefined(userSession.get('name')) && availableNick.length > 0) {
+            if (ValidUtil.isNullOrUndefined(userSession.get('name')) && availableNick.length > 0 && UserHostCode.OBSERVER !== userSession.get('host')) {
                 userSession.set('name', availableNick.pop());
             }
         });
-    }
-    joinFirstStatusRoom(status: string, ws: WebSocket) {
-        this.exitRoom(ws);
-        this.userHeadsetClear(ws);
-        const rooms = this.getStatusRoom(name);
-        if (rooms && rooms[0]) {
-            rooms[0].resetCnt();
-            rooms[0].pushUser(ws);
-        }
-    }
-
-    joinRoom(name: string, ws: WebSocket) {
-        this.exitRoom(ws);
-        const room = this.rooms.get(name);
     }
     resetRoom(name: string) {
         const room = this.rooms.get(name);
