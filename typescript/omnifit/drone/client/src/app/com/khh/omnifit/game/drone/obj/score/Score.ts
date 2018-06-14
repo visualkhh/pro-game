@@ -76,14 +76,14 @@ export class Score extends ObjDrone {
     grd.addColorStop(1, '#51CFDE');
     context.fillStyle = grd;
     context.fill();
-    context.beginPath();
-    const fontPT = 18;
-    context.font = 'bold ' + fontPT + 'pt Multicolore';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillStyle = '#FFFFFF';
-    context.lineWidth = 2;
-    context.fillText(headsetConcentration.toLocaleString(), gageBgCenterX, gageBgCenterY);
+    // context.beginPath();
+    // const fontPT = 18;
+    // context.font = 'bold ' + fontPT + 'pt Multicolore';
+    // context.textAlign = 'center';
+    // context.textBaseline = 'middle';
+    // context.fillStyle = '#FFFFFF';
+    // context.lineWidth = 2;
+    // context.fillText(headsetConcentration.toLocaleString(), gageBgCenterX, gageBgCenterY);
 
     if (this.showBadge) {
       //badge
