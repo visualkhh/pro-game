@@ -12,11 +12,9 @@ export abstract class MoveImg extends ObjDrone {
   private acceleration: PointVector;
   private accelerationStep: PointVector;
 
-
   constructor(stage: DroneStage, x: number, y: number, z: number, img?: HTMLImageElement) {
     super(stage, x, y, z, img);
   }
-
 
   onDraw(context: CanvasRenderingContext2D): void {
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -47,21 +45,22 @@ export abstract class MoveImg extends ObjDrone {
     // context.textAlign = 'center';
     // context.textBaseline = 'middle';
 
-    let x = this.x;
-    let y = this.y;
-    //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_canvas_textalign
-    if (this.imgAlign === 'center') {
-      x = this.x - (this.img.width / 2);
-    }
-    //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_canvas_textbaseline
-    if (this.imgBaseline === 'middle') {
-      y = this.y - (this.img.height / 2);
-    }else if (this.imgBaseline === 'hanging') {
-      y = this.y;
-    }else if (this.imgBaseline === 'bottom') {
-      y = this.y - (this.img.height);
-    }
-    context.drawImage(this.img, x, y);
+    // let x = this.x;
+    // let y = this.y;
+    // //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_canvas_textalign
+    // if (this.imgAlign === 'center') {
+    //   x = this.x - (this.img.width / 2);
+    // }
+    // //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_canvas_textbaseline
+    // if (this.imgBaseline === 'middle') {
+    //   y = this.y - (this.img.height / 2);
+    // }else if (this.imgBaseline === 'hanging') {
+    //   y = this.y;
+    // }else if (this.imgBaseline === 'bottom') {
+    //   y = this.y - (this.img.height);
+    // }
+    // context.drawImage(this.img, x, y);
+    this.drawImage(context);
   }
 
   onStart(data?: any) {

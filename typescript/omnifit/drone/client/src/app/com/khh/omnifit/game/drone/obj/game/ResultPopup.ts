@@ -1,4 +1,6 @@
 import {Subscription} from 'rxjs/Subscription';
+import {RoomStatusCode} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/code/RoomStatusCode';
+import {UserHostCode} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/code/UserHostCode';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/domain/Room';
 import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/info/Info';
 import {CollectionUtil} from '../../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
@@ -7,13 +9,12 @@ import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/mat
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
+import {DeviceManager} from '../../../../drive/DeviceManager';
 import {DroneResourceManager} from '../../DroneResourceManager';
 import {DroneStageManager} from '../../DroneStageManager';
 import {DroneStage} from '../../stage/DroneStage';
 import {DroneStageEvent} from '../../stage/DronStageEvent';
 import {ObjDrone} from '../ObjDrone';
-import {UserHostCode} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/code/UserHostCode';
-import {RoomStatusCode} from '../../../../../../../../../../common/com/khh/omnifit/game/drone/code/RoomStatusCode';
 
 export interface UserResult {
   uuid: string;
@@ -39,6 +40,8 @@ export class ResultPopup extends ObjDrone {
   private targetPosition: PointVector;
   private hostResult: UserResult;
   private hitArea: Rect;
+  private hitExitArea: Rect;
+  private hitReStartArea: Rect;
   private mousedownSubscription: Subscription;
   private userResults: UserResult[];
 
@@ -73,9 +76,11 @@ export class ResultPopup extends ObjDrone {
 
     //draw popup background
     const popup_x = this.x - (this.result_popup_bgImg.width / 2);
-    const popup_y = this.y - (this.result_popup_bgImg.height / 2);
+    const popup_y = this.y - (this.result_popup_bgImg.height / 2) - 20;
     context.drawImage(this.result_popup_bgImg, popup_x, popup_y);
     this.hitArea = new Rect(popup_x, popup_y, popup_x + this.result_popup_bgImg.width, popup_y + this.result_popup_bgImg.height);
+    this.hitExitArea = new Rect(popup_x + 20, popup_y + this.result_popup_bgImg.height - 150, popup_x + this.result_popup_bgImg.width - 185, popup_y + this.result_popup_bgImg.height);
+    this.hitReStartArea = new Rect(popup_x + 180, popup_y + this.result_popup_bgImg.height - 150, popup_x + this.result_popup_bgImg.width, popup_y + this.result_popup_bgImg.height);
 
     if (!ValidUtil.isNullOrUndefined(this.hostResult)) {
       context.save();
@@ -89,8 +94,8 @@ export class ResultPopup extends ObjDrone {
       context.textBaseline = 'middle';
       context.fillStyle = '#FFFFFF';
       context.lineWidth = 2;
-      context.fillText(this.hostResult.score.toLocaleString(), this.x, this.y - 5);
-      context.strokeText(this.hostResult.score.toLocaleString(), this.x, this.y - 5);
+      context.fillText(this.hostResult.score.toLocaleString(), popup_x + 180, popup_y + 322);
+      context.strokeText(this.hostResult.score.toLocaleString(), popup_x + 180, popup_y + 322);
       // fontPT = 18;
       // context.font = 'bold  ' + fontPT + 'pt Multicolore';
       // context.textAlign = 'center';
@@ -120,17 +125,17 @@ export class ResultPopup extends ObjDrone {
         if (it.uuid === this.hostResult.uuid) {
           //result characte
           const result_characterImg = this.resultCharacte(it.name);
-          const character_x = this.x - (result_characterImg.width / 2);
-          const character_y = this.y - (result_characterImg.height / 2) - 125;
+          const character_x = popup_x + 130;
+          const character_y = popup_y + 110;
           context.drawImage(result_characterImg, character_x, character_y);
-          context.drawImage(this.ranking_shape_02Img, popup_x + wjump, popup_y + 325);
+          context.drawImage(this.ranking_shape_02Img, popup_x + wjump, popup_y + 385);
         }else {
-          context.drawImage(this.ranking_shape_01Img, popup_x + wjump, popup_y + 325);
+          context.drawImage(this.ranking_shape_01Img, popup_x + wjump, popup_y + 385);
         }
-        context.drawImage(this.summaryCharacte(it.name), popup_x + wjump  + 20, popup_y + 325 + 3);
-        context.drawImage(this.getRankImg(it.rank), popup_x + wjump - 3, popup_y + 325 - 3);
+        context.drawImage(this.summaryCharacte(it.name), popup_x + wjump  + 20, popup_y + 385 + 3);
+        context.drawImage(this.getRankImg(it.rank), popup_x + wjump - 3, popup_y + 385 - 3);
         if (it.host === 'host') {
-          context.drawImage(this.ranking_shape_02_arrowImg, popup_x + wjump + 25, popup_y + 325 - 5);
+          context.drawImage(this.ranking_shape_02_arrowImg, popup_x + wjump + 25, popup_y + 385 - 5);
         }
 
         context.save();
@@ -144,11 +149,13 @@ export class ResultPopup extends ObjDrone {
         context.textBaseline = 'middle';
         context.fillStyle = '#FFFFFF';
         // context.lineWidth = 1;
-        context.fillText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 55);
+        context.fillText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 382 + 56);
         // context.strokeText(it.score.toLocaleString(), popup_x + wjump + 36, popup_y + 322 + 51);
         context.restore();
       });
-      //context.strokeRect(this.hitArea.left, this.hitArea.top, this.hitArea.width(), this.hitArea.height());
+      // context.strokeRect(this.hitArea.left, this.hitArea.top, this.hitArea.width(), this.hitArea.height());
+      // context.strokeRect(this.hitExitArea.left, this.hitExitArea.top, this.hitExitArea.width(), this.hitExitArea.height());
+      // context.strokeRect(this.hitReStartArea.left, this.hitReStartArea.top, this.hitReStartArea.width(), this.hitReStartArea.height());
     }
 
   }
@@ -174,7 +181,11 @@ export class ResultPopup extends ObjDrone {
     this.hostResult = undefined;
     this.hitArea = new Rect(0, 0, 0, 0);
     this.mousedownSubscription = this.stage.canvasEventSubscribe('mousedown', (event: MouseEvent) => {
-      if (!ValidUtil.isNullOrUndefined(this.hitArea) && this.hitArea.contains(event.offsetX, event.offsetY) ) {
+      if (!ValidUtil.isNullOrUndefined(this.hitExitArea) && this.hitExitArea.contains(event.offsetX, event.offsetY) ) {
+        DeviceManager.getInstance().onDestroy();
+        this.stage.onDestroy();
+      }
+      if (!ValidUtil.isNullOrUndefined(this.hitReStartArea) && this.hitReStartArea.contains(event.offsetX, event.offsetY) ) {
         DroneStageManager.getInstance().goStage(1);
       }
     });
@@ -242,5 +253,4 @@ export class ResultPopup extends ObjDrone {
   onPause(data?: any) {}
   onRestart(data?: any) {}
   onResume(data?: any) {}
-
 }

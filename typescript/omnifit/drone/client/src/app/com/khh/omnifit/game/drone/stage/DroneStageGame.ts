@@ -118,7 +118,7 @@ export class DroneStageGame extends DroneStage {
       DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms/join' && telegram.method === 'put' && joinTelegram.uuid === telegram.uuid).subscribe( (joindTelegram: Telegram<any>) => {
         console.log('join' + joindTelegram.uuid);
         this.websocketSubscription = DroneStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'rooms' && telegram.method === 'detail').subscribe((roomTelegram: Telegram<any>) => {
-          console.log('telegram game ' + roomTelegram);
+          //console.log('telegram game ' + roomTelegram);
           this.room = roomTelegram.body;
           this.room.users = (this.room.users as any[]).filter( (it) => UserHostCode.HOST === it.host || UserHostCode.OTHER === it.host);
           if (this.room.startCnt <= 0 && this.room.endCnt >= Info.END_CNT) {
@@ -150,8 +150,8 @@ export class DroneStageGame extends DroneStage {
       this.hostDroneId = 'local';
       this.pushDroneOnCreateStart(this.hostDroneId, UserHostCode.HOST, Character.DO);
       this.room.users = [{uuid: this.hostDroneId, name: Character.DO, host: UserHostCode.HOST, headsetConcentrationHistory: this.headsetConcentrationHistory, headsetConcentration: this.headsetConcentration}];
-      this.localRoomIntervalSubScription = interval(1000).subscribe( (it) => {
-        console.log(this.room.users.length + ' ' + this.room.startCnt + ' ' + this.room.endCnt);
+      this.localRoomIntervalSubScription = interval(Info.STEP_UNIT).subscribe( (it) => {
+        //console.log(this.room.users.length + ' ' + this.room.startCnt + ' ' + this.room.endCnt);
         if (this.room.startCnt > 0) {
           this.room.startCnt = (--this.room.startCnt);
           this.room.status = RoomStatusCode.WAIT;
@@ -242,6 +242,9 @@ export class DroneStageGame extends DroneStage {
 
   onDestroy(data?: any) {
     this.objs.forEach((it) => it.onDestroy(data));
+    if (!ValidUtil.isNullOrUndefined(this.audio)) {
+      this.audio.pause();
+    }
   }
 
   onPause(data?: any) {

@@ -19,6 +19,7 @@
 
 </head>
 <body>
+  <!--<input type="text" id="callJS">-->
   <app-root></app-root>
 </body>
 <script type="text/javascript">
@@ -27,6 +28,7 @@
     // // Add an event listener
     // Create the event
     // var event = new CustomEvent('omnifit-concentration', {'detail': {'name':'omnifit', 'data': Number(data)} });
+    // document.getElementById('callJS').value(data);
     var event = new CustomEvent('omnifit-headset-concentration', {'detail': Number(data)});
     // Dispatch/Trigger/Fire the event
     var a = window.dispatchEvent(event);

@@ -19,13 +19,9 @@ export class DroneResourceManager implements LifeCycle {
   }
 
   private constructor() {
-    const cloudImg = new Image(); cloudImg.src = 'assets/image/cloud.png';
-    const groundImg = new Image(); groundImg.src = 'assets/image/ground.png';
-    const readyGreenImg = new Image(); readyGreenImg.src = 'assets/image/button/green-chrome.png';
-    const readyBlueImg = new Image(); readyBlueImg.src = 'assets/image/button/blue-chrome.png';
-    const readyYellowImg = new Image(); readyYellowImg.src = 'assets/image/button/yellow-chrome.png';
-    const droneImg = new Image(); droneImg.src = 'assets/image/drone.png';
-    const hostDroneImg = new Image(); hostDroneImg.src = 'assets/image/host-drone.png';
+    const gage_bgImg = new Image(); gage_bgImg.src = 'assets/image/gage_bg.png';
+    const gage_badge_onImg = new Image(); gage_badge_onImg.src = 'assets/image/gage_badge_on.png';
+    const gage_badge_offImg = new Image(); gage_badge_offImg.src = 'assets/image/gage_badge_off.png';
     const character_01Img = new Image(); character_01Img.src = 'assets/image/character_01.png';
     const character_02Img = new Image(); character_02Img.src = 'assets/image/character_02.png';
     const character_03Img = new Image(); character_03Img.src = 'assets/image/character_03.png';
@@ -88,13 +84,9 @@ export class DroneResourceManager implements LifeCycle {
     const CSC018Sound = new Audio('assets/audio/CSC018.mp3');
 
     this._resources = new Map<string, HTMLImageElement>();
-    this._resources.set('cloudImg', cloudImg);
-    this._resources.set('groundImg', groundImg);
-    this._resources.set('readyGreenImg', readyGreenImg);
-    this._resources.set('readyBlueImg', readyBlueImg);
-    this._resources.set('readyYellowImg', readyYellowImg);
-    this._resources.set('droneImg', droneImg);
-    this._resources.set('hostDroneImg', hostDroneImg);
+    this._resources.set('gage_bgImg', gage_bgImg);
+    this._resources.set('gage_badge_onImg', gage_badge_onImg);
+    this._resources.set('gage_badge_offImg', gage_badge_offImg);
     this._resources.set('character_01Img', character_01Img);
     this._resources.set('character_02Img', character_02Img);
     this._resources.set('character_03Img', character_03Img);

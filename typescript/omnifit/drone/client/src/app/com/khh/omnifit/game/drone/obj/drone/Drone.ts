@@ -47,8 +47,6 @@ export class Drone extends ObjDrone {
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-    context.setTransform(1, 0, 0, 1, 0, 0);
-
     //height
     const minHeight = this.stage.height - 200;
     const stepVal = (minHeight - 200) / 10;
@@ -184,11 +182,13 @@ export class Drone extends ObjDrone {
     context.beginPath();
 
     if ('other' === this.host) {
-    context.translate(this.x, this.y);
-    context.scale(0.35, 0.35);
-    this.score.x = -this.img.width;
-    this.score.y = this.img.height + 20;
+    context.translate(this.x - 60, this.y + 55);
+    context.scale(0.3, 0.3);
+    // this.score.x = -this.img.width;
+    // this.score.y = this.img.height + 20;
+    this.score.showBadge = false;
     this.score.onDraw(context);
+    this.stage.resetContext(context);
     }else if ('host' === this.host) {
       const arrowImg = DroneResourceManager.getInstance().resources('ranking_shape_02_arrowImg');
       context.drawImage(arrowImg, this.x - (arrowImg.width / 2), imgY - 4);

@@ -32,7 +32,7 @@ export class RoomManager {
         interval(500).subscribe((it) => {
             this.sendRoomsDetail();
         });
-        interval(1000).subscribe((it) => {
+        interval(Info.STEP_UNIT).subscribe((it) => {
             this.rooms.forEach((v, k) => {
                 //console.log(v.users.length + ' ' + v.startCnt + ' ' + v.endCnt)
                 if (v.users.length > 0 && v.startCnt > 0) {
