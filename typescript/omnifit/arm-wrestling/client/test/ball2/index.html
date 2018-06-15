@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Experimenting Canvas</title>
+  <script src="https://cdn.rawgit.com/moczka/One-Ball-Physics/master/modernizr.js"></script>
+  <script>
+    //adds the event listeners to be triggered when everything has loaded
+    window.addEventListener("load", onWindowLoad, false);
+
+    function onWindowLoad(){
+      //calls the main function after the window event has triggerd
+      canvasApp();
+    }
+    //function part of the modernizr to check if canvas is supported.
+    function canvasSupport () {
+      return Modernizr.canvas;
+    }
+    function canvasApp(){
+      //if the opposite of canvas support is true, means there is no support and exits the program.
+      if(!canvasSupport()){
+        return;
+      }
+      //creates the canvas objet and gets its context.
+      var theCanvas = document.getElementById("theCanvas");
+      var context = theCanvas.getContext("2d");
+      //Creates our ball object.
+      var ball = {radius:20, x:theCanvas.width/2, y:theCanvas.height/2, color:"#00FF00", angle:0, speed:10, velX:0, velY:0, elasticity:0.80};
+      ball.angle = -45;
+      //converts our starting angle to radians.
+      ball.angle = ball.angle * Math.PI / 180;
+      //calculates our starting velocity given our angle.
+      ball.velX = Math.cos(ball.angle)*ball.speed;
+      ball.velY = Math.sin(ball.angle)*ball.speed;
+      //Sets our starting gravity and friction value.
+      var gravity = 0.2;
+      var friction = 0.01;
+      //set our gameOn variable to true so the game can start.
+      var gameOn = true;
+      //adds event listener for our pause and gravity range.
+      menuForm = document.getElementById("pauseButton");
+      menuForm.addEventListener("click", onPause, false);
+      //begins the game loop.
+      gameLoop();
+
+      //function in charge of doing all the drawing.
+      function drawScreen(){
+        //Clears the canvas on every call. make use of alpha to create trailing effect.
+        context.fillStyle = "rgba(255,255,255, 0.4)";
+        context.fillRect(0,0, theCanvas.width, theCanvas.height);
+        //Gravity is added to the Y component of the ball velocity vector
+        ball.velY += gravity;
+        //Friction is proportionally substracted from the X component of the velocity vector.
+        ball.velX = ball.velX - (ball.velX*friction);
+        //X and Y components of the velocity vector are added to the ball x and y values.
+        ball.x += ball.velX;
+        ball.y += ball.velY;
+        //checks if it has hit any of the wall boundaries
+        checkBoundary(ball);
+
+        //draws the ball
+        context.fillStyle = ball.color;
+        context.beginPath();
+        context.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2, true);
+        context.closePath();
+        context.fill();
+      }
+//function in charge of checking the ball against walls.
+      function checkBoundary(object){
+        //if ball has hit any of the right or left sides, reverse its X component velocity vector
+        //Reduce its X velocity component by the ball's elasticity property
+        if(object.x>=theCanvas.width-object.radius){
+          object.x = theCanvas.width - object.radius;
+          object.velX = -object.velX;
+          object.velX *= object.elasticity;
+        }else if(object.x<=object.radius){
+          object.x = object.radius;
+          object.velX = -object.velX;
+          object.velX *= object.elasticity;
+//if ball has hit any of the top or bottom sides, reverse its Y component velocity vector
+//Reduce its Y velocity component by the ball's elasticity property
+        }else if(object.y>=theCanvas.height-object.radius){
+          object.y = theCanvas.height-object.radius;
+          object.velY = -object.velY;
+          object.velY *= object.elasticity;
+
+        }else if(object.y<=0+object.radius){
+          object.y = object.radius;
+          object.velY = -object.velY;
+          object.velY *= object.elasticity;
+        }
+      }
+      function gameLoop(){
+        if(gameOn){
+          window.setTimeout(gameLoop, 20);
+          drawScreen();
+        }
+      }
+//pause button handler, switching the game on and off.
+      function onPause(e){
+//sets it to its opposite value.
+        gameOn = !gameOn;
+        gameLoop();
+      }
+
+    }
+  </script>
+</head>
+<body>
+<canvas id="theCanvas" width="500" height="500" style="border: 1px solid #000;"></canvas>
+<br>
+<input type="button" id="pauseButton" value="Pause"/>
+</body>
+</html>
