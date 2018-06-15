@@ -1,3 +1,6 @@
 [submodule "typescript/omnifit/arm-wrestling/lib-typescript"]
 	path = typescript/omnifit/arm-wrestling/lib-typescript
 	url = https://github.com/visualkhh/lib-typescript.git
+[submodule "typescript/omnifit/drone/lib-typescript"]
+	path = typescript/omnifit/drone/lib-typescript
+	url = https://github.com/visualkhh/lib-typescript.git

@@ -60,7 +60,7 @@ export abstract class MoveImg extends ObjDrone {
     //   y = this.y - (this.img.height);
     // }
     // context.drawImage(this.img, x, y);
-    this.drawImage(context);
+    this.drawImage(context, this.img);
   }
 
   onStart(data?: any) {
