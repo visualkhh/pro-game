@@ -1,15 +1,9 @@
 import 'rxjs/add/observable/interval';
-// import 'rxjs/operators/distinctUntilChanged';
 import 'rxjs/add/operator/distinctUntilChanged';
-// import 'rxjs/operator/merge';
 import 'rxjs/add/operator/merge';
 import {Observable} from 'rxjs/Observable';
-import { distinctUntilChanged } from 'rxjs/operators';
 import {Subscription} from 'rxjs/Subscription';
-import {Telegram} from '../../../../../../../common/com/khh/omnifit/game/drone/domain/Telegram';
-import {DroneStageManager} from '../game/drone/DroneStageManager';
-// import 'rxjs/add/operator/groupBy';
-// import 'rxjs/add/operator/mergeAll';
+import {AWStageManager} from '../game/arm-wresling/AWStageManager';
 
 export class DeviceManager {
 
@@ -17,6 +11,10 @@ export class DeviceManager {
   static readonly EVENT_OMNIFIT_WEBSOCKET_SEND = 'omnifit-webSocket-send';
   private static instance: DeviceManager;
   private _headsetConcentrationObservable: Observable<number>;
+  private concentrationSubscription: Subscription;
+  private keySubscription: Subscription;
+  private headsetConcentration = 0;
+  private headsetConcentrationHistory = new Array<number>();
 
   //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
@@ -30,8 +28,25 @@ export class DeviceManager {
   private constructor() {
     this._headsetConcentrationObservable = Observable.fromEvent(window, DeviceManager.EVENT_OMNIFIT_HEADSET_CONCENTRATION).map((event: CustomEvent) => Number(event.detail) );
     Observable.fromEvent(window, DeviceManager.EVENT_OMNIFIT_WEBSOCKET_SEND).subscribe((event: CustomEvent) => {
-      console.log('mnifit-webSocket-send' + event);
-      DroneStageManager.getInstance().webSocketSubject.next(event.detail);
+      console.log('omnifit-webSocket-send' + event);
+      AWStageManager.getInstance().webSocketSubject.next(event.detail);
+    });
+
+    this.concentrationSubscription = this.headsetConcentrationSubscribe((concentration) => {
+      this.headsetConcentration = concentration;
+      this.headsetConcentrationHistory.push(concentration);
+      console.log('headsetConcentration' + this.headsetConcentration + ', history ' + this.headsetConcentrationHistory);
+    });
+    this.keySubscription = this.fromeEvent('keydown', (e: KeyboardEvent) => {
+      let at = (this.headsetConcentration || 0);
+      if ('ArrowUp' === e.key) {
+        at++;
+      }else if ('ArrowDown' === e.key) {
+        at--;
+      }
+      at = Math.min(10, at);
+      at = Math.max(0, at);
+      this.dispatchCustomEvent(new CustomEvent(DeviceManager.EVENT_OMNIFIT_HEADSET_CONCENTRATION, {detail: at}));
     });
   }
 

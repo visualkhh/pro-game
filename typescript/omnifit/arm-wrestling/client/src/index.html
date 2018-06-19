@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <title>Drone</title>
+  <title>arm-wresling</title>
   <base href="/">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,7 +50,7 @@
     dummyInterval = setInterval(function(){
       var max = 10;
       var min = 0;
-      var data = Math.floor(Math.random() * (max - min)) + min;
+      var data = Math.floor(Math.random() * (max - min + 1)) + min;
       var event = new CustomEvent('omnifit-headset-concentration', {'detail': Number(data)});
       var a = window.dispatchEvent(event);
       console.log("dummy "+data+"  "+a);
