@@ -13,18 +13,14 @@ import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs/observable/interval';
 import {Subscription} from 'rxjs/Subscription';
 import {RoomStatusCode} from '../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/code/RoomStatusCode';
-import {UserHostCode} from '../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/code/UserHostCode';
+import {Algo} from '../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Algo';
 import {Room} from '../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Room';
-import {Character} from '../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/info/Character';
 import {Info} from '../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/info/Info';
 import {CollectionUtil} from '../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {PointVector} from '../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {DeviceManager} from '../../../drive/DeviceManager';
-import {Algo} from '../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Algo';
 import {Local} from '../algo/Local';
-import {AWResourceManager} from '../AWResourceManager';
 import {AWStageManager} from '../AWStageManager';
 import {Arm} from '../obj/game/Arm';
 import {ResultPopup} from '../obj/game/ResultPopup';
@@ -64,7 +60,8 @@ export class AWStageGame extends AWStage {
   onStart(data: Algo): void {
     console.log('game start ' + data.constructor.name + ' ' + data.uuid);
     this.otherAlgo = data;
-    // this.audio = AWResourceManager.getInstance().resources('CSC018Sound');
+    this.objs.filter( (it) => it instanceof Arm).forEach( (it) => it.id = this.otherAlgo.name);
+    // this.audio = ResourceManager.getInstance().resources('CSC018Sound');
     // this.audio.play();
     this.eventSubscribes = new Map<string, Observable<any>>();
     // this.concentrationSubject = new BehaviorSubject(new AlgoDataSet(this.localAlgo, this.otherAlgo));
@@ -99,6 +96,11 @@ export class AWStageGame extends AWStage {
         this.resultPopup = this.pushResultPopupOnCreateStart(this.room);
       }
     });
+    // if (!ValidUtil.isNullOrUndefined(this.arm)) {
+    //   this.removeObjOnStopDestory(this.arm);
+    // }
+    // this.arm = new Arm(this, this.otherAlgo.name);
+    // this.pushObjCreateStart(this.arm);
   }
 
   onStop(data?: any): void {

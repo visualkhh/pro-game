@@ -1,9 +1,9 @@
-import {ObjAW} from '../ObjAW';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {AWStage} from '../../stage/AWStage';
+import {AWObj} from '../AWObj';
 
-export class ArcWaveDummy extends ObjAW {
+export class ArcWaveDummy extends AWObj {
   private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;

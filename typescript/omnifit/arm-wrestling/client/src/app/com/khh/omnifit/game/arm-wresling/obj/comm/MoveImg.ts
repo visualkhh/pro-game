@@ -1,12 +1,9 @@
-import {Subscription} from 'rxjs/Subscription';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
-import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {DeviceManager} from '../../../../drive/DeviceManager';
 import {AWStage} from '../../stage/AWStage';
-import {ObjAW} from '../ObjAW';
+import {AWObj} from '../AWObj';
 
-export abstract class MoveImg extends ObjAW {
+export abstract class MoveImg extends AWObj {
   // private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;

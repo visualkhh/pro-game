@@ -1,9 +1,8 @@
-import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {AWStage} from '../../stage/AWStage';
-import {ObjAW} from '../ObjAW';
+import {AWObj} from '../AWObj';
 
 // import { Point } from '../org/Point';
-export class BackGround extends ObjAW {
+export class BackGround extends AWObj {
 
   private currentX = 0;
 
@@ -21,7 +20,8 @@ export class BackGround extends ObjAW {
     grd.addColorStop(0.8, '#f294ae');
     grd.addColorStop(1, '#fed3e6');
 
-    context.fillStyle = grd;
+    // context.fillStyle = grd;
+    context.fillStyle = '#000000';
     context.fill();
   }
 

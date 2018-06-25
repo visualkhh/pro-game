@@ -2,174 +2,135 @@ import {Subscription} from 'rxjs/Subscription';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Room';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {Algo} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Algo';
+import {AWResourceManager} from '../../AWResourceManager';
 import {AWStage} from '../../stage/AWStage';
 import {AWStageEvent} from '../../stage/AWStageEvent';
-import {ObjAW} from '../ObjAW';
+import {AWObj} from '../AWObj';
 
-export class Arm extends ObjAW {
+export class Arm extends AWObj {
   private velocity: PointVector;
-  private acceleration: PointVector;
   private roomDetailSubscription: Subscription;
-  private room: Room<Algo>;
+  private room: Room;
   private percent = 50;
-  private ang = 0;
+  private charArm1Img;
+  private charArm2Img;
+  private charBodyImg;
+  private charFace1Img;
+  private charFace2Img;
+  private charFace3Img;
+  private charHand1Img;
+  private charHand2Img;
+  private charHeadImg;
+  private tableImg = AWResourceManager.getInstance().resources('stage01_tableImg');
+  private playerHand1Img = AWResourceManager.getInstance().resources('player_handImg');
+  private playerArm1Img = AWResourceManager.getInstance().resources('player_arm1Img');
+  private playerArm2Img = AWResourceManager.getInstance().resources('player_arm2Img');
 
-  constructor(stage: AWStage, x: number, y: number, z: number, img?: HTMLImageElement) {
-    super(stage, x, y, z, img);
+  constructor(stage: AWStage, id = 'char_00') {
+    super(stage);
     this.imgAlign = 'center';
-    this.imgBaseline = 'bottom';
+    this.imgBaseline = 'middle';
+    this.id = id;
+    this.changeChar();
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-    const ximg  = this.stage.width / 2;
-    const yimg = this.stage.height;
-    const stepVal = 100 / 10;
-    const concentration = this.concentration;
-    const conStepVal = (stepVal * (this.status === 'run' || this.status === 'end' ? concentration : 0));
-    //targetPosition
-    const targetPosition = new PointVector(this.stage.width / 2, 0);
+    // if (ValidUtil.isNullOrUndefined(this.room)) {return; }
 
+    const tablePosition = new PointVector(this.stage.width / 2, this.stage.height - (this.tableImg.height / 2));
+    const bodyPosition = tablePosition.get();
+    bodyPosition.sub(0, this.tableImg.height / 1.5);
+    const arm1Position = bodyPosition.get();
+    arm1Position.sub(this.charBodyImg.width / 3.3);
+    arm1Position.add(0, 130);
+    const arm2Position = bodyPosition.get();
+    arm2Position.x = tablePosition.x - 120;
+    arm2Position.y = tablePosition.y;
+
+    const hand2Position = bodyPosition.get();
+    hand2Position.add(this.charBodyImg.width / 3);
+    hand2Position.add(0, 100);
+
+    const headPosition = bodyPosition.get();
+    headPosition.add(20);
+    headPosition.sub(0, this.charBodyImg.height / 1.5);
+    const facePosition = headPosition.get();
+    const charFaceImg = AWResourceManager.getInstance().resources('char_00_face1Img');
+
+    const playerHand1Position = tablePosition.get();
+    playerHand1Position.sub(this.charHeadImg.width / 1.5);
+    playerHand1Position.add(0, this.charHeadImg.height / 2);
+    const playerArm1Position = tablePosition.get();
+    playerArm1Position.add(this.charHeadImg.width / 1.5, this.charHeadImg.height / 2.5);
+    const playerArm2Position = playerArm1Position.get();
+    playerArm2Position.x = tablePosition.x + 120;
+    playerArm2Position.y = tablePosition.y;
+
+    this.drawImage(context, this.charBodyImg, bodyPosition.x, bodyPosition.y);
+    this.drawImage(context, this.tableImg, tablePosition.x, tablePosition.y);
+    this.drawImage(context, this.charHeadImg, headPosition.x, headPosition.y);
+    this.drawImage(context, charFaceImg, facePosition.x, facePosition.y);
+    this.drawImage(context, this.charArm1Img, arm1Position.x, arm1Position.y);
+    this.drawImage(context, this.charHand2Img, hand2Position.x, hand2Position.y);
+    this.drawImage(context, this.playerHand1Img, playerHand1Position.x, playerHand1Position.y);
+    // this.drawImage(context, this.playerArm2Img, playerArm2Position.x, playerArm2Position.y);
+    // this.drawRotateImage(context, this.playerArm2Img, playerArm2Position.x, playerArm2Position.y, 0, 'center', 'bottom');
+    context.fillStyle = '#FF0000';
+    context.beginPath(); context.arc(bodyPosition.x, bodyPosition.y, 5, 0, 2 * Math.PI); context.closePath(); context.fill();
+    context.beginPath(); context.arc(headPosition.x, headPosition.y, 5, 0, 2 * Math.PI); context.closePath(); context.fill();
+    context.beginPath(); context.arc(tablePosition.x, tablePosition.y, 5, 0, 2 * Math.PI); context.closePath(); context.fill();
+    context.beginPath(); context.arc(arm2Position.x, arm2Position.y, 10, 0, 2 * Math.PI); context.closePath(); context.fill();
+    context.beginPath(); context.arc(playerArm1Position.x, playerArm1Position.y, 5, 0, 2 * Math.PI); context.closePath(); context.fill();
+    context.beginPath(); context.arc(playerArm2Position.x, playerArm2Position.y, 10, 0, 2 * Math.PI); context.closePath(); context.fill();
+    context.beginPath(); context.arc(hand2Position.x, hand2Position.y, 5, 0, 2 * Math.PI); context.closePath(); context.fill();
+
+    //targetPosition
+    const targetPosition = new PointVector(this.percent, 0);
     //////update
     //방향
     const dir = PointVector.sub(targetPosition, this);
     dir.normalize();
-    dir.mult(0.5);
-    this.acceleration = dir;
-    this.velocity.add(this.acceleration);
-    this.velocity.limit(2);
+    dir.mult(2);
+    this.velocity.add(dir);
+    this.velocity.limit(1);
     const oldPosition = this.get();
     this.add(this.velocity);
-
-    const point = this.drawRotateImage(context, this.img, ximg, yimg, -90);
-    // context.drawImage(this.img, x - this.img.width / 2, y - this.img.height / 2);
-    // console.log(point.x + ' ' + point.y + ' ---  ' + (x - this.img.width / 2) + ' ' + (y - this.img.height / 2));
-    // context.save(); //saves the state of canvas
-    // context.clearRect(0, 0, this.stage.width, this.stage.height); //clear the canvas
-    // context.translate(this.stage.width / 2, this.stage.height / 2); //let's translate
-    // context.rotate(Math.PI / 180 * (this.ang += 5)); //increment the angle and rotate the image
-    // // context.translate(-(this.stage.width / 2), -(this.stage.height / 2)); //let's translate
-    // // context.drawImage(this.img, this.stage.width / 2 - this.img.width / 2, this.stage.height / 2 - this.img.height / 2, this.img.width, this.img.height); //draw the image ;)
-    // context.drawImage(this.img, 100, 100, this.img.width, this.img.height); //draw the image ;)
-    // context.setTransform(1, 0, 0, 1, 0, 0);
-    //context.restore(); //restore the state of canvas
-
-    // //height
-    // const minHeight = this.stage.height - 200;
-    // const stepVal = (minHeight - 200) / 10;
-    // const conStepVal = (stepVal * (this.status === 'run' || this.status === 'end' ? concentration : 0));
-    // const finishCnt = (this.status === 'run' || this.status === 'end' ? this.finishCnt : Info.FINISH_CNT);
-    //
-    // //targetPosition
-    // const targetPosition = new PointVector(this._initX || (this.stage.width / 2), minHeight - conStepVal);
-    //
-    // //////update
-    // //방향
-    // const dir = PointVector.sub(targetPosition, this);
-    // dir.normalize();
-    // dir.mult(0.5);
-    // this.acceleration = dir;
-    // this.velocity.add(this.acceleration);
-    // this.velocity.limit(2);
-    // const oldPosition = this.get();
-    // this.add(this.velocity);
-    //
-    // const oldCheck = PointVector.sub(oldPosition, targetPosition);
-    // const check = PointVector.sub(this, targetPosition);
+    const oldCheck = PointVector.sub(oldPosition, targetPosition);
+    const check = PointVector.sub(this, targetPosition);
     // if (oldCheck.x <= 0 && check.x > 0 || oldCheck.x >= 0 && check.x < 0) {
+    //   this.x = targetPosition.x;
+    //   this.velocity.x = 0;
     // }
     // if (oldCheck.y <= 0 && check.y > 0 || oldCheck.y >= 0 && check.y < 0) {
     //   this.y = targetPosition.y;
+    //   this.velocity.y = 0;
     // }
-    //
-    //
-    // //bg
-    // const bgImg = AWResourceManager.getInstance().resources('character_right_bgImg');
-    // const bgImgX = this.x - (bgImg.width / 2);
-    // const bgImgY = this.y - (bgImg.height / 2);
-    // context.drawImage(bgImg, bgImgX, bgImgY);
-    //
-    // //img
-    // //올라가기
-    // if (finishCnt >= Info.FINISH_CNT && targetPosition.y < this.y) {
-    //   const effectImg = AWResourceManager.getInstance().resources('effect_character02Img');
-    //   const effectImgX = this.x - (effectImg.width / 2);
-    //   const effectImgY = this.y - (effectImg.height / 2) + (this.img.height / 2);
-    //   this.img = this.upCharacte(this.name);
-    //   context.drawImage(effectImg, effectImgX, effectImgY);
-    // }else if (finishCnt >= Info.FINISH_CNT && targetPosition.y > this.y) {//내려가기
-    //   const effectImg = AWResourceManager.getInstance().resources('effect_character03Img');
-    //   const effectImgX = this.x - (effectImg.width / 2);
-    //   const effectImgY = this.y - (effectImg.height);
-    //   context.drawImage(effectImg, effectImgX, effectImgY);
-    //   this.img = this.downCharacte(this.name);
-    // }else if (finishCnt >= Info.FINISH_CNT) {
-    //   //일반모습
-    //   if (concentration === 8) {
-    //     this.img = this.wingCharacte(this.name);
-    //   }else {
-    //     this.img = this.normalCharacte(this.name);
-    //   }
-    // }else if (finishCnt === 1) { //날개 후광
-    //   const effectImg = AWResourceManager.getInstance().resources('effect_character04_3Img');
-    //   const effectImgX = this.x - (effectImg.width / 2);
-    //   const effectImgY = this.y - (effectImg.height / 2);
-    //   context.drawImage(effectImg, effectImgX, effectImgY);
-    //   this.img = this.wingCharacte(this.name);
-    // }else if (finishCnt <= 0) { //날개 후광 득도
-    //   const effectImg = AWResourceManager.getInstance().resources('effect_character04_3Img');
-    //   const effectImgX = this.x - (effectImg.width / 2);
-    //   const effectImgY = this.y - (effectImg.height / 2);
-    //   context.drawImage(effectImg, effectImgX, effectImgY);
-    //   const effect2Img = AWResourceManager.getInstance().resources('effect_character04_4Img');
-    //   const effect2ImgX = this.x - (effect2Img.width / 2);
-    //   const effect2ImgY = this.y - (effect2Img.height + this.img.height / 2);
-    //   context.drawImage(effect2Img, effect2ImgX, effect2ImgY);
-    //   this.img = this.wingCharacte(this.name);
-    // }
-    //
-    // //display
-    // //http://creativejs.com/2012/01/day-10-drawing-rotated-images-into-canvas/index.html
-    // context.beginPath();
-    // context.strokeStyle = '#FF0000';
-    // context.lineWidth = 2;
-    // context.fillStyle = 'rgba(0, 0, 0, 0.2)';
-    // context.fill();
-    // context.restore();
-    //
-    // // context.scale(0.5, 0.5);
-    // const imgX = this.x - (this.img.width / 2);
-    // const imgY = this.y - (this.img.height / 2);
-    // context.drawImage(this.img, imgX, imgY);
-    //
-    // context.font = '10pt Calibri';
-    // context.textAlign = 'center';
-    // context.textBaseline = 'middle';
-    // context.fillStyle = 'blue';
-    // // context.fillText(this.name + ' -**********- ', this.x, imgY);
-    // // context.fillText(this.id, this.x, imgY);
-    // context.fill();
-    // context.beginPath();
-    //
-    // if ('other' === this.host) {
-    // context.translate(this.x - 60, this.y + 55);
-    // context.scale(0.3, 0.3);
-    // // this.score.x = -this.img.width;
-    // // this.score.y = this.img.height + 20;
-    // this.stage.resetContext(context);
-    // }else if ('host' === this.host) {
-    //   const arrowImg = AWResourceManager.getInstance().resources('ranking_shape_02_arrowImg');
-    //   context.drawImage(arrowImg, this.x - (arrowImg.width / 2), imgY - 4);
-    // }
+    this.drawRotate(context, (c)  => {
+      this.drawImage(c, this.playerArm2Img, playerArm2Position.x, playerArm2Position.y, 'center', 'bottom');
+    }, playerArm2Position.x, playerArm2Position.y, (-20)  - (this.x - 50));
+
+    this.drawRotate(context, (c)  => {
+      this.drawImage(context, this.charArm2Img, arm2Position.x, arm2Position.y, 'center', 'bottom');
+    }, arm2Position.x, arm2Position.y, 20 - (this.x - 50));
+
+    this.drawImage(context, this.playerArm1Img, playerArm1Position.x, playerArm1Position.y);
+    console.log('---' + this.percent);
   }
 
   onStart(data?: any) {
     console.log('drone start id ' + this.id);
+    this.changeChar();
     this.velocity = new PointVector(0, 0);
-    this.acceleration = new PointVector(0, 0);
     this.set(0, 0, 0);
-    this.roomDetailSubscription = this.stage.eventObservable(AWStageEvent.EVENT_ROOM_DETAIL).filter( (it) => !ValidUtil.isNullOrUndefined(it.users) && it.users.length >= 2 ).subscribe( (room: Room<Algo>) => {
+    this.roomDetailSubscription = this.stage.eventObservable(AWStageEvent.EVENT_ROOM_DETAIL).filter( (it) => !ValidUtil.isNullOrUndefined(it.local) && !ValidUtil.isNullOrUndefined(it.other) ).subscribe( (room: Room) => {
       this.room = room;
+      // console.log(this.room.local.headsetConcentration + ' ----- ' + this.room.other.headsetConcentration)
+      if (this.room.local.headsetConcentration > this.room.other.headsetConcentration) {
+        this.percent = Math.min(100, this.percent += 10);
+      }else if (this.room.local.headsetConcentration < this.room.other.headsetConcentration) {
+        this.percent = Math.max(0, this.percent -= 10);
+      }else {
+      }
     });
   }
 
@@ -181,4 +142,56 @@ export class Arm extends ObjAW {
   onPause(data?: any) {}
   onRestart(data?: any) {}
   onResume(data?: any) {}
+
+  public changeChar(id = this.id) {
+    switch (id) {
+      case 'char_00': {
+        this.charArm1Img = AWResourceManager.getInstance().resources('char_00_arm1Img');
+        this.charArm2Img = AWResourceManager.getInstance().resources('char_00_arm2Img');
+        this.charBodyImg = AWResourceManager.getInstance().resources('char_00_bodyImg');
+        this.charFace1Img = AWResourceManager.getInstance().resources('char_00_face1Img');
+        this.charFace2Img = AWResourceManager.getInstance().resources('char_00_face2Img');
+        this.charFace3Img = AWResourceManager.getInstance().resources('char_00_face3Img');
+        this.charHand1Img = AWResourceManager.getInstance().resources('char_00_hand1Img');
+        this.charHand2Img = AWResourceManager.getInstance().resources('char_00_hand2Img');
+        this.charHeadImg = AWResourceManager.getInstance().resources('char_00_headImg');
+        break;
+      }
+      case 'char_01': {
+        this.charArm1Img = AWResourceManager.getInstance().resources('char_01_arm1Img');
+        this.charArm2Img = AWResourceManager.getInstance().resources('char_01_arm2Img');
+        this.charBodyImg = AWResourceManager.getInstance().resources('char_01_bodyImg');
+        this.charFace1Img = AWResourceManager.getInstance().resources('char_01_face1Img');
+        this.charFace2Img = AWResourceManager.getInstance().resources('char_01_face2Img');
+        this.charFace3Img = AWResourceManager.getInstance().resources('char_01_face3Img');
+        this.charHand1Img = AWResourceManager.getInstance().resources('char_01_hand1Img');
+        this.charHand2Img = AWResourceManager.getInstance().resources('char_01_hand2Img');
+        this.charHeadImg = AWResourceManager.getInstance().resources('char_01_headImg');
+        break;
+      }
+      case 'char_02': {
+        this.charArm1Img = AWResourceManager.getInstance().resources('char_02_arm1Img');
+        this.charArm2Img = AWResourceManager.getInstance().resources('char_02_arm2Img');
+        this.charBodyImg = AWResourceManager.getInstance().resources('char_02_bodyImg');
+        this.charFace1Img = AWResourceManager.getInstance().resources('char_02_face1Img');
+        this.charFace2Img = AWResourceManager.getInstance().resources('char_02_face2Img');
+        this.charFace3Img = AWResourceManager.getInstance().resources('char_02_face3Img');
+        this.charHand1Img = AWResourceManager.getInstance().resources('char_02_hand1Img');
+        this.charHand2Img = AWResourceManager.getInstance().resources('char_02_hand2Img');
+        this.charHeadImg = AWResourceManager.getInstance().resources('char_02_headImg');
+        break;
+      }
+      default: {
+        this.charArm1Img = AWResourceManager.getInstance().resources('char_00_arm1Img');
+        this.charArm2Img = AWResourceManager.getInstance().resources('char_00_arm2Img');
+        this.charBodyImg = AWResourceManager.getInstance().resources('char_00_bodyImg');
+        this.charFace1Img = AWResourceManager.getInstance().resources('char_00_face1Img');
+        this.charFace2Img = AWResourceManager.getInstance().resources('char_00_face2Img');
+        this.charFace3Img = AWResourceManager.getInstance().resources('char_00_face3Img');
+        this.charHand1Img = AWResourceManager.getInstance().resources('char_00_hand1Img');
+        this.charHand2Img = AWResourceManager.getInstance().resources('char_00_hand2Img');
+        this.charHeadImg = AWResourceManager.getInstance().resources('char_00_headImg');
+      }
+    }
+  }
 }

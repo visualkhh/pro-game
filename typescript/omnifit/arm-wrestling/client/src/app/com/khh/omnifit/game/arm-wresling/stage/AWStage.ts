@@ -6,11 +6,11 @@ import {LifeCycle} from '../../../../../../../../../lib-typescript/com/khh/event
 import {ViewInterface} from '../../../../../../../../../lib-typescript/com/khh/graphics/view/ViewInterface';
 import {Stage} from '../../../../../../../../../lib-typescript/com/khh/stage/Stage';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {ObjAW} from '../obj/ObjAW';
+import {AWObj} from '../obj/AWObj';
 
 export abstract class AWStage extends Stage implements LifeCycle, ViewInterface {
 
-  private _objs: ObjAW[];
+  private _objs: AWObj[];
   private clock: Observable<number>;
   protected clockInterval = 30;
   private _canvas: HTMLCanvasElement;
@@ -18,7 +18,7 @@ export abstract class AWStage extends Stage implements LifeCycle, ViewInterface 
   private reSizeSubscription: Subscription;
 
   //http://xgrommx.github.io/rx-book/content/observable/observable_methods/fromeventpattern.html
-  constructor(canvas: HTMLCanvasElement, objs: ObjAW[] = new Array<ObjAW>()) {
+  constructor(canvas: HTMLCanvasElement, objs: AWObj[] = new Array<AWObj>()) {
     super();
     this._canvas = canvas;
     this._objs = objs;
@@ -50,7 +50,7 @@ export abstract class AWStage extends Stage implements LifeCycle, ViewInterface 
     context.drawImage(canvas, 0, 0);
   }
 
-  pushObj(obj: ObjAW| ObjAW[]) {
+  pushObj(obj: AWObj| AWObj[]) {
     if (obj instanceof Array) {
       obj.forEach((it) => this.objs.push(it));
     }else {
@@ -67,7 +67,7 @@ export abstract class AWStage extends Stage implements LifeCycle, ViewInterface 
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.save();
   }
-  get objs(): ObjAW[] {
+  get objs(): AWObj[] {
     return this._objs.sort((n1, n2) => (n1.z > n2.z ? 1 : -1));
   }
   // get objsAll(): ObjDrone[] {
@@ -81,13 +81,13 @@ export abstract class AWStage extends Stage implements LifeCycle, ViewInterface 
   //   this.objsAll.forEach((it) => it.onDraw(context));
   //   this.flushCanvas(canvas);
   // }
-  removeObjOnStopDestory(obj: ObjAW): void {
+  removeObjOnStopDestory(obj: AWObj): void {
      CollectionUtil.removeArrayItem(this._objs, obj, (it) => {
        it.onStop();
        it.onDestroy();
      });
   }
-  pushObjCreateStart(obj: ObjAW): ObjAW {
+  pushObjCreateStart(obj: AWObj): AWObj {
     obj.onCreate();
     obj.onStart();
     this.pushObj(obj);
@@ -115,7 +115,7 @@ export abstract class AWStage extends Stage implements LifeCycle, ViewInterface 
   abstract onStart(data?: any);
   abstract onStop(data?: any);
 
-  removeObj(param: ObjAW) {
+  removeObj(param: AWObj) {
     CollectionUtil.removeArrayItem(this.objs, param);
   }
 }

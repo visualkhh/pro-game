@@ -61,17 +61,6 @@
       clearInterval(dummyInterval);
     }
   }
-  function wsSend(obj) {
-    var event = new CustomEvent('omnifit-webSocket-send', {'detail': obj});
-    var a = window.dispatchEvent(event);
-    console.log("wsSend "+obj+"  "+a);
-  }
-  function wsObserver() {
-    var obj = {action: 'profile', method: 'put', body: {host: 'observer'}};
-    var event = new CustomEvent('omnifit-webSocket-send', {'detail': obj});
-    var a = window.dispatchEvent(event);
-    console.log("wsObserver "+obj+"  "+a);
-  }
 </script>
 
 </html>

@@ -1,10 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Subject} from 'rxjs/Subject';
-import {Subscription} from 'rxjs/Subscription';
-import {Telegram} from '../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Telegram';
-import {ValidUtil} from '../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {ObjAW} from './obj/ObjAW';
+import {AWObj} from './obj/AWObj';
 import {AWStage} from './stage/AWStage';
 
 export class AWStageManager extends AWStage {
@@ -12,54 +7,19 @@ export class AWStageManager extends AWStage {
   private static instance: AWStageManager;
 
   private position = 0;
-  private stages: AWStage[];
-  private _webSocket: WebSocket;
-  private _webSocketSubject: Subject<Telegram<any>>;
-  // private clockSubscription: Subscription;
+  private stages = new Array<AWStage>();
 
   //singletone pattern
   //https://basarat.gitbooks.io/typescript/docs/tips/singleton.html
-  static getInstance(canvas?: HTMLCanvasElement, objs?: ObjAW[]) {
+  static getInstance(canvas?: HTMLCanvasElement, objs?: AWObj[]) {
     if (!AWStageManager.instance) {
       AWStageManager.instance = new AWStageManager(canvas, objs);
     }
     return AWStageManager.instance;
   }
 
-  private constructor(canvas: HTMLCanvasElement, objs: ObjAW[] = new Array<ObjAW>()) {
+  private constructor(canvas: HTMLCanvasElement, objs: AWObj[] = new Array<AWObj>()) {
     super(canvas, objs);
-    // this.clockInterval = 10;
-    this.stages = new Array<AWStage>();
-    // this._webSocket = new WebSocket('ws://192.168.13.58:8999');
-    this._webSocket = new WebSocket('ws://119.206.205.171:8999');
-    const observable = Observable.create((obs: Observer<MessageEvent>) => {
-        this._webSocket.onmessage = obs.next.bind(obs);
-        this._webSocket.onerror = obs.error.bind(obs);
-        this._webSocket.onclose = obs.complete.bind(obs);
-        //return this._webSocket.close.bind(this._webSocket);
-      });
-    const observer = {
-      next: (data: any) => {
-        if (this._webSocket.readyState === WebSocket.OPEN) {
-          this._webSocket.send(JSON.stringify(data));
-        }
-      },
-      error : (error: any) => {
-        console.log('error websocket');
-      },
-    };
-    this._webSocketSubject = Subject.create(observer as Observer<any>, observable).map((response: MessageEvent): Telegram<any> => {
-      const data = JSON.parse(response.data) as Telegram<any>;
-      return data;
-    });
-  }
-
-  get webSocket(): WebSocket {
-    return this._webSocket;
-  }
-
-  get webSocketSubject(): Subject<Telegram<any>> {
-    return this._webSocketSubject;
   }
 
   public nextPosition(): number {
@@ -145,7 +105,6 @@ export class AWStageManager extends AWStage {
   onStop(data?: any) {
     this.objs.forEach((it) => it.onResume());
     this.currentStage().onStop(data);
-    if (!ValidUtil.isNullOrUndefined(this._webSocketSubject)) { this._webSocketSubject.unsubscribe(); }
   }
   onDestroy(data?: any) {
     this.objs.forEach((it) => it.onDestroy());
@@ -153,12 +112,11 @@ export class AWStageManager extends AWStage {
     this.stages.length = 0;
   }
 
-  getAllObjs(stage: AWStage): ObjAW[] {
+  getAllObjs(stage: AWStage): AWObj[] {
     const r =  this.objs.map((it) => {
       it.stage = stage;
       return it;
     }).concat(stage.objs).sort((n1, n2) => {
-      //(n1.index > n2.index ? 1 : -1)
       if (n1.index > n2.index) {
         return 1;
       }

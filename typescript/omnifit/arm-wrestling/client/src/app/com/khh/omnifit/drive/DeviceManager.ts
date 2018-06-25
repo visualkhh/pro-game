@@ -3,12 +3,11 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/merge';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
-import {AWStageManager} from '../game/arm-wresling/AWStageManager';
 
 export class DeviceManager {
 
   static readonly EVENT_OMNIFIT_HEADSET_CONCENTRATION = 'omnifit-headset-concentration';
-  static readonly EVENT_OMNIFIT_WEBSOCKET_SEND = 'omnifit-webSocket-send';
+  // static readonly EVENT_OMNIFIT_WEBSOCKET_SEND = 'omnifit-webSocket-send';
   private static instance: DeviceManager;
   private _headsetConcentrationObservable: Observable<number>;
   private concentrationSubscription: Subscription;
@@ -27,11 +26,6 @@ export class DeviceManager {
 
   private constructor() {
     this._headsetConcentrationObservable = Observable.fromEvent(window, DeviceManager.EVENT_OMNIFIT_HEADSET_CONCENTRATION).map((event: CustomEvent) => Number(event.detail) );
-    Observable.fromEvent(window, DeviceManager.EVENT_OMNIFIT_WEBSOCKET_SEND).subscribe((event: CustomEvent) => {
-      console.log('omnifit-webSocket-send' + event);
-      AWStageManager.getInstance().webSocketSubject.next(event.detail);
-    });
-
     this.concentrationSubscription = this.headsetConcentrationSubscribe((concentration) => {
       this.headsetConcentration = concentration;
       this.headsetConcentrationHistory.push(concentration);

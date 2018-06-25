@@ -1,17 +1,14 @@
 import {Subscription} from 'rxjs/Subscription';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Room';
 import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/info/Info';
-import {Rect} from '../../../../../../../../../../lib-typescript/com/khh/graphics/Rect';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {AWResourceManager} from '../../AWResourceManager';
 import {AWStage} from '../../stage/AWStage';
 import {AWStageEvent} from '../../stage/AWStageEvent';
-import {ObjAW} from '../ObjAW';
-import {Score} from '../score/Score';
+import {AWObj} from '../AWObj';
 
-export class Timer extends ObjAW {
+export class Timer extends AWObj {
   // private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
@@ -60,14 +57,14 @@ export class Timer extends ObjAW {
 
   onStart(data?: any) {
     // this.position = this.position || new PointVector(RandomUtil.random(this.stage.width), RandomUtil.random(this.stage.height));
-    console.log('drone start id ' + this.id);
+    //console.log('drone start id ' + this.id);
     this.x  = RandomUtil.random(this.stage.width);
     this.y = this.stage.height;
     this.velocity = new PointVector(0, 0);
     this.acceleration = new PointVector(0, 0);
 
-    this.roomDetailSubscription = this.stage.eventObservable(AWStageEvent.EVENT_ROOM_DETAIL).filter( (it: Room<any>) => it.status === 'wait' || it.status === 'run').subscribe( (room) => {
-      //console.log(room.startCnt + '  ' + room.endCnt);
+    this.roomDetailSubscription = this.stage.eventObservable(AWStageEvent.EVENT_ROOM_DETAIL).filter( (it: Room) => it.status === 'wait' || it.status === 'run').subscribe( (room) => {
+      //console.log(room.status + ' ' + room.startCnt + '  ' + room.endCnt);
       this.btnText = room.startCnt;
       this.sizejump = 100;
       if (room.endCnt < Info.END_CNT) {

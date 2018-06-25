@@ -1,10 +1,8 @@
 import {Observable} from 'rxjs/Observable';
-import {timer} from 'rxjs/observable/timer';
 import {Subscription} from 'rxjs/Subscription';
 import {ValidUtil} from '../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {AWResourceManager} from '../AWResourceManager';
 import {AWStageManager} from '../AWStageManager';
-import {ObjAW} from '../obj/ObjAW';
+import {AWObj} from '../obj/AWObj';
 import {AWStage} from './AWStage';
 
 //websocket https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/
@@ -13,10 +11,9 @@ export class AWStageIntro extends AWStage {
   private resizeSubscription: Subscription;
   private mouseDownSubscription: Subscription;
   private clockSubscription: Subscription;
-  private websocketSubscription: Subscription;
   private audio: HTMLAudioElement;
 
-  constructor(canvas: HTMLCanvasElement, objs?: ObjAW[]) {
+  constructor(canvas: HTMLCanvasElement, objs?: AWObj[]) {
     super(canvas, objs);
   }
 
@@ -41,11 +38,8 @@ export class AWStageIntro extends AWStage {
 
   onStart(data?: any): void {
     console.log('intro onStart');
-    // this.audio = AWResourceManager.getInstance().resources('videoplaybackSound');
+    // this.audio = ResourceManager.getInstance().resources('videoplaybackSound');
     // this.audio.play();
-    this.websocketSubscription = AWStageManager.getInstance().webSocketSubject.filter((telegram) => telegram.action === 'welcome').subscribe((telegram) => {
-      console.log('telegram Intro ' + telegram);
-    });
     this.clockSubscription = this.clockIntervalSubscribe((date: number) => this.onDraw());
     this.resizeSubscription = this.canvasEventSubscribe('resize', (evnet: Event) => this.onDraw());
     this.objs.forEach((it) => it.onStart(data));
@@ -59,7 +53,6 @@ export class AWStageIntro extends AWStage {
     // }
     if (!ValidUtil.isNullOrUndefined(this.resizeSubscription)) { this.resizeSubscription.unsubscribe(); }
     if (!ValidUtil.isNullOrUndefined(this.clockSubscription)) { this.clockSubscription.unsubscribe(); }
-    if (!ValidUtil.isNullOrUndefined(this.websocketSubscription)) { this.websocketSubscription.unsubscribe(); }
     this.objs.forEach((it) => it.onStop(data));
   }
 

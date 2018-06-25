@@ -15,6 +15,7 @@ export class Room {
         this.uuid = uuid;
         this.status = status;
         this.startCnt = startCnt;
+        this.endCnt = endCnt;
         this.local = local;
         this.other = other;
     }

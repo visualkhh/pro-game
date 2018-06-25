@@ -2,6 +2,7 @@ import {LifeCycle} from '../../../../../../../lib-typescript/com/khh/event/life/
 
 export abstract class Algo implements LifeCycle {
   public uuid: string;
+  public name: string;
   public host: string;
   public headsetConcentration = 0;
   public headsetConcentrationHistory = new Array<number>();

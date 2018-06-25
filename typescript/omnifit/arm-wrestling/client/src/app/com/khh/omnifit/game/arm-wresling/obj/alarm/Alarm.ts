@@ -1,16 +1,15 @@
 import {Subscription} from 'rxjs/Subscription';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Room';
+import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/info/Info';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {AWStage} from '../../stage/AWStage';
 import {AWStageEvent} from '../../stage/AWStageEvent';
-import {ObjAW} from '../ObjAW';
-import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/info/Info';
+import {AWObj} from '../AWObj';
 
-export class Alarm extends ObjAW {
+export class Alarm extends AWObj {
 
   private roomDetailSubscription: Subscription;
   private endCnt: number;
-
   constructor(stage: AWStage, x: number, y: number, z: number, img: HTMLImageElement) {
     super(stage, x, y, z, img);
   }
@@ -41,7 +40,7 @@ export class Alarm extends ObjAW {
     this.y = 20;
     //집중도
     console.log('--alarm id- ' + this.id);
-    this.roomDetailSubscription = this.stage.eventObservable(AWStageEvent.EVENT_ROOM_DETAIL).filter( (it: Room<any>) => it.status === 'run').subscribe( (room) => {
+    this.roomDetailSubscription = this.stage.eventObservable(AWStageEvent.EVENT_ROOM_DETAIL).filter( (it: Room) => it.status === 'run').subscribe( (room) => {
       this.endCnt = room.endCnt;
     });
   }

@@ -10,18 +10,19 @@ import {AWResourceManager} from './com/khh/omnifit/game/arm-wresling/AWResourceM
 import {AWStageManager} from './com/khh/omnifit/game/arm-wresling/AWStageManager';
 import {Alarm} from './com/khh/omnifit/game/arm-wresling/obj/alarm/Alarm';
 import {BackGround} from './com/khh/omnifit/game/arm-wresling/obj/background/BackGround';
-import {Moon} from './com/khh/omnifit/game/arm-wresling/obj/background/Moon';
-import {Mountain} from './com/khh/omnifit/game/arm-wresling/obj/background/Mountain';
-import {Cloud} from './com/khh/omnifit/game/arm-wresling/obj/cloud/Cloud';
-import {IntroIcon} from './com/khh/omnifit/game/arm-wresling/obj/intro/IntroIcon';
+import {Arm} from './com/khh/omnifit/game/arm-wresling/obj/game/Arm';
+import {Guest1} from './com/khh/omnifit/game/arm-wresling/obj/game/Guest1';
+import {Guest2} from './com/khh/omnifit/game/arm-wresling/obj/game/Guest2';
+import {Guest3} from './com/khh/omnifit/game/arm-wresling/obj/game/Guest3';
+import {MainBackGround} from './com/khh/omnifit/game/arm-wresling/obj/game/MainBackGround';
+import {Cloud} from './com/khh/omnifit/game/arm-wresling/obj/intro/Cloud';
 import {IntroPopup} from './com/khh/omnifit/game/arm-wresling/obj/intro/IntroPopup';
-import {IntroTitle} from './com/khh/omnifit/game/arm-wresling/obj/intro/IntroTitle';
+import {Star} from './com/khh/omnifit/game/arm-wresling/obj/intro/Star';
+import {Title} from './com/khh/omnifit/game/arm-wresling/obj/intro/Title';
 import {Score} from './com/khh/omnifit/game/arm-wresling/obj/score/Score';
-import {Star} from './com/khh/omnifit/game/arm-wresling/obj/star/Star';
 import {Timer} from './com/khh/omnifit/game/arm-wresling/obj/timer/Timer';
 import {AWStageGame} from './com/khh/omnifit/game/arm-wresling/stage/AWStageGame';
 import {AWStageIntro} from './com/khh/omnifit/game/arm-wresling/stage/AWStageIntro';
-import {Arm} from './com/khh/omnifit/game/arm-wresling/obj/game/Arm';
 
 // https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 // typescript observable subscribe example
@@ -41,7 +42,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private title = 'app';
 
   private canvas: HTMLCanvasElement;
-  private droneManager: AWStageManager;
+  private stageManager: AWStageManager;
   private context: CanvasRenderingContext2D | null;
   @ViewChild('canvas') public canvasElementRef: ElementRef;
   private resourceManager: AWResourceManager;
@@ -66,74 +67,74 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     //game initialize
-    this.droneManager = AWStageManager.getInstance(this.canvas);
+    this.stageManager = AWStageManager.getInstance(this.canvas);
     this.deviceManager = DeviceManager.getInstance();
-    //resource
     this.resourceManager = AWResourceManager.getInstance();
 
-    //stage Intro
+    /////////////////stage Intro
     const droneStageIntro = new AWStageIntro(this.canvas);
-    const introTitle = new IntroTitle(droneStageIntro, 0, 0, 0, AWResourceManager.getInstance().resources('intro_text_01Img'));
-    introTitle.index = 65;
-    const introIcon = new IntroIcon(droneStageIntro, 0, 0, 0, AWResourceManager.getInstance().resources('intro_02Img'));
-    introIcon.index = 66;
-    const touchScreen = new IntroPopup(droneStageIntro, 0, 0, 0, AWResourceManager.getInstance().resources('intro_text_02Img'));
-    touchScreen.index = 67;
-    droneStageIntro.pushObj(introTitle);
-    droneStageIntro.pushObj(introIcon);
-    droneStageIntro.pushObj(touchScreen);
-    const background = new BackGround(this.droneManager, 0, 0, 0);
+    const background = new BackGround(droneStageIntro, 0, 0, 0);
     background.index = 0;
     droneStageIntro.pushObj(background);
-    //Stage Game
+    const introTitle = new Title(droneStageIntro, 0, 0, 0, AWResourceManager.getInstance().resources('titleImg'));
+    introTitle.index = 50;
+    droneStageIntro.pushObj(introTitle);
+    const touchScreen = new IntroPopup(droneStageIntro, 0, 0, 0, AWResourceManager.getInstance().resources('intro_text_02Img'));
+    touchScreen.index = 150;
+    droneStageIntro.pushObj(touchScreen);
+    //cloud
+    for (let i = 51; i < 100 ; i++) {
+      const cloud = new Cloud(droneStageIntro, 0, 0, 0, AWResourceManager.getInstance().resources('ef_smokeImg'));
+      cloud.index = i;
+      droneStageIntro.pushObj(cloud);
+    }
+    //star
+    for (let i = 100; i < 120 ; i++) {
+      const star = new Star(droneStageIntro, 0, 0, 0);
+      star.index = i;
+      droneStageIntro.pushObj(star);
+    }
+
+    ///////////////Stage Game
     const droneStageGame = new AWStageGame(this.canvas);
     //background
     droneStageGame.pushObj(background);
 
-    for (let i = 20; i < 40 ; i++) {
-      const star = new Star(this.droneManager, 0, 0, 0);
-      star.index = i;
-      this.droneManager.pushObj(star);
-    }
+    const mainBackGround = new MainBackGround(droneStageIntro, 0, 0, 0, AWResourceManager.getInstance().resources('main_bgImg'));
+    mainBackGround.index = 2;
+    droneStageGame.pushObj(mainBackGround);
 
-    //moon
-    const moon = new Moon(droneStageGame, 0, 0, 0, AWResourceManager.getInstance().resources('game_bg_moonImg'));
-    moon.index = 41;
-    droneStageGame.pushObj(moon);
-    // droneStageIntro.pushObj(moon);
-    //cloud
-    for (let i = 50; i < 55 ; i++) {
-      const cloud = new Cloud(this.droneManager, 0, 0, 0, AWResourceManager.getInstance().resources('game_bg_cloud_04Img'));
-      cloud.index = i;
-      this.droneManager.pushObj(cloud);
-    }
-    for (let i = 55; i < 60 ; i++) {
-      const cloud = new Cloud(this.droneManager, 0, 0, 0, AWResourceManager.getInstance().resources('game_bg_cloud_05Img'));
-      cloud.index = i;
-      this.droneManager.pushObj(cloud);
-    }
-    //mountain
-    const mountain = new Mountain(this.droneManager, 0, 0, 0, AWResourceManager.getInstance().resources('game_bg_mountainImg'));
-    mountain.index = 61;
-    this.droneManager.pushObj(mountain);
+    //geust
+    const geust1 = new Guest1(droneStageGame, 0, 0, 0);
+    geust1.index = 11;
+    droneStageGame.pushObj(geust1);
+    const geust2 = new Guest2(droneStageGame, 0, 0, 0);
+    geust2.index = 10;
+    droneStageGame.pushObj(geust2);
+    const geust3 = new Guest3(droneStageGame, 0, 0, 0);
+    geust3.index = 13;
+    droneStageGame.pushObj(geust3);
 
-    const arm = new Arm(droneStageGame, 0, 0, 0, AWResourceManager.getInstance().resources('armImg'));
-    arm.index = 1000;
+    const arm = new Arm(droneStageGame);
+    arm.index = 500;
+    droneStageGame.pushObj(arm);
+
     const score = new Score(droneStageGame, 0, 0, 0, AWResourceManager.getInstance().resources('gage_00Img'));
-    score.id = 'local';
     score.index = 1001;
+    droneStageGame.pushObj(score);
+
     const alarm = new Alarm(droneStageGame, 0, 0, 0, AWResourceManager.getInstance().resources('alarm_iconImg'));
     alarm.index = 1002;
+    droneStageGame.pushObj(alarm);
+
     const timer = new Timer(droneStageGame, 0, 0, 0, AWResourceManager.getInstance().resources('gage_00Img'));
     timer.index = 1003;
-    droneStageGame.pushObj(arm);
-    droneStageGame.pushObj(score);
-    droneStageGame.pushObj(alarm);
     droneStageGame.pushObj(timer);
-    this.droneManager.pushStage(droneStageIntro);
-    this.droneManager.pushStage(droneStageGame);
-    this.droneManager.onCreate(this.canvas);
-    this.droneManager.onStart();
+
+    this.stageManager.pushStage(droneStageIntro);
+    this.stageManager.pushStage(droneStageGame);
+    this.stageManager.onCreate();
+    this.stageManager.onStart();
 
   }
 

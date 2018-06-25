@@ -2,15 +2,15 @@ import {Subscription} from 'rxjs/Subscription';
 import {Rect} from '../../../../../../../../../../lib-typescript/com/khh/graphics/Rect';
 import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/MathUtil';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
-import {AWResourceManager} from '../../AWResourceManager';
-import {AWStageManager} from '../../AWStageManager';
 import {Level1} from '../../algo/Level1';
 import {Level2} from '../../algo/Level2';
 import {Level3} from '../../algo/Level3';
+import {AWResourceManager} from '../../AWResourceManager';
+import {AWStageManager} from '../../AWStageManager';
 import {AWStage} from '../../stage/AWStage';
-import {ObjAW} from '../ObjAW';
+import {AWObj} from '../AWObj';
 
-export class IntroPopup extends ObjAW {
+export class IntroPopup extends AWObj {
   private mousedownSubscription: Subscription;
   private hitArea: Rect;
   private introPopup: HTMLImageElement;
@@ -25,7 +25,6 @@ export class IntroPopup extends ObjAW {
   }
 
   onDraw(context: CanvasRenderingContext2D): void {
-
     this.x = (this.stage.width / 2) - this.img.width / 2;
     this.y = this.stage.height - (this.img.height) - 50;
     const imgStartX = this.x;
@@ -87,11 +86,11 @@ export class IntroPopup extends ObjAW {
       if (ValidUtil.isNullOrUndefined(this.introPopup)) {
         this.setupPopup();
       }else if (!ValidUtil.isNullOrUndefined(this.btn1levelImgHit) && this.btn1levelImgHit.contains(event.offsetX, event.offsetY)) {
-        AWStageManager.getInstance().nextStage(new Level1('level1', 'other'));
+        AWStageManager.getInstance().nextStage(new Level1('level1', 'other', 'char_00').onCreate().onStart());
       }else if (!ValidUtil.isNullOrUndefined(this.btn2levelImgHit) && this.btn2levelImgHit.contains(event.offsetX, event.offsetY)) {
-        AWStageManager.getInstance().nextStage(new Level2('level2', 'other'));
+        AWStageManager.getInstance().nextStage(new Level2('level2', 'other', 'char_01').onCreate().onStart());
       }else if (!ValidUtil.isNullOrUndefined(this.btn3levelImgHit) && this.btn3levelImgHit.contains(event.offsetX, event.offsetY)) {
-        AWStageManager.getInstance().nextStage(new Level3('level3', 'other'));
+        AWStageManager.getInstance().nextStage(new Level3('level3', 'other', 'char_02').onCreate().onStart());
       }
     });
   }

@@ -1,19 +1,13 @@
 import {Subscription} from 'rxjs/Subscription';
-import {RoomStatusCode} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/code/RoomStatusCode';
-import {UserHostCode} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/code/UserHostCode';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Room';
-import {Info} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/info/Info';
-import {CollectionUtil} from '../../../../../../../../../../lib-typescript/com/khh/collection/CollectionUtil';
 import {Rect} from '../../../../../../../../../../lib-typescript/com/khh/graphics/Rect';
-import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/MathUtil';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
-import {RandomUtil} from '../../../../../../../../../../lib-typescript/com/khh/random/RandomUtil';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {DeviceManager} from '../../../../drive/DeviceManager';
 import {AWResourceManager} from '../../AWResourceManager';
 import {AWStageManager} from '../../AWStageManager';
 import {AWStage} from '../../stage/AWStage';
-import {ObjAW} from '../ObjAW';
+import {AWObj} from '../AWObj';
 
 export interface UserResult {
   uuid: string;
@@ -23,7 +17,7 @@ export interface UserResult {
   score: number;
 }
 
-export class ResultPopup extends ObjAW {
+export class ResultPopup extends AWObj {
   // private position: PointVector;
   private velocity: PointVector;
   private acceleration: PointVector;
@@ -171,7 +165,7 @@ export class ResultPopup extends ObjAW {
     return hostRankImg;
   }
 
-  onStart(room: Room<any>) {
+  onStart(room: Room) {
     this.set(this.startPosition());
     this.accelerationStep = new PointVector(0.2, 0.2, 0);
     this.acceleration = new PointVector(0, 0);
@@ -185,26 +179,26 @@ export class ResultPopup extends ObjAW {
         this.stage.onDestroy();
       }
       if (!ValidUtil.isNullOrUndefined(this.hitReStartArea) && this.hitReStartArea.contains(event.offsetX, event.offsetY) ) {
-        AWStageManager.getInstance().goStage(1);
+        AWStageManager.getInstance().goStage(0, '11');
       }
     });
     //console.log('resultPopup');
     const userResults = new Array<UserResult>();
-    for (const user of room.users) {
-      const headsetConcentrationHistory = user.headsetConcentrationHistory || [0];
-      //user Result Setting
-      const result = {uuid: user.uuid, name: user.name, host: user.host, score: CollectionUtil.sumArray(headsetConcentrationHistory)} as UserResult;
-      result.score = result.score || 0;
-      userResults.push(result);
-      if (user.host === UserHostCode.HOST) {
-        this.hostResult = result;
-      }
-      //user ranking Setting
-      userResults.sort((n1, n2) => (n1.score < n2.score ? 1 : -1));
-      for (let i = 0; i < userResults.length; i++) {
-        userResults[i].rank = (i + 1);
-      }
-    }
+    // for (const user of room.users) {
+    //   const headsetConcentrationHistory = user.headsetConcentrationHistory || [0];
+    //   //user Result Setting
+    //   const result = {uuid: user.uuid, name: user.name, host: user.host, score: CollectionUtil.sumArray(headsetConcentrationHistory)} as UserResult;
+    //   result.score = result.score || 0;
+    //   userResults.push(result);
+    //   if (user.host === UserHostCode.HOST) {
+    //     this.hostResult = result;
+    //   }
+    //   //user ranking Setting
+    //   userResults.sort((n1, n2) => (n1.score < n2.score ? 1 : -1));
+    //   for (let i = 0; i < userResults.length; i++) {
+    //     userResults[i].rank = (i + 1);
+    //   }
+    // }
 
     // console.log('>>>>>> ' + userResults);
     if (ValidUtil.isNullOrUndefined(this.hostResult)) {
