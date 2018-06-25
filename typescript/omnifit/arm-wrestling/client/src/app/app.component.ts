@@ -1,6 +1,6 @@
 // import * as Processing from 'assets/javascript/processing-1.4.1';
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {hello} from 'assets/javascript/omnifit';
+// import {hello} from 'assets/javascript/omnifit';
 // Observable operators
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/filter';

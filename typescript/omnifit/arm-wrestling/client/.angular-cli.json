@@ -23,7 +23,6 @@
         "../node_modules/roboto-fontface/css/roboto/roboto-fontface.css"
       ],
       "scripts": [
-        "assets/javascript/processing-1.4.1.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
