@@ -1,4 +1,4 @@
-# Drone
+# arm wresling
 1. npm install
 2. npm install @angular-devkit/core
 3. npm install -g ng-cli
