@@ -4,3 +4,7 @@
 [submodule "typescript/omnifit/drone/lib-typescript"]
 	path = typescript/omnifit/drone/lib-typescript
 	url = https://github.com/visualkhh/lib-typescript.git
+[submodule "typescript/omnifit/blowing/lib-typescript"]
+	path = typescript/omnifit/blowing/lib-typescript
+	url = https://github.com/visualkhh/lib-typescript.git
+	branch = master
