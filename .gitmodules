@@ -8,3 +8,7 @@
 	path = typescript/omnifit/blowing/lib-typescript
 	url = https://github.com/visualkhh/lib-typescript.git
 	branch = master
+[submodule "typescript/omnifit/running/lib-typescript"]
+	path = typescript/omnifit/running/lib-typescript
+	url = https://github.com/visualkhh/lib-typescript.git
+	branch = master
