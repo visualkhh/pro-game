@@ -1,12 +1,12 @@
 import {Subscription} from 'rxjs/Subscription';
 import {Room} from '../../../../../../../../../../common/com/khh/omnifit/game/arm-wrestling/domain/Room';
+import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/MathUtil';
 import {PointVector} from '../../../../../../../../../../lib-typescript/com/khh/math/PointVector';
 import {ValidUtil} from '../../../../../../../../../../lib-typescript/com/khh/valid/ValidUtil';
 import {AWResourceManager} from '../../AWResourceManager';
 import {AWStage} from '../../stage/AWStage';
 import {AWStageEvent} from '../../stage/AWStageEvent';
 import {AWObj} from '../AWObj';
-import {MathUtil} from '../../../../../../../../../../lib-typescript/com/khh/math/MathUtil';
 
 export class Arm extends AWObj {
   private velocity: PointVector;
@@ -41,7 +41,6 @@ export class Arm extends AWObj {
   onDraw(context: CanvasRenderingContext2D): void {
 
     this.drawImage(context, this.tableImg, this.stage.width / 2, this.stage.height / 2);
-
 
     //targetPosition
     // const targetPosition = new PointVector(this.percent, 0);
