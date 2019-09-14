@@ -32,7 +32,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
 
+    this.run();
 
+    // range(0, 10).delay(1000).subscribe(it => console.log(new Date().getMilliseconds(), it));
+      // interval(1000)
+      // // .map(x => x + 1) // to start from 1 instead of 0
+      // // .map(x => console.log(x)) // do some logic here
+      // // .take(60)
+      // .subscribe((it) => {
+      //   console.log(it);
+      // });
+  }
+  run () {
     const ducktaek = new Image(10, 10);
     ducktaek.src = '/assets/ducktaek.png';
     const duckboon = new Image(10, 10);
@@ -107,7 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       const gdD = new PointVector(((ddd.x - lddd.x) / frame) * cnt, ((ddd.y - lddd.y) / frame) * cnt);
       const gddd = new PointVector(ddd.x - gdD.x, ddd.y - gdD.y);
       // position.sub(dD)
-      // this.context.clearRect(0, 0, 9999, 9999);
+      this.context.clearRect(0, 0, 9999, 9999);
       this.context.beginPath();
       // this.context.strokeStyle = '#FF0000';
       // this.context.arc(ddd.x, ddd.y, 1, 0, 2 * Math.PI);
@@ -130,13 +141,5 @@ export class AppComponent implements OnInit, AfterViewInit {
       // this.context.lineTo(end.x,  end.y);
       // this.context.stroke();
     });
-    // range(0, 10).delay(1000).subscribe(it => console.log(new Date().getMilliseconds(), it));
-      // interval(1000)
-      // // .map(x => x + 1) // to start from 1 instead of 0
-      // // .map(x => console.log(x)) // do some logic here
-      // // .take(60)
-      // .subscribe((it) => {
-      //   console.log(it);
-      // });
   }
 }
