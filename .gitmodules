@@ -1,14 +1,24 @@
 [submodule "typescript/omnifit/arm-wrestling/lib-typescript"]
 	path = typescript/omnifit/arm-wrestling/lib-typescript
 	url = https://github.com/visualkhh/lib-typescript.git
+	branch = master
 [submodule "typescript/omnifit/drone/lib-typescript"]
 	path = typescript/omnifit/drone/lib-typescript
 	url = https://github.com/visualkhh/lib-typescript.git
+	branch = master
 [submodule "typescript/omnifit/blowing/lib-typescript"]
 	path = typescript/omnifit/blowing/lib-typescript
 	url = https://github.com/visualkhh/lib-typescript.git
 	branch = master
 [submodule "typescript/omnifit/five-fan/lib-typescript"]
 	path = typescript/omnifit/five-fan/lib-typescript
+	url = https://github.com/visualkhh/lib-typescript.git
+	branch = master
+[submodule "typescript/omnifit/running/lib-typescript"]
+        path = typescript/omnifit/running/lib-typescript
+        url = https://github.com/visualkhh/lib-typescript.git
+        branch = master
+[submodule "typescript/test-game/src/lib-typescript"]
+	path = typescript/test-game/src/lib-typescript
 	url = https://github.com/visualkhh/lib-typescript.git
 	branch = master
