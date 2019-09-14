@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {interval} from 'rxjs-compat/observable/interval';
 import {range} from 'rxjs-compat/observable/range';
 import 'rxjs-compat/add/operator/delay';
 import 'rxjs-compat/add/operator/take';
 import {PointVector} from '../lib-typescript/com/khh/math/PointVector';
+import {RandomUtil} from '../lib-typescript/com/khh/random/RandomUtil';
 
 @Component({
   selector: 'app-root',
@@ -31,16 +32,29 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.canvas.height = window.innerHeight;
     this.context = this.canvas.getContext('2d');
 
+
+    const ducktaek = new Image(10, 10);
+    ducktaek.src = '/assets/ducktaek.png';
+    const duckboon = new Image(10, 10);
+    duckboon.src = '/assets/duckboon.png';
+    const moon = new Image(10, 10);
+    moon.src = '/assets/moon_PNG52.png';
+    // duckboon.onload = (even) => {
+    //   console.log('asd');
+    //   // this.context.drawImage(ducktaek, 100, 100);
+    // };
+
     // this.context.beginPath();
     // this.context.lineWidth = 1;
     // this.context.strokeStyle = 'blue';
     // this.context.rect(0, 0, 300, 300);
     // this.context.stroke();
 
-    const start = new PointVector(20, 300);
-    const center = new PointVector(100, 20);
-    const end = new PointVector(200, 200);
-    const lastEnd = new PointVector(300, 30);
+
+    const start = new PointVector(RandomUtil.random(10, window.innerWidth), RandomUtil.random(10, window.innerHeight));
+    const center = new PointVector(RandomUtil.random(10, window.innerWidth), RandomUtil.random(10, window.innerHeight));
+    const end = new PointVector(RandomUtil.random(10, window.innerWidth), RandomUtil.random(10, window.innerHeight));
+    const lastEnd = new PointVector(RandomUtil.random(10, window.innerWidth), RandomUtil.random(10, window.innerHeight));
 
 
     this.context.beginPath();
@@ -57,14 +71,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.context.stroke();
 
 
-    const frame = 50;
+    const frame = 500;
     const sD = new PointVector((start.x - center.x) / frame, (start.y - center.y) / frame);
     const cD = new PointVector((center.x - end.x) / frame, (center.y - end.y) / frame);
     const eD = new PointVector((end.x - lastEnd.x) / frame, (end.y - lastEnd.y) / frame);
     const leD = new PointVector(lastEnd.x / frame, lastEnd.y / frame);
 
 
-    interval(100).take(frame).subscribe(it => {
+    interval(10).take(frame).subscribe(it => {
       start.sub(sD);
       center.sub(cD);
       end.sub(eD);
@@ -93,10 +107,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       const gdD = new PointVector(((ddd.x - lddd.x) / frame) * cnt, ((ddd.y - lddd.y) / frame) * cnt);
       const gddd = new PointVector(ddd.x - gdD.x, ddd.y - gdD.y);
       // position.sub(dD)
+      // this.context.clearRect(0, 0, 9999, 9999);
       this.context.beginPath();
       // this.context.strokeStyle = '#FF0000';
       // this.context.arc(ddd.x, ddd.y, 1, 0, 2 * Math.PI);
-      this.context.arc(gddd.x, gddd.y, 1, 0, 2 * Math.PI);
+      this.context.arc(gddd.x, gddd.y, 3, 0, 2 * Math.PI);
+      this.context.drawImage(moon, gddd.x - 100, gddd.y - 100)
+      this.context.drawImage(ducktaek, ddd.x - 300, ddd.y - 200)
+      this.context.drawImage(duckboon, lddd.x, lddd.y - 200)
       // this.context.arc(lddd.x, lddd.y, 1, 0, 2 * Math.PI);
       // this.context.arc(ddd.x - lddd.x, ddd.y - lddd.y, 1, 0, 2 * Math.PI);
       this.context.stroke();
@@ -106,6 +124,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       // this.context.beginPath();
       // this.context.moveTo(start.x,  start.y);
       // this.context.lineTo(center.x,  center.y);
+      // this.context.stroke();
+      // this.context.beginPath();
+      // this.context.moveTo(center.x,  center.y);
+      // this.context.lineTo(end.x,  end.y);
       // this.context.stroke();
     });
     // range(0, 10).delay(1000).subscribe(it => console.log(new Date().getMilliseconds(), it));
