@@ -1,5 +1,6 @@
 import {Item} from "./Item";
-
+// import {Type} from "code/Type"
+// import {Type} from "type/Type"
 export class Essence {
 
     private _name: string;
