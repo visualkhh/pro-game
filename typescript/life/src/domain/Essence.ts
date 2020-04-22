@@ -1,4 +1,5 @@
 import {Item} from "./Item";
+import {BehaviorSubject} from "rxjs";
 // import {Type} from "code/Type"
 // import {Type} from "type/Type"
 export class Essence {

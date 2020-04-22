@@ -1,4 +1,5 @@
 export class Item<T> {
+
     constructor(private _name: string, private _value: T) {
     }
 

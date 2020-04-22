@@ -32,4 +32,23 @@ export class EssenceManager {
         this.essences.set(Type.DEFENSIVE_ATTACKS, new Essence(Type.DEFENSIVE_ATTACKS, Type.DEFENSIVE, Type.ATTACKS));
         this.essences.set(Type.NARROW_WIDE, new Essence(Type.NARROW_WIDE, Type.NARROW, Type.WIDE));
     }
+    getEssences(key: string): Essence | undefined {
+        return this.essences.get(key);
+    }
+    positiveValue(key: string): number {
+        let newVar = this.essences.get(key);
+        if (newVar) {
+            return newVar.positiveValue;
+        } else {
+            return 0;
+        }
+    }
+    negativeValue(key: string): number {
+        let newVar = this.essences.get(key);
+        if (newVar) {
+            return newVar.negativeValue;
+        } else {
+            return 0;
+        }
+    }
 }

@@ -1,5 +1,5 @@
 import LocalizedStrings from "localized-strings";
-const localizationContent = require("./localization.json");
+const localizationContent = require("@src/localization/localization.json");
 const localization: any = new LocalizedStrings(localizationContent, {
     customLanguageInterface: () => 'ko'
 });

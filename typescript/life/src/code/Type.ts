@@ -1,6 +1,5 @@
 export enum Type {
 
-
     RIGHT = "RIGHT", LEFT = "LEFT", RIGHT_LEFT = "RIGHT_LEFT",                                                                     // 좌 우
     UP = "UP", DOWN = "DOWN", UP_DOWN = "UP_DOWN",                                                                                 // 하 상
     DARK = "DARK", BRIGHT = "BRIGHT", DARK_BRIGHT = "DARK_BRIGHT",                                                                 // 어두움 밝음
@@ -25,6 +24,5 @@ export enum Type {
     CONSERVATIVE = "CONSERVATIVE", PROGRESSIVE = "PROGRESSIVE", CONSERVATIVE_PROGRESSIVE = "CONSERVATIVE_PROGRESSIVE",             // 보수 진보
     DEFENSIVE = "DEFENSIVE", ATTACKS = "ATTACKS", DEFENSIVE_ATTACKS = "DEFENSIVE_ATTACKS",                                         // 방어 공격
     NARROW = "NARROW", WIDE = "WIDE", NARROW_WIDE = "NARROW_WIDE",                                                                 // 좁음 넓음
-
-
+    
 }
