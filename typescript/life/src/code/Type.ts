@@ -23,6 +23,7 @@ export enum Type {
     PUSH = "PUSH", PULL = "PULL", PUSH_PULL = "PUSH_PULL",                                                                         // 밀어냄 끌어들임
     CONSERVATIVE = "CONSERVATIVE", PROGRESSIVE = "PROGRESSIVE", CONSERVATIVE_PROGRESSIVE = "CONSERVATIVE_PROGRESSIVE",             // 보수 진보
     DEFENSIVE = "DEFENSIVE", ATTACKS = "ATTACKS", DEFENSIVE_ATTACKS = "DEFENSIVE_ATTACKS",                                         // 방어 공격
+    FEMALE = "FEMALE", MALE = "MALE", "FEMALE_MALE" = "FEMALE_MALE",                                                               // 여성 남
     NARROW = "NARROW", WIDE = "WIDE", NARROW_WIDE = "NARROW_WIDE",                                                                 // 좁음 넓음
     
 }

@@ -29,26 +29,44 @@ export class EssenceManager {
         this.essences.set(Type.IRREVERSIBLE_REVERSIBLE, new Essence(Type.IRREVERSIBLE_REVERSIBLE, Type.IRREVERSIBLE, Type.REVERSIBLE));
         this.essences.set(Type.PUSH_PULL, new Essence(Type.PUSH_PULL, Type.PUSH, Type.PULL));
         this.essences.set(Type.CONSERVATIVE_PROGRESSIVE, new Essence(Type.CONSERVATIVE_PROGRESSIVE, Type.CONSERVATIVE, Type.PROGRESSIVE));
+        this.essences.set(Type.FEMALE_MALE, new Essence(Type.FEMALE_MALE, Type.FEMALE, Type.MALE));
         this.essences.set(Type.DEFENSIVE_ATTACKS, new Essence(Type.DEFENSIVE_ATTACKS, Type.DEFENSIVE, Type.ATTACKS));
         this.essences.set(Type.NARROW_WIDE, new Essence(Type.NARROW_WIDE, Type.NARROW, Type.WIDE));
     }
     getEssences(key: string): Essence | undefined {
         return this.essences.get(key);
     }
-    positiveValue(key: string): number {
+    // positiveValue(key: string): number {
+    //     let newVar = this.essences.get(key);
+    //     if (newVar) {
+    //         return newVar.positiveValue;
+    //     } else {
+    //         return 0;
+    //     }
+    // }
+    // negativeValue(key: string): number {
+    //     let newVar = this.essences.get(key);
+    //     if (newVar) {
+    //         return newVar.negativeValue;
+    //     } else {
+    //         return 0;
+    //     }
+    // }
+
+    value(key: string): number {
         let newVar = this.essences.get(key);
         if (newVar) {
-            return newVar.positiveValue;
-        } else {
-            return 0;
+            return newVar.value;
         }
-    }
-    negativeValue(key: string): number {
-        let newVar = this.essences.get(key);
-        if (newVar) {
-            return newVar.negativeValue;
-        } else {
-            return 0;
-        }
+
+        let r = 0;
+        this.essences.forEach( it => {
+            if (key === it.positiveName) {
+               r = it.positiveValue;
+            } else if (key === it.negativeName) {
+               r = it.negativeValue;
+            }
+        })
+        return r;
     }
 }

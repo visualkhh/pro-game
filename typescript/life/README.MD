@@ -59,5 +59,7 @@ web docs
 
 Links
 ===
+ - intellij shortcut
+   - https://lalwr.blogspot.com/2018/04/intellij.html
 
 

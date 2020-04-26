@@ -10,14 +10,14 @@ const {map, filter, catchError} = require('rxjs/operators');
 const canvasContainer = document.querySelector("#canvasContainer")! as HTMLDivElement;
 const canvas: HTMLCanvasElement = document.createElement("canvas");
 canvas.setAttribute('style', 'border: 1px solid #000000');
-canvas.height = canvas.width = window.innerWidth;
+canvas.height = canvas.width = window.innerWidth / 2;
 const ctx = canvas.getContext('2d')!;
 canvasContainer.appendChild(canvas);
 
+// canvas sizing
 fromEvent(window, 'resize').subscribe((event: Event) => {
     let target: any = event.target!;
-    canvas.width = target['innerWidth'];
-    canvas.height = canvas.width;
+    canvas.height = canvas.width = target['innerWidth'] / 2;
 });
 
 essenceManager.essences.forEach(it => {
@@ -34,15 +34,18 @@ essenceManager.essences.forEach(it => {
     fromEvent(input, 'mousemove').subscribe((event: Event) => {
         let target: any = event.target!;
         let newVar = target['value'];
-        console.log(newVar);
+        // console.log(newVar);
         it.value = Number(newVar);
     });
     fromEvent(input, 'change').subscribe((event: Event) => {
-        console.log(it);
+        let target: any = event.target!;
+        let newVar = target['value'];
+        // console.log(newVar);
+        it.value = Number(newVar);
     });
-    div.append(localization.type[it.negativeName]);
+    div.append(localization.type[it.negativeName]||it.negativeName);
     div.appendChild(input);
-    div.append(localization.type[it.positiveName]);
+    div.append(localization.type[it.positiveName]||it.positiveName);
     querySelector.appendChild(div);
 });
 
@@ -55,10 +58,11 @@ list.push(new Face(canvas, ctx));
 function draw(timestamp: number) {
 
     // 픽셀 정리
-    ctx.save();
+    ctx.restore();
     ctx.setLineDash([]);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
     ctx.beginPath();
     list.forEach(it => {
         ctx.save();

@@ -3,7 +3,7 @@ import {Draw} from "@src/draw/Draw";
 export class Grid extends Draw {
 
     draw() {
-        const splitSize = 100;
+        const splitSize = 10;
         let wUnit = this.canvas.width / splitSize;
         let hUnit = this.canvas.height / splitSize;
         this.context.strokeStyle = '#c8c8c8';
