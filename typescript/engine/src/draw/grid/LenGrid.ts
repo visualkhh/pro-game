@@ -1,6 +1,6 @@
 import {Draw} from "@src/draw/Draw";
 
-export class Grid extends Draw {
+export class LenGrid extends Draw {
 
     draw() {
         const splitSize = 10;

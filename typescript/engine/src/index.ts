@@ -1,5 +1,5 @@
 import {Draw} from "@src/draw/Draw";
-import {Grid} from "@src/draw/Grid";
+import {SizeGrid} from "@src/draw/grid/SizeGrid";
 const {range, fromEvent, interval, Observable, of, Subscription, timer} = require('rxjs');
 const {map, filter, catchError} = require('rxjs/operators');
 
@@ -8,6 +8,8 @@ const canvas: HTMLCanvasElement = document.createElement("canvas");
 // canvas.setAttribute('style', 'border: 1px solid #000000');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+// canvas.width = 500;
+// canvas.height = 500;
 const ctx = canvas.getContext('2d')!;
 canvasContainer.appendChild(canvas);
 
@@ -21,7 +23,8 @@ fromEvent(window, 'resize').subscribe((event: Event) => {
 
 
 const list = new Array<Draw>();
-list.push(new Grid(canvas, ctx));
+list.push(new SizeGrid(canvas, ctx));
+// list.push(new LenGrid(canvas, ctx));
 
 /////draw
 function draw(timestamp: number) {
