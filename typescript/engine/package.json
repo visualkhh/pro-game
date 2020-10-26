@@ -1,0 +1,23 @@
+{
+  "name": "life",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --config webpack.config.js --watch",
+    "server": "webpack-dev-server --open --host 0.0.0.0 --watch"
+  },
+  "devDependencies": {
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "localized-strings": "^0.2.4",
+    "rxjs": "^6.5.5",
+    "ts-loader": "^7.0.0",
+    "webpack-dev-server": "^3.10.3"
+  }
+}
