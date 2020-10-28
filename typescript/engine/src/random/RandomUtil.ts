@@ -1,8 +1,8 @@
 import {ValidUtil} from '../valid/ValidUtil';
 
 export class RandomUtil {
-    static readonly  d = ''
-    static random(min?: number, max?: number) {
+
+    static scope(min?: number, max?: number) {
         if (ValidUtil.isNullOrUndefined(min)) {
           return Math.random();
         }else if (!ValidUtil.isNullOrUndefined(min) && ValidUtil.isNullOrUndefined(max)) {
@@ -11,6 +11,7 @@ export class RandomUtil {
           return Math.random() * ((max || 0) - (min || 0)) + (min || 0);
         }
     }
+
     static uuid(format: string = 'xxxx-xxxx-xxxx-xxxx'): string {
      return format.replace(/[xy]/g, function(c) {
           var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -18,7 +19,7 @@ export class RandomUtil {
       });
     }
 
-    static  getRandomRGBColor(): string {
+    static  rgb(): string {
         const letters = '0123456789ABCDEF'.split('');
         let color = '#';
         for (let i = 0; i < 6; i++ ) {
@@ -26,7 +27,8 @@ export class RandomUtil {
         }
         return color;
     }
-    static  getRandomRGBAColor(): string {
+
+    static  rgba(): string {
         const letters = '0123456789ABCDEF'.split('');
         let color = '#';
         for (let i = 0; i < 8; i++ ) {
@@ -34,7 +36,8 @@ export class RandomUtil {
         }
         return color;
     }
-    static  getRandomHex(): string {
+
+    static  hex(): string {
         const letters = '0123456789ABCDEF'.split('');
         let color = '';
         for (let i = 0; i < 2; i++ ) {
@@ -42,8 +45,9 @@ export class RandomUtil {
         }
         return color;
     }
+
     //(Math.random().toString(36)+'00000000000000000').slice(2, 10) + Date.now()
-    static  getRandomAlphabet(len: number): string {
+    static  alphabet(len: number): string {
         const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         let color = '';
         for (let i = 0; i < len; i++ ) {

@@ -8,7 +8,8 @@ import {Unit} from "@src/domain/Unit";
 import {MathUtil} from "@src/math/MathUtil";
 import {RandomUtil} from "@src/random/RandomUtil";
 import {Optional} from "@src/optional/Optional";
-import {PointVector} from "@src/domain/PointVector";
+import {config} from "@src/config";
+import {TriangleObj} from "@src/object/obj/TriangleObj";
 
 const {range, fromEvent, interval, Observable, of, Subscription, timer} = require('rxjs');
 const {map, filter, catchError} = require('rxjs/operators');
@@ -17,6 +18,7 @@ class Engine extends Draw {
 
     public grid: SizeGrid;
     public objs = new Map<string, Obj>();
+    public infos = new Map<string, Obj>();
 
 
     constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
@@ -31,7 +33,11 @@ class Engine extends Draw {
     animationFrame(timestamp?: number): void {
         // console.log("---", timestamp)
         this.draw();
-        window.requestAnimationFrame(this.animationFrame.bind(this));
+        if(config.drawDelay) {
+            timer(config.drawDelay).subscribe((cnt: number) => window.requestAnimationFrame(this.animationFrame.bind(this)))
+        } else {
+            window.requestAnimationFrame(this.animationFrame.bind(this));
+        }
     }
 
     draw(): void {
@@ -49,6 +55,11 @@ class Engine extends Draw {
         this.context.restore();
 
         this.objs.forEach(it => {
+            this.context.save();
+            it.draw();
+            this.context.restore();
+        });
+        this.infos.forEach(it => {
             this.context.save();
             it.draw();
             this.context.restore();
@@ -74,8 +85,8 @@ class Engine extends Draw {
             );
             // point.unit = Unit.PERCENT;
             const arcObj = new ArcObj(canvas, this.context, new Rectangle(point));
-            arcObj.fillStyle = RandomUtil.getRandomRGBColor();
-            arcObj.mass = RandomUtil.random(1, 10);
+            arcObj.fillStyle = RandomUtil.rgb();
+            arcObj.mass = RandomUtil.scope(1, 10);
             this.objs.set(this.createId('Obj'), arcObj);
         });
     }
@@ -84,28 +95,37 @@ class Engine extends Draw {
 
     public createId(prefix: string) {
         // return prefix + '-' + new Date().getTime() + '-' + RandomUtil.getRandomAlphabet(10);
-        return prefix + '-' +  RandomUtil.getRandomAlphabet(10);
+        return prefix + '-' +  RandomUtil.alphabet(10);
     }
 
     //https://evan-moon.github.io/2017/05/06/gravity-via-js-1/
     private processing() {
+        this.infos.clear();
+        // return;
         const p = new Map<string, Point>();
+        // for (let [key, value] of this.objs) {
+        //     console.log(key, value);
+        // }
         this.objs.forEach((v, k, m) => {
+            if("arcObj0" != k) {
+                return;
+            }
             let center = v.avaliablePlace.center;
             // let centerVector = new PointVector(center.x, center.y, center.z);
             let move = v.avaliablePlace.center;
             // let moveVector = new PointVector(move.x, move.y, move.z);
             this.objs.forEach((vSub, kSub, mSub) => {
                 if(k != kSub) {
+
                     let centerSub = vSub.avaliablePlace.center;
-                    let mass = 6.674 * Optional.ofNullable(v.mass).orElse(0) * Optional.ofNullable(vSub.mass).orElse(0);
-                    let x = Math.pow(center.x - centerSub.x, 2);
-                    let y = Math.pow(center.y - centerSub.y, 2);
-                    let mx = x != 0 ? mass / x : 0;
-                    let my = y != 0 ? mass / y : 0;
-                    console.log(move, x, y, mx, my);
-                    // mx *= 6.674;
-                    // my *= 6.674;
+                    //////
+                    this.infos.set("t", new TriangleObj(this.canvas, this.context, new Rectangle(center, centerSub)));
+                    //////
+                    let mass = config.G * Optional.ofNullable(v.mass).orElse(0) * Optional.ofNullable(vSub.mass).orElse(0);
+                    let rx = Math.pow(center.x - centerSub.x, 2);
+                    let ry = Math.pow(center.y - centerSub.y, 2);
+                    let mx = rx ? mass / rx : 0;
+                    let my = ry ? mass / ry : 0;
                     if(center.x > centerSub.x) {
                         move.x -= mx;
                     } else {
@@ -116,6 +136,7 @@ class Engine extends Draw {
                     } else {
                         move.y += my;
                     }
+                    console.log(move, mass, mx, my);
                 }
             });
             // if(move.x > 100){
@@ -131,7 +152,9 @@ class Engine extends Draw {
             //     move.y =  RandomUtil.random(0, 100);
             // }
             // console.log(move.x, move.y);
+            console.log('-----------')
             p.set(k, move);
+
         });
 
 
@@ -141,17 +164,24 @@ class Engine extends Draw {
     }
 
     private initObj() {
-        let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(30, 10)));
-        arcObj0.fillStyle = RandomUtil.getRandomRGBColor();
-        arcObj0.mass = RandomUtil.random(1, 10);
-        this.objs.set(this.createId('Obj'), arcObj0);
+        // let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(0, 50)));
+        let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 0)));
+        arcObj0.fillStyle = RandomUtil.rgb();
+        arcObj0.mass = RandomUtil.scope(5, 15);
+        this.objs.set("arcObj0", arcObj0);
         //
         //
-        let arcObj1 = new ArcObj(canvas, this.context, new Rectangle(new Point(70, 60)));
-        arcObj1.fillStyle = RandomUtil.getRandomRGBColor();
-        arcObj1.mass = RandomUtil.random(1, 10);
-        this.objs.set(this.createId('Obj'), arcObj1);
-        // console.log(this.objs)
+        // let arcObj1 = new ArcObj(canvas, this.context, new Rectangle(new Point(100, 50)));
+        // let arcObj1 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 100)));
+        // arcObj1.fillStyle = RandomUtil.rgb();
+        // arcObj1.mass = RandomUtil.scope(5, 15);
+        // this.objs.set("arcObj1", arcObj1);
+
+
+        let arcObj2 = new ArcObj(canvas, this.context, new Rectangle(new Point(100, 50)));
+        arcObj2.fillStyle = RandomUtil.rgb();
+        arcObj2.mass = RandomUtil.scope(5, 15);
+        this.objs.set("arcObj2", arcObj2);
     }
 }
 
