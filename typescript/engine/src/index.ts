@@ -114,11 +114,23 @@ class Engine extends Draw {
             // let centerVector = new PointVector(center.x, center.y, center.z);
             let move = v.avaliablePlace.center;
             // let moveVector = new PointVector(move.x, move.y, move.z);
+
+
+            //2:5 = 10:□ 에서 2 × □ = 5 × 10 이므로 □ =25이기 때문입니다.
             this.objs.forEach((vSub, kSub, mSub) => {
                 if(k != kSub) {
 
                     let centerSub = vSub.avaliablePlace.center;
                     //////
+                    let startX = center.x;
+                    let startY = center.y;
+                    let endX = centerSub.x;
+                    let endY = centerSub.y;
+                    let yGap = endY - startY;
+                    let xGap = endX - startX;
+                    console.log(yGap / xGap)
+                    // this.context.fillText(mGap.toFixed(3), startX + (xGap / 2),  startY + ((yGap) / 2));
+
                     this.infos.set("t", new TriangleObj(this.canvas, this.context, new Rectangle(center, centerSub)));
                     //////
                     let mass = config.G * Optional.ofNullable(v.mass).orElse(0) * Optional.ofNullable(vSub.mass).orElse(0);
@@ -178,7 +190,7 @@ class Engine extends Draw {
         // this.objs.set("arcObj1", arcObj1);
 
 
-        let arcObj2 = new ArcObj(canvas, this.context, new Rectangle(new Point(100, 50)));
+        let arcObj2 = new ArcObj(canvas, this.context, new Rectangle(new Point(100, 60)));
         arcObj2.fillStyle = RandomUtil.rgb();
         arcObj2.mass = RandomUtil.scope(5, 15);
         this.objs.set("arcObj2", arcObj2);
