@@ -53,6 +53,7 @@ export class TriangleObj extends Obj {
         // https://ko.wikihow.com/%EC%A7%81%EC%84%A0%EC%9D%98-%EA%B8%B0%EC%9A%B8%EA%B8%B0-%EA%B5%AC%ED%95%98%EB%8A%94-%EB%B2%95
         // https://ko.khanacademy.org/math/cc-eighth-grade-math/cc-8th-linear-equations-functions/8th-slope/a/slope-formula
         // http://m.ebsmath.co.kr/resource/rscView;jsessionid=dF1YRqf9y5ErOvRxl6w10o9gahO02xKQ92W6cMYlRx5ChNyZVmimrB1Q18saM4oE?cate=10096&cate2=10149&cate3=10155&rscTpDscd=RTP10&grdCd=MGRD02&sno=22097&historyYn=study&ts=ts&isBot=false&viaType=I&isGalaxyS=false&isWin10=false&isAndroid=false&isLG=false&isIOS=false&currentDate=20201028171444&ieVersion=&isMobile=false&isIE=false&userOs=etc&isIOSChrome53=false&remoteIp=112.217.122.28&ieSquare=&prefixURLCheck=REAL&histSeq=7749484&urlSno=16580&userBrowser=chrome&isLoginChk=N&html5Support=true&isHtml5Support=true
+        // https://ko.khanacademy.org/math/cc-eighth-grade-math/cc-8th-linear-equations-functions/8th-slope/v/converting-to-slope-intercept-form
     }
 
 }
