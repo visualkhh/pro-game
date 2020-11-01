@@ -1,36 +1,31 @@
+import {Drawable} from "@src/draw/Drawable";
 import {Draw} from "@src/draw/Draw";
 
-export class SizeGrid extends Draw {
+export class SizeGrid implements Drawable {
 
-    public splitSize = 0;
 
-    constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, public size = 10) {
-        super(canvas, context);
-        this.setSplitSize();
+    constructor(public size = 10) {
     }
 
-    draw() {
-        this.setSplitSize();
-        let wUnit = this.splitSize;
-        let hUnit = this.splitSize;
-        this.context.strokeStyle = '#373737';
-        this.context.lineWidth = 0.5;
-        this.context.setLineDash([4, 2]);
-        for (let i = 0; wUnit * i <= this.canvas.width; i++) {
-            this.context.beginPath();
-            this.context.moveTo(wUnit * i, 0);
-            this.context.lineTo(wUnit * i, this.canvas.height);
-            this.context.stroke();
+    draw(draw: Draw) {
+        let splitSize = draw.canvas.width / this.size;
+        let wUnit = splitSize;
+        let hUnit = splitSize;
+        draw.context.strokeStyle = '#373737';
+        draw.context.lineWidth = 0.5;
+        draw.context.setLineDash([4, 2]);
+        for (let i = 0; wUnit * i <= draw.canvas.width; i++) {
+            draw.context.beginPath();
+            draw.context.moveTo(wUnit * i, 0);
+            draw.context.lineTo(wUnit * i, draw.canvas.height);
+            draw.context.stroke();
         }
-        for (let i = 0; hUnit * i <= this.canvas.height; i++) {
-            this.context.beginPath();
-            this.context.moveTo(0, hUnit * i);
-            this.context.lineTo(this.canvas.width, hUnit * i);
-            this.context.stroke();
+        for (let i = 0; hUnit * i <= draw.canvas.height; i++) {
+            draw.context.beginPath();
+            draw.context.moveTo(0, hUnit * i);
+            draw.context.lineTo(draw.canvas.width, hUnit * i);
+            draw.context.stroke();
         }
     }
 
-    public setSplitSize() {
-        this.splitSize = this.canvas.width / this.size;
-    }
 }

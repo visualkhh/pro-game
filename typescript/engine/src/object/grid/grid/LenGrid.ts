@@ -1,24 +1,25 @@
+import {Drawable} from "@src/draw/Drawable";
 import {Draw} from "@src/draw/Draw";
 
-export class LenGrid extends Draw {
+export class LenGrid implements Drawable {
 
-    draw() {
+    draw(draw: Draw) {
         const splitSize = 10;
-        let wUnit = this.canvas.width / splitSize;
-        let hUnit = this.canvas.height / splitSize;
-        this.context.strokeStyle = '#c8c8c8';
-        this.context.lineWidth = 0.5;
+        let wUnit = draw.canvas.width / splitSize;
+        let hUnit = draw.canvas.height / splitSize;
+        draw.context.strokeStyle = '#c8c8c8';
+        draw.context.lineWidth = 0.5;
         for (let i = 0; i < splitSize; i++) {
-            this.context.beginPath();
-            this.context.moveTo(wUnit * i, 0);
-            this.context.lineTo(wUnit * i, this.canvas.height);
-            this.context.stroke();
+            draw.context.beginPath();
+            draw.context.moveTo(wUnit * i, 0);
+            draw.context.lineTo(wUnit * i, draw.canvas.height);
+            draw.context.stroke();
         }
         for (let i = 0; i < splitSize; i++) {
-            this.context.beginPath();
-            this.context.moveTo(0, hUnit * i);
-            this.context.lineTo(this.canvas.width, hUnit * i);
-            this.context.stroke();
+            draw.context.beginPath();
+            draw.context.moveTo(0, hUnit * i);
+            draw.context.lineTo(draw.canvas.width, hUnit * i);
+            draw.context.stroke();
         }
     }
 }

@@ -1,10 +1,5 @@
-export abstract class Draw {
-
-    public fillStyle = '#000000';
-    public strokeStyle = '#000000';
+export class Draw {
 
     constructor(public canvas: HTMLCanvasElement, public context: CanvasRenderingContext2D) {
     }
-
-    abstract draw(): void;
 }
