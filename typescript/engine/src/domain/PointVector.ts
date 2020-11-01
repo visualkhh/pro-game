@@ -41,6 +41,7 @@ export class PointVector {
       this.y = y;
       this.z = z;
     }
+    return this;
   }
 
   public get() {
