@@ -101,8 +101,8 @@ export class ArcDrawObj extends DrawObj {
 
             let mx = r2 ? mass / r2 : 0;
             let my = r2 ? mass / r2 : 0;
-            mx *= (sub.x * 0.01);
-            my *= (sub.y * 0.01);
+            mx *= (sub.x / dist) * 0.01;
+            my *= (sub.y / dist) * 0.01;
             // console.log(sub, mx, my);
             move.add(mx, my)
             // if (this.x > v.x) {
@@ -127,12 +127,11 @@ export class ArcDrawObj extends DrawObj {
         ).forEach(it => {
             engine.deleteObj(it.id);
 
-            const point = new PointVector(RandomUtil.scope(0, 100), RandomUtil.scope(0, 100));
-            // point.unit = Unit.PERCENT;
-            const arcObj = new ArcDrawObj(it.id!).set(point);
-            arcObj.fillStyle = RandomUtil.rgb();
-            arcObj.mass = RandomUtil.scope(1, 10);
-            engine.setObj(arcObj);
+            // const point = new PointVector(RandomUtil.scope(0, 100), RandomUtil.scope(0, 100));
+            // const arcObj = new ArcDrawObj(it.id!).set(point);
+            // arcObj.fillStyle = RandomUtil.rgb();
+            // arcObj.mass = RandomUtil.scope(1, 10);
+            // engine.setObj(arcObj);
         });
         // if (this.x > 100) {
         //     this.x = 0;
