@@ -121,6 +121,12 @@ export class PointVector {
       dz = this.z - v.z;
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
   }
+  public static dist(v1: PointVector, v2: PointVector): number {
+    const dx = v1.x - v2.x,
+      dy = v1.y - v2.y,
+      dz = v1.z - v2.z;
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  }
 
   public dot(v: number|PointVector, y: number, z: number): number {
       if (v instanceof PointVector) { return this.x * v.x + this.y * v.y + this.z * v.z; };

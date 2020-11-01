@@ -42,9 +42,18 @@ class Engine implements Drawable {
     setObj(obj: DrawObj) {
         this.objs.set(obj.id!, obj as DrawObj);
     }
+    deleteObj(id?: string) {
+        this.objs.delete(id!);
+    }
     getObjs(): Array<Obj> {
        return Array.from(this.objs.values());
     }
+    // getObjsFromSpaceRectangle(rect: Rectangle): Array<Obj> {
+    //    return this.getObjs().filter(it =>
+    //        rect.start.x <= it.x && rect.end.x >= it.x &&
+    //        rect.start.y <= it.y && rect.end.y >= it.y
+    //    );
+    // }
 
     animationFrame(timestamp?: number): void {
         // console.log("---", timestamp)
@@ -117,26 +126,27 @@ class Engine implements Drawable {
         // let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 0)));
         let arcObj0 = new ArcDrawObj("arcObj0").set(new PointVector(0, 50));
         arcObj0.fillStyle = RandomUtil.rgb();
-        arcObj0.mass = mass; //RandomUtil.scope(5, 15);
+        // arcObj0.mass = mass; //RandomUtil.scope(5, 15);
         this.objs.set(arcObj0.id, arcObj0);
         //
         //
         // let arcObj1 = new ArcObj(canvas, this.context, new Rectangle(new Point(100, 50)));
-        let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 0));
         // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 50));
+        let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 0));
         arcObj1.fillStyle = RandomUtil.rgb();
-        arcObj1.mass = mass; // RandomUtil.scope(5, 15);
+        // arcObj1.mass = mass; // RandomUtil.scope(5, 15);
         this.objs.set(arcObj1.id, arcObj1);
 
 
         let arcObj2 = new ArcDrawObj("arcObj2").set(new PointVector(100, 50));
         arcObj2.fillStyle = RandomUtil.rgb();
-        arcObj2.mass = mass; //RandomUtil.scope(5, 15);
+        // arcObj2.mass = mass; //RandomUtil.scope(5, 15);
         this.objs.set("arcObj2", arcObj2);
 
-        // let arcObj3 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 100)));
-        // arcObj3.fillStyle = RandomUtil.rgb();
-        // this.objs.set("arcObj3", arcObj3);
+        let arcObj3 = new ArcDrawObj("arcObj3").set(new PointVector(50, 100));
+        arcObj3.fillStyle = RandomUtil.rgb();
+        // arcObj2.mass = mass;
+        this.objs.set(arcObj3.id, arcObj3);
     }
 }
 
