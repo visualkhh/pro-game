@@ -15,12 +15,15 @@ import {RandomUtil} from "@src/random/RandomUtil";
 export class ArcDrawObj extends DrawObj {
 
     // private shadow = new Array<PointVector>();
-
+    private directionvelocity = new PointVector(RandomUtil.scope(-100, 100) / 1000, RandomUtil.scope(-100, 100) / 1000)
+    // private velocity = new PointVector(0, 0);
+    // private acceleration = new PointVector(0, 0);
     constructor(public id: string, public mass = RandomUtil.scope(1, 10), public fillStyle = '#000000', public strokeStyle = '#000000') {
         super();
     }
 
     draw(draw: Draw): void {
+        // console.log(this.directionvelocity);
         this.processing();
         // console.log(center.x, center.y);
         const sizeGorup = draw.canvas.width / 100;
@@ -67,7 +70,16 @@ export class ArcDrawObj extends DrawObj {
         excludeObjs.forEach((v) => {
             //////
             let sub = PointVector.sub(v, this);
-            // let xSlope = pointVector.y ? pointVector.x / pointVector.y : 0;
+            // let slope = pointVector.y ? pointVector.x / pointVector.y : 0;
+            // const dir = PointVector.sub(v, this);
+            // dir.normalize();
+            // dir.mult(0.5);
+            // this.acceleration = dir;
+            // this.velocity.add(this.acceleration);
+            // this.velocity.limit(0.1);
+            // move.add(this.velocity);
+            // sub.normalize();
+            // sub.mult(0.5);
             let dist = PointVector.dist(this, v);
             // console.log(this.id, "dist:", dist, "xSlope:", xSlope);
             // console.log(this.id, "dist:", dist);
@@ -101,8 +113,11 @@ export class ArcDrawObj extends DrawObj {
 
             let mx = r2 ? mass / r2 : 0;
             let my = r2 ? mass / r2 : 0;
-            mx *= (sub.x / dist) * 0.01;
-            my *= (sub.y / dist) * 0.01;
+            // mx *= (sub.x / dist) * 0.1;
+            // my *= (sub.y / dist) * 0.1;
+            // let number = sub.x / dist;
+            mx *= (sub.x / dist) * 0.1;
+            my *= (sub.y / dist) * 0.1;
             // console.log(sub, mx, my);
             move.add(mx, my)
             // if (this.x > v.x) {
@@ -118,7 +133,13 @@ export class ArcDrawObj extends DrawObj {
             // console.log(move, mass, mx, my);
         });
 
+        let dist = PointVector.dist(this, move);
         this.set(move);
+        // this.mult(dist);
+        // move.mult(0.05);
+        let pointVector = PointVector.div(this.directionvelocity, dist);
+        pointVector.mult(0.05);
+        this.add(pointVector);
 
         const size = 1;
         excludeObjs.filter(it =>
@@ -133,18 +154,19 @@ export class ArcDrawObj extends DrawObj {
             // arcObj.mass = RandomUtil.scope(1, 10);
             // engine.setObj(arcObj);
         });
-        // if (this.x > 100) {
-        //     this.x = 0;
-        // }
-        // if (this.y > 100) {
-        //     this.y = 0;
-        // }
-        // if (this.x < 0) {
-        //     this.x = 100;
-        // }
-        // if (this.y < 0) {
-        //     this.y = 100;
-        // }
+
+        if (this.x > 100) {
+            this.x = 0;
+        }
+        if (this.y > 100) {
+            this.y = 0;
+        }
+        if (this.x < 0) {
+            this.x = 100;
+        }
+        if (this.y < 0) {
+            this.y = 100;
+        }
     }
 
 
