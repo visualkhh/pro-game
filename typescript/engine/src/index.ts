@@ -108,7 +108,7 @@ class Engine implements Drawable {
             // point.unit = Unit.PERCENT;
             const arcObj = new ArcDrawObj(this.createId('Obj')).set(point);
             arcObj.fillStyle = RandomUtil.rgb();
-            arcObj.mass = RandomUtil.scope(1, 10);
+            arcObj.mass =  RandomUtil.scope(1, 5);
             this.objs.set(arcObj.id, arcObj);
         });
     }
@@ -122,7 +122,8 @@ class Engine implements Drawable {
 
 
     private initObj() {
-        let mass = 5;
+        // let mass = RandomUtil.scope(0.5, 1);
+        let mass = RandomUtil.scope(1, 5);
         // let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 0)));
         let arcObj0 = new ArcDrawObj("arcObj0").set(new PointVector(0, 50));
         arcObj0.fillStyle = RandomUtil.rgb();
@@ -132,10 +133,10 @@ class Engine implements Drawable {
         //
         // let arcObj1 = new ArcObj(canvas, this.context, new Rectangle(new Point(100, 50)));
         // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 50));
-        let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 0));
-        arcObj1.fillStyle = RandomUtil.rgb();
-        arcObj1.mass = mass; // RandomUtil.scope(5, 15);
-        this.objs.set(arcObj1.id, arcObj1);
+        // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 0));
+        // arcObj1.fillStyle = RandomUtil.rgb();
+        // arcObj1.mass = mass; // RandomUtil.scope(5, 15);
+        // this.objs.set(arcObj1.id, arcObj1);
 
 
         let arcObj2 = new ArcDrawObj("arcObj2").set(new PointVector(100, 50));
@@ -143,10 +144,10 @@ class Engine implements Drawable {
         arcObj2.mass = mass; //RandomUtil.scope(5, 15);
         this.objs.set("arcObj2", arcObj2);
 
-        let arcObj3 = new ArcDrawObj("arcObj3").set(new PointVector(50, 100));
-        arcObj3.fillStyle = RandomUtil.rgb();
-        arcObj3.mass = mass;
-        this.objs.set(arcObj3.id, arcObj3);
+        // let arcObj3 = new ArcDrawObj("arcObj3").set(new PointVector(50, 100));
+        // arcObj3.fillStyle = RandomUtil.rgb();
+        // arcObj3.mass = mass;
+        // this.objs.set(arcObj3.id, arcObj3);
     }
 }
 

@@ -15,25 +15,32 @@ import {RandomUtil} from "@src/random/RandomUtil";
 export class ArcDrawObj extends DrawObj {
 
     // private shadow = new Array<PointVector>();
-    private directionvelocity = new PointVector(RandomUtil.scope(-1, 1), RandomUtil.scope(-1, 1));
+    public acceleration = new PointVector(RandomUtil.scope(-1, 1) / 10, RandomUtil.scope(-1, 1) / 10);
     // private velocity = new PointVector(0, 0);
     // private acceleration = new PointVector(0, 0);
     constructor(public id: string, public mass = RandomUtil.scope(1, 10), public fillStyle = '#000000', public strokeStyle = '#000000') {
         super();
+        this.e = RandomUtil.scope(5,20);
     }
 
     draw(draw: Draw): void {
-        // console.log(this.directionvelocity);
-        this.processing();
+        // console.log(this.id, this.acceleration);
+        this.processing(draw);
+        this.checkEdge(draw);
+
         // console.log(center.x, center.y);
-        const sizeGorup = draw.canvas.width / 100;
+        // const sizeGorup = draw.canvas.width / 100;
         draw.context.beginPath();
         draw.context.fillStyle = this.fillStyle;
         draw.context.strokeStyle = this.strokeStyle;
+        let xPixel = MathUtil.getValueByTotInPercent(draw.canvas.width, this.x);
+        let yPixel = MathUtil.getValueByTotInPercent(draw.canvas.height, this.y);
+        let radiusPixel = MathUtil.getValueByTotInPercent(draw.canvas.width, this.mass);
+        // console.log('--->', xPixel, yPixel, radiusPixel);
         draw.context.arc(
-            MathUtil.getValueByTotInPercent(draw.canvas.width, this.x),
-            MathUtil.getValueByTotInPercent(draw.canvas.height, this.y),
-            sizeGorup * Optional.ofNullable(this.mass).orElse(0), 0, 2 * Math.PI
+            xPixel,
+            yPixel,
+            radiusPixel, 0, 2 * Math.PI
         );
         draw.context.fill();
         draw.context.stroke()
@@ -55,9 +62,14 @@ export class ArcDrawObj extends DrawObj {
 
     //https://evan-moon.github.io/2017/05/06/gravity-via-js-1/
     // 기울기: https://ko.khanacademy.org/math/cc-eighth-grade-math/cc-8th-linear-equations-functions/8th-slope/a/slope-formula
-    private processing() {
-        // this.add(0, 0.1);
-
+    // 알짜힘, 여러힘작용: https://ko.khanacademy.org/partner-content/pixar/effects/particle-physics/v/fx8-fine
+    // 힘과 가속도 f=ma: https://ko.khanacademy.org/partner-content/pixar/effects/particle-physics/v/fx9-finalcut
+    // 입자 충돌: https://ko.khanacademy.org/partner-content/pixar/effects/particle-physics/v/fx-collision
+    // 부드러운 충돌: https://ko.khanacademy.org/partner-content/pixar/effects/particle/v/fx3-finalcut2
+    // 충돌 체크: https://evan-moon.github.io/2017/05/06/gravity-via-js-2/
+    private processing(draw: Draw) {
+        // this.acceleration.div(5.5);
+        // this.add(this.acceleration);
 
         // if(this.id != "arcObj2") {
         //     return;
@@ -66,7 +78,7 @@ export class ArcDrawObj extends DrawObj {
 
         let excludeObjs = engine.getExcludeObjs(this.id);
         // console.log(this.id, excludeObjs);
-        let move = this.get();
+        let move = new PointVector(); //this.get();
         excludeObjs.forEach((v) => {
             //////
             let sub = PointVector.sub(v, this);
@@ -133,13 +145,41 @@ export class ArcDrawObj extends DrawObj {
             // console.log(move, mass, mx, my);
         });
 
-        let dist = PointVector.dist(this, move);
-        this.set(move);
+        // move.limit(1);
+        this.acceleration.add(move);
+        // let dist = PointVector.dist(this, move);
+        this.acceleration.limit(1);
+
+
+        //충돌
+        excludeObjs.forEach(it => {
+            let dist = this.dist(it);
+            let radiusForm = this.mass;
+            let radiusTo = it.mass;
+            let radiusSum = radiusForm + radiusTo;
+            //console.log(dist, radiusSum, radiusForm, radiusTo);
+            if (dist <= radiusSum) {
+                if(this.x > it.x) {
+
+                } else if (this.y > it.y) {
+
+                }
+                this.acceleration.mult(-1);
+                this.acceleration.mult(this.e);
+                return;
+            }
+        });
+
+        this.add(this.acceleration);
         // this.mult(dist);
         // move.mult(0.05);
         // let pointVector = PointVector.div(this.directionvelocity, dist);
         // pointVector.mult(0.05);
         // this.add(pointVector);
+
+
+
+
 
         const size = 1;
         excludeObjs.filter(it =>
@@ -147,8 +187,8 @@ export class ArcDrawObj extends DrawObj {
             (this.y - size) <= it.y && (this.y + size) >= it.y
             //&& this.mass >= it.mass
         ).forEach(it => {
-            // this.mass += it.mass;
             // engine.deleteObj(it.id);
+            // this.mass += it.mass;
 
             // const point = new PointVector(RandomUtil.scope(0, 100), RandomUtil.scope(0, 100));
             // const arcObj = new ArcDrawObj(it.id!).set(point);
@@ -157,19 +197,21 @@ export class ArcDrawObj extends DrawObj {
             // engine.setObj(arcObj);
         });
 
-        if (this.x > 100) {
-            this.x = 0;
-        }
-        if (this.y > 100) {
-            this.y = 0;
-        }
-        if (this.x < 0) {
-            this.x = 100;
-        }
-        if (this.y < 0) {
-            this.y = 100;
-        }
+
     }
 
 
+    private checkEdge(draw: Draw) {
+        if (this.x > 100) {
+            this.x = 0;
+        } else if (this.x < 0) {
+            this.x = 100;
+        }
+
+        if (this.y > 100) {
+            this.y = 0;
+        } else if (this.y < 0) {
+            this.y = 100;
+        }
+    }
 }
