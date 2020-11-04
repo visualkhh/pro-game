@@ -15,7 +15,7 @@ import {RandomUtil} from "@src/random/RandomUtil";
 export class ArcDrawObj extends DrawObj {
 
     // private shadow = new Array<PointVector>();
-    private directionvelocity = new PointVector(RandomUtil.scope(-100, 100) / 1000, RandomUtil.scope(-100, 100) / 1000)
+    private directionvelocity = new PointVector(RandomUtil.scope(-1, 1), RandomUtil.scope(-1, 1));
     // private velocity = new PointVector(0, 0);
     // private acceleration = new PointVector(0, 0);
     constructor(public id: string, public mass = RandomUtil.scope(1, 10), public fillStyle = '#000000', public strokeStyle = '#000000') {
@@ -72,8 +72,8 @@ export class ArcDrawObj extends DrawObj {
             let sub = PointVector.sub(v, this);
             // let slope = pointVector.y ? pointVector.x / pointVector.y : 0;
             // const dir = PointVector.sub(v, this);
-            // dir.normalize();
-            // dir.mult(0.5);
+            // sub.normalize();
+            // sub.mult(0.5);
             // this.acceleration = dir;
             // this.velocity.add(this.acceleration);
             // this.velocity.limit(0.1);
@@ -137,16 +137,18 @@ export class ArcDrawObj extends DrawObj {
         this.set(move);
         // this.mult(dist);
         // move.mult(0.05);
-        let pointVector = PointVector.div(this.directionvelocity, dist);
-        pointVector.mult(0.05);
-        this.add(pointVector);
+        // let pointVector = PointVector.div(this.directionvelocity, dist);
+        // pointVector.mult(0.05);
+        // this.add(pointVector);
 
         const size = 1;
         excludeObjs.filter(it =>
             (this.x - size) <= it.x && (this.x + size) >= it.x &&
             (this.y - size) <= it.y && (this.y + size) >= it.y
+            //&& this.mass >= it.mass
         ).forEach(it => {
-            engine.deleteObj(it.id);
+            // this.mass += it.mass;
+            // engine.deleteObj(it.id);
 
             // const point = new PointVector(RandomUtil.scope(0, 100), RandomUtil.scope(0, 100));
             // const arcObj = new ArcDrawObj(it.id!).set(point);

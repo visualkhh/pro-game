@@ -1,3 +1,4 @@
+// https://p5js.org/ko/
 export class PointVector {
   private _x: number;
   private _y: number;
@@ -159,12 +160,31 @@ export class PointVector {
     return -Math.atan2(-this.y, this.x);
   }
 
-  public toString(): string{
-    return "[" + this.x + ", " + this.y + ", " + this.z + "]";
+  public random2D() {
+    return this.fromAngle(Math.random() * (2*Math.PI));
   }
+  public fromAngle(angle: number, length = 1) {
+    return new PointVector(length * Math.cos(angle), length * Math.sin(angle), 0);
+  };
+  public fromAngles(theta: number, phi: number, length = 1) {
+    const cosPhi = Math.cos(phi);
+    const sinPhi = Math.sin(phi);
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+
+    return new PointVector(
+        length * sinTheta * sinPhi,
+        -length * cosTheta,
+        length * sinTheta * cosPhi
+    );
+  };
 
   public array(): number[] {
     return [this.x, this.y, this.z];
+  }
+
+  public toString(): string{
+    return "[" + this.x + ", " + this.y + ", " + this.z + "]";
   }
 
 }
