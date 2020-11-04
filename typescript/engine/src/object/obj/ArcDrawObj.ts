@@ -14,7 +14,8 @@ import {RandomUtil} from "@src/random/RandomUtil";
 
 export class ArcDrawObj extends DrawObj {
 
-    // private shadow = new Array<PointVector>();
+    private shadow = new Array<PointVector>();
+    public edgeLoop = true;
     public acceleration = new PointVector(RandomUtil.scope(-1, 1) / 10, RandomUtil.scope(-1, 1) / 10);
     // private velocity = new PointVector(0, 0);
     // private acceleration = new PointVector(0, 0);
@@ -25,6 +26,7 @@ export class ArcDrawObj extends DrawObj {
 
     draw(draw: Draw): void {
         // console.log(this.id, this.acceleration);
+        if(this.edgeLoop)
         this.processing(draw);
         this.checkEdge(draw);
 
@@ -35,7 +37,7 @@ export class ArcDrawObj extends DrawObj {
         draw.context.strokeStyle = this.strokeStyle;
         let xPixel = MathUtil.getValueByTotInPercent(draw.canvas.width, this.x);
         let yPixel = MathUtil.getValueByTotInPercent(draw.canvas.height, this.y);
-        let radiusPixel = MathUtil.getValueByTotInPercent(draw.canvas.width, this.mass);
+        let radiusPixel = MathUtil.getValueByTotInPercent(draw.canvas.width, this.volume);
         // console.log('--->', xPixel, yPixel, radiusPixel);
         draw.context.arc(
             xPixel,
@@ -43,20 +45,25 @@ export class ArcDrawObj extends DrawObj {
             radiusPixel, 0, 2 * Math.PI
         );
         draw.context.fill();
-        draw.context.stroke()
+        draw.context.stroke();
+        draw.context.closePath();
 
-        // this.shadow.forEach(it => {
-        //     draw.context.beginPath();
-        //     draw.context.fillStyle = "#000000";
-        //     draw.context.arc(
-        //         MathUtil.getValueByTotInPercent(draw.canvas.width, it.x),
-        //         MathUtil.getValueByTotInPercent(draw.canvas.height, it.y),
-        //         3, 0, 2 * Math.PI
-        //     );
-        //     // draw.context.fill();
-        //     draw.context.stroke();
-        //     draw.context.beginPath();
-        // });
+        this.shadow.forEach(it => {
+            // draw.context.moveTo(pointVector.x, pointVector.y);
+            // pointVector.sub(this.acceleration);
+            // draw.context.lineTo(MathUtil.getValueByTotInPercent(draw.canvas.width,it.x), MathUtil.getValueByTotInPercent(draw.canvas.height,it.y));
+            draw.context.beginPath();
+            draw.context.fillStyle = "#000000";
+            draw.context.arc(
+                MathUtil.getValueByTotInPercent(draw.canvas.width, it.x),
+                MathUtil.getValueByTotInPercent(draw.canvas.height, it.y),
+                2, 0, 2 * Math.PI
+            );
+            // // draw.context.fill();
+            // draw.context.beginPath();
+            draw.context.stroke();
+            draw.context.closePath();
+        });
         // this.shadow.push(this.get());
     }
 
@@ -156,8 +163,8 @@ export class ArcDrawObj extends DrawObj {
         excludeObjs.forEach(it => {
             let it1 = it as ArcDrawObj;
             let dist = this.dist(it);
-            let radiusForm = this.mass;
-            let radiusTo = it.mass;
+            let radiusForm = this.volume;
+            let radiusTo = it.volume;
             let radiusSum = radiusForm + radiusTo;
             //console.log(dist, radiusSum, radiusForm, radiusTo);
             if (dist <= radiusSum) {
@@ -166,9 +173,9 @@ export class ArcDrawObj extends DrawObj {
                 } else {
                     this.acceleration.y *= -1;
                 }
+                this.acceleration.add(it1.acceleration);
+                this.acceleration.mult(this.e);//.mult(RandomUtil.scope(1, 3));
                 // this.acceleration.mult(-1);
-                this.acceleration.add(it1.acceleration)
-                this.acceleration.mult(this.e);
                 return;
             }
         });
@@ -206,15 +213,15 @@ export class ArcDrawObj extends DrawObj {
 
     private checkEdge(draw: Draw) {
         if (this.x > 100) {
-            this.x = 0;
+            this.x = this.edgeLoop ? 0 : 100;
         } else if (this.x < 0) {
-            this.x = 100;
+            this.x = this.edgeLoop ? 100 : 0;
         }
 
         if (this.y > 100) {
-            this.y = 0;
+            this.y = this.edgeLoop ? 0 : 100;
         } else if (this.y < 0) {
-            this.y = 100;
+            this.y = this.edgeLoop ? 100 : 0;
         }
     }
 }

@@ -6,6 +6,7 @@ const {range, fromEvent, interval, Observable, of, Subscription, timer} = requir
 
 export abstract class Obj extends PointVector  {
 
+    public volume = 0; // 부피
     public mass = 0; // 질량
     public e = 0; // 탄성
     public age = 0; // 생성된 시간 가중치
