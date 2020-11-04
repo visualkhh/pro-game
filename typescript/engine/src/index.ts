@@ -126,23 +126,26 @@ class Engine implements Drawable {
         let mass = RandomUtil.scope(1, 5);
         // let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 0)));
         let arcObj0 = new ArcDrawObj("arcObj0").set(new PointVector(0, 50));
+        arcObj0.acceleration = new PointVector(1, 0, 0);
+        arcObj0.e = 1;
         arcObj0.fillStyle = RandomUtil.rgb();
         arcObj0.mass = mass; //RandomUtil.scope(5, 15);
         this.objs.set(arcObj0.id, arcObj0);
         //
         //
-        // let arcObj1 = new ArcObj(canvas, this.context, new Rectangle(new Point(100, 50)));
         // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 50));
-        // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 0));
-        // arcObj1.fillStyle = RandomUtil.rgb();
-        // arcObj1.mass = mass; // RandomUtil.scope(5, 15);
-        // this.objs.set(arcObj1.id, arcObj1);
+        let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(100, 40));
+        arcObj1.acceleration = new PointVector(-1, 0, 0);
+        arcObj1.e = 1;
+        arcObj1.fillStyle = RandomUtil.rgb();
+        arcObj1.mass = mass; // RandomUtil.scope(5, 15);
+        this.objs.set(arcObj1.id, arcObj1);
 
 
-        let arcObj2 = new ArcDrawObj("arcObj2").set(new PointVector(100, 50));
-        arcObj2.fillStyle = RandomUtil.rgb();
-        arcObj2.mass = mass; //RandomUtil.scope(5, 15);
-        this.objs.set("arcObj2", arcObj2);
+        // let arcObj2 = new ArcDrawObj("arcObj2").set(new PointVector(100, 50));
+        // arcObj2.fillStyle = RandomUtil.rgb();
+        // arcObj2.mass = mass; //RandomUtil.scope(5, 15);
+        // this.objs.set("arcObj2", arcObj2);
 
         // let arcObj3 = new ArcDrawObj("arcObj3").set(new PointVector(50, 100));
         // arcObj3.fillStyle = RandomUtil.rgb();

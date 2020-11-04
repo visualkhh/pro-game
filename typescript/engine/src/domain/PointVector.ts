@@ -96,6 +96,7 @@ export class PointVector {
       this.y *= v;
       this.z *= v;
     }
+    return this;
   }
   public static mult(v1: PointVector, v2: PointVector) {
     return new PointVector(v1.x *= v2.x, v1.y *= v2.y, v1.z *= v2.z);

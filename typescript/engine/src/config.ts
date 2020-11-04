@@ -4,7 +4,7 @@ const config = {
     // G: 1.67384,
     // G: 0.2,
     G: 16.67384,
-    drawDelay: 10,
+    drawDelay: 0,
 };
 
 export {config}

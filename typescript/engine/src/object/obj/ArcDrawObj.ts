@@ -20,7 +20,7 @@ export class ArcDrawObj extends DrawObj {
     // private acceleration = new PointVector(0, 0);
     constructor(public id: string, public mass = RandomUtil.scope(1, 10), public fillStyle = '#000000', public strokeStyle = '#000000') {
         super();
-        this.e = RandomUtil.scope(5,20);
+        this.e = RandomUtil.scope(1,4);
     }
 
     draw(draw: Draw): void {
@@ -149,22 +149,25 @@ export class ArcDrawObj extends DrawObj {
         this.acceleration.add(move);
         // let dist = PointVector.dist(this, move);
         this.acceleration.limit(1);
+        // this.acceleration.sub( this.mass * 0.1);
 
 
         //충돌
         excludeObjs.forEach(it => {
+            let it1 = it as ArcDrawObj;
             let dist = this.dist(it);
             let radiusForm = this.mass;
             let radiusTo = it.mass;
             let radiusSum = radiusForm + radiusTo;
             //console.log(dist, radiusSum, radiusForm, radiusTo);
             if (dist <= radiusSum) {
-                if(this.x > it.x) {
-
-                } else if (this.y > it.y) {
-
+                if(Math.abs(this.acceleration.x) > Math.abs(this.acceleration.y)) {
+                    this.acceleration.x *= -1;
+                } else {
+                    this.acceleration.y *= -1;
                 }
-                this.acceleration.mult(-1);
+                // this.acceleration.mult(-1);
+                this.acceleration.add(it1.acceleration)
                 this.acceleration.mult(this.e);
                 return;
             }
