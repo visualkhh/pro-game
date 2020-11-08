@@ -37,7 +37,7 @@ export class PointVector {
   public set(v: number|PointVector, y: number = 0, z: number = 0) {
     if (v instanceof PointVector) {
       this.set(v.x || 0, v.y || 0, v.z || 0);
-    }else {
+    } else {
       this.x = v;
       this.y = y;
       this.z = z;

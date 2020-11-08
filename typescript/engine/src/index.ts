@@ -4,7 +4,6 @@ import {Obj} from "@src/object/obj/Obj";
 import {ArcDrawObj} from "@src/object/obj/ArcDrawObj";
 import {Point} from "@src/domain/Point";
 import {Rectangle} from "@src/domain/Rectangle";
-import {Unit} from "@src/domain/Unit";
 import {MathUtil} from "@src/math/MathUtil";
 import {RandomUtil} from "@src/random/RandomUtil";
 import {Optional} from "@src/optional/Optional";
@@ -26,9 +25,8 @@ class Engine implements Drawable {
 
     constructor(public canvas: HTMLCanvasElement, public context: CanvasRenderingContext2D) {
         this.setCanvasSize(window);
-        this.grid = new SizeGrid(50);
+        this.grid = new SizeGrid(100);
         this.addEvent();
-        this.animationFrame();
         this.initObj();
     }
 
@@ -66,6 +64,14 @@ class Engine implements Drawable {
     }
 
     draw(draw: Draw): void {
+        // sort
+        // Array.from(this.objs.values()).sort((a,b) => b.z - a.z).forEach(it => {
+        //     console.log('-----', it)
+        //     //this.objs.set(it.id!, it)
+        // });
+        let sortObjs = Array.from(this.objs.values()).sort((a, b) => a.z - b.z);
+        // [].concat(this.objs.entries());
+        // let m2= new Map([...this.objs.values()].sort((a,b) => b[1] - a[1]))
         // 픽셀 정리
         this.context.restore();
         this.context.setLineDash([]);
@@ -78,7 +84,7 @@ class Engine implements Drawable {
         this.grid.draw(draw);
         this.context.restore();
 
-        this.objs.forEach((it: DrawObj) => {
+        sortObjs.forEach((it: DrawObj) => {
             this.context.save();
             it.draw(draw);
             this.context.restore();
@@ -103,13 +109,16 @@ class Engine implements Drawable {
         fromEvent(canvas, 'click').subscribe((event: MouseEvent) => {
             const point = new PointVector(
                 MathUtil.getPercentByTot(canvas.width, event.clientX),
-                MathUtil.getPercentByTot(canvas.height, event.clientY)
+                MathUtil.getPercentByTot(canvas.height, event.clientY),
+                RandomUtil.scope(0, 10)
             );
             // point.unit = Unit.PERCENT;
             const arcObj = new ArcDrawObj(this.createId('Obj')).set(point);
             arcObj.fillStyle = RandomUtil.rgb();
             arcObj.mass =  RandomUtil.scope(1, 5);
             arcObj.volume =  RandomUtil.scope(1, 5);
+            arcObj.acceleration = new PointVector(RandomUtil.scope(-10, 10), RandomUtil.scope(-10, 10), RandomUtil.scope(-10, 10));
+            arcObj.shadowDraw = true;
             this.objs.set(arcObj.id, arcObj);
         });
     }
@@ -127,23 +136,36 @@ class Engine implements Drawable {
         let volume = RandomUtil.scope(1, 5);
         let mass = RandomUtil.scope(1, 5);
         // let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 0)));
-        let arcObj0 = new ArcDrawObj("arcObj0").set(new PointVector(0, 50));
-        arcObj0.acceleration = new PointVector(1, 0, 0);
-        arcObj0.e = 1;
+        let arcObj0 = new ArcDrawObj("arcObj0").set(new PointVector(0, 60, 20));
+        arcObj0.acceleration = new PointVector(5, 0, 0);
+        arcObj0.e = RandomUtil.scope(1, 5);
         arcObj0.fillStyle = RandomUtil.rgb();
         arcObj0.volume = volume;
         arcObj0.mass = mass;
+        arcObj0.shadowDraw = true;
         this.objs.set(arcObj0.id, arcObj0);
         //
         //
-        // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(50, 50));
-        let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(100, 40));
-        arcObj1.acceleration = new PointVector(-1, 0, 0);
-        arcObj1.e = 1;
-        arcObj1.fillStyle = RandomUtil.rgb();
-        arcObj1.volume = volume;
-        arcObj1.mass = mass;
-        this.objs.set(arcObj1.id, arcObj1);
+        // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(100, 40, 0));
+        // arcObj1.acceleration = new PointVector(-5, 0, 0);
+        // arcObj1.e = 1;
+        // arcObj1.fillStyle = RandomUtil.rgb();
+        // arcObj1.volume = volume;
+        // arcObj1.mass = mass;
+        // arcObj1.shadowDraw = true;
+        // this.objs.set(arcObj1.id, arcObj1);
+
+
+
+        let ground = new ArcDrawObj("ground").set(new PointVector(50, 50, 5));
+        ground.acceleration = new PointVector(1, 0, 0);
+        ground.e = RandomUtil.scope(1, 5);
+        ground.fillStyle = RandomUtil.rgb();
+        ground.volume = volume;
+        ground.mass = 100;
+        ground.stop = true;
+        ground.shadowDraw = false;
+        this.objs.set(ground.id, ground);
 
 
         // let arcObj2 = new ArcDrawObj("arcObj2").set(new PointVector(100, 50));
@@ -157,32 +179,32 @@ class Engine implements Drawable {
         // this.objs.set(arcObj3.id, arcObj3);
 
 
-        let ground = new ArcDrawObj("ground").set(new PointVector(50, 100));
-        ground.acceleration = new PointVector(0, 0, 0);
-        ground.e = 1;
-        ground.fillStyle = RandomUtil.rgb();
-        ground.edgeLoop = false;
-        ground.volume = 5;
-        ground.mass = 99;
-        this.objs.set(ground.id, ground);
+        // let ground = new ArcDrawObj("ground").set(new PointVector(50, 100), -50);
+        // ground.acceleration = new PointVector(0, 0, 0);
+        // ground.e = 1;
+        // ground.fillStyle = RandomUtil.rgb();
+        // // ground.edgeLoop = false;
+        // ground.volume = 5;
+        // ground.mass = 99;
+        // this.objs.set(ground.id, ground);
+        //
+        // let ground1 = new ArcDrawObj("ground1").set(new PointVector(51, 100, -50));
+        // ground1.acceleration = new PointVector(0, 0, 0);
+        // ground1.e = 1;
+        // ground1.fillStyle = RandomUtil.rgb();
+        // // ground1.edgeLoop = false;
+        // ground1.volume = 5;
+        // ground1.mass = 99;
+        // this.objs.set(ground1.id, ground1);
 
-        let ground1 = new ArcDrawObj("ground1").set(new PointVector(51, 100));
-        ground1.acceleration = new PointVector(0, 0, 0);
-        ground1.e = 1;
-        ground1.fillStyle = RandomUtil.rgb();
-        ground1.edgeLoop = false;
-        ground1.volume = 5;
-        ground1.mass = 99;
-        this.objs.set(ground1.id, ground1);
-
-        let ground2 = new ArcDrawObj("ground2").set(new PointVector(49, 100));
-        ground2.acceleration = new PointVector(0, 0, 0);
-        ground2.e = 1;
-        ground2.fillStyle = RandomUtil.rgb();
-        ground2.edgeLoop = false;
-        ground2.volume = 5;
-        ground2.mass = 99;
-        this.objs.set(ground2.id, ground2);
+        // let ground2 = new ArcDrawObj("ground2").set(new PointVector(49, 100));
+        // ground2.acceleration = new PointVector(0, 0, 0);
+        // ground2.e = 1;
+        // ground2.fillStyle = RandomUtil.rgb();
+        // ground2.edgeLoop = false;
+        // ground2.volume = 5;
+        // ground2.mass = 99;
+        // this.objs.set(ground2.id, ground2);
 
     }
 }

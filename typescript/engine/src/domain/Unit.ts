@@ -1,4 +1,4 @@
-export enum Unit {
-    PIXEL,
-    PERCENT
-}
+// export enum Unit {
+//     PIXEL,
+//     PERCENT
+// }
