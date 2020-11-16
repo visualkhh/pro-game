@@ -143,7 +143,7 @@ export class ArcDrawObj extends DrawObj {
             let radiusSum = radiusForm + radiusTo;
             // 충돌
             if (dist <= radiusSum) {
-                targetPoint.sub(gravitation.mult(other.e));
+                targetPoint.sub(gravitation.mult(this.e));
             }
             // if (this.x > v.x) {
             //     move.x -= mx;
@@ -190,8 +190,11 @@ export class ArcDrawObj extends DrawObj {
         // });
 
 
-        this.acceleration = PointVector.sub(targetPoint, this);
-        this.acceleration.limit(1);
+        const targetAcceleration = PointVector.sub(targetPoint, this);
+        targetAcceleration.limit(5);
+        if(targetAcceleration.x || targetAcceleration.y  || targetAcceleration.z) {
+            this.acceleration = targetAcceleration;
+        }
         this.set(targetPoint);
 
         // this.mult(dist);
@@ -209,16 +212,20 @@ export class ArcDrawObj extends DrawObj {
     private checkEdge(draw: Draw) {
         if (this.x > 100) {
             this.x = 100;
+            this.acceleration.x *= -1;
             // this.x = this.edgeLoop ? 0 : 100;
         } else if (this.x < 0) {
             this.x = 0;
+            this.acceleration.x *= -1;
             // this.x = this.edgeLoop ? 100 : 0;
         }
 
         if (this.y > 100) {
             this.y = 100;
+            this.acceleration.y *= -1;
         } else if (this.y < 0) {
             this.y = 0;
+            this.acceleration.y *= -1;
         }
     }
 }

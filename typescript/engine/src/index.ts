@@ -135,15 +135,39 @@ class Engine implements Drawable {
         // let mass = RandomUtil.scope(0.5, 1);
         let volume = RandomUtil.scope(1, 5);
         let mass = RandomUtil.scope(1, 5);
+
+
+
+        let arcObj = new ArcDrawObj("arcObj").set(new PointVector(0, 60, 10));
+        arcObj.acceleration = new PointVector(5, 0, 0);
+        arcObj.e = RandomUtil.scope(1, 5);
+        arcObj.fillStyle = RandomUtil.rgb();
+        arcObj.volume = volume;
+        arcObj.mass = mass;
+        arcObj.shadowDraw = true;
+        this.objs.set(arcObj.id, arcObj);
+
+        let arcObjC = new ArcDrawObj("arcObjC").set(new PointVector(50, 50, 10));
+        arcObjC.acceleration = new PointVector(0, 0, 0);
+        arcObjC.e = RandomUtil.scope(1, 5);
+        arcObjC.fillStyle = RandomUtil.rgb();
+        arcObjC.volume = volume;
+        arcObjC.mass = mass;
+        arcObjC.shadowDraw = false;
+        arcObjC.stop = true;
+        this.objs.set(arcObjC.id, arcObjC);
+
+
+
         // let arcObj0 = new ArcObj(canvas, this.context, new Rectangle(new Point(50, 0)));
-        let arcObj0 = new ArcDrawObj("arcObj0").set(new PointVector(0, 60, 20));
-        arcObj0.acceleration = new PointVector(5, 0, 0);
-        arcObj0.e = RandomUtil.scope(1, 5);
-        arcObj0.fillStyle = RandomUtil.rgb();
-        arcObj0.volume = volume;
-        arcObj0.mass = mass;
-        arcObj0.shadowDraw = true;
-        this.objs.set(arcObj0.id, arcObj0);
+        // let arcObj0 = new ArcDrawObj("arcObj0").set(new PointVector(0, 60, 20));
+        // arcObj0.acceleration = new PointVector(5, 0, 0);
+        // arcObj0.e = RandomUtil.scope(1, 5);
+        // arcObj0.fillStyle = RandomUtil.rgb();
+        // arcObj0.volume = volume;
+        // arcObj0.mass = mass;
+        // arcObj0.shadowDraw = true;
+        // this.objs.set(arcObj0.id, arcObj0);
         //
         //
         // let arcObj1 = new ArcDrawObj("arcObj1").set(new PointVector(100, 40, 0));
@@ -157,15 +181,15 @@ class Engine implements Drawable {
 
 
 
-        let ground = new ArcDrawObj("ground").set(new PointVector(50, 50, 5));
-        ground.acceleration = new PointVector(1, 0, 0);
-        ground.e = RandomUtil.scope(1, 5);
-        ground.fillStyle = RandomUtil.rgb();
-        ground.volume = volume;
-        ground.mass = 100;
-        ground.stop = true;
-        ground.shadowDraw = false;
-        this.objs.set(ground.id, ground);
+        // let ground = new ArcDrawObj("ground").set(new PointVector(50, 100, 5));
+        // ground.acceleration = new PointVector(1, 0, 0);
+        // ground.e = RandomUtil.scope(1, 5);
+        // ground.fillStyle = RandomUtil.rgb();
+        // ground.volume = volume;
+        // ground.mass = 100;
+        // ground.stop = true;
+        // ground.shadowDraw = false;
+        // this.objs.set(ground.id, ground);
 
 
         // let arcObj2 = new ArcDrawObj("arcObj2").set(new PointVector(100, 50));
