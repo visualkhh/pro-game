@@ -80,7 +80,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.context.arc(lastEnd.x, lastEnd.y, 10, 0, 2 * Math.PI);
     this.context.stroke();
 
-    const frame = 70;
+    const frame = 200;
     const sD = new PointVector((start.x - center.x) / frame, (start.y - center.y) / frame);
     const cD = new PointVector((center.x - end.x) / frame, (center.y - end.y) / frame);
     const eD = new PointVector((end.x - lastEnd.x) / frame, (end.y - lastEnd.y) / frame);
