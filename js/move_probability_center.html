@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #canvas {
+            border: black 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+        const canvas = document.querySelector("#canvas");
+        const ctx = canvas.getContext('2d');
+
+        const arcs = [];
+        for (let i = 0; i < 1000; i++) {
+            arcs.push({x:  Math.floor(Math.random() * canvas.width), y:  Math.floor(Math.random() * canvas.height)})
+        }
+
+        var start = null;
+        var xcenter = canvas.width / 2;
+        var ycenter = canvas.height / 2;
+        // var x = 100;
+        // var y = 100;
+        function step(timestamp) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+
+            for (const arc of arcs) {
+                //element.style.left = Math.min(progress / 10, 200) + 'px';
+                ctx.beginPath();
+                ctx.arc(arc.x, arc.y, 2, 0, 2 * Math.PI);
+                ctx.stroke();
+                const xDiff = xcenter - arc.x;
+                const yDiff = ycenter - arc.y;
+                const xsign = Math.floor(Math.random() * 100) >= (xDiff > 0 ? 70 : 30);
+                const ysign = Math.floor(Math.random() * 100) >= (yDiff > 0 ? 70 : 30);
+                const xval = Math.floor(Math.random() * 100) >= (xDiff > 0 ? 70 : 30) ? Math.floor(Math.random() * 10) : Math.floor(Math.random() * 3);
+                const yval = Math.floor(Math.random() * 100) >= (yDiff > 0 ? 70 : 30) ? Math.floor(Math.random() * 10) : Math.floor(Math.random() * 3);
+
+                arc.x = arc.x + (xsign ? -xval : xval)
+                arc.y = arc.y + (ysign ? -yval : yval)
+            }
+
+
+            if (progress < 20000) {
+                window.requestAnimationFrame(step);
+            }
+        }
+
+        window.requestAnimationFrame(step);
+    </script>
+</body>
+</html>
